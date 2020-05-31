@@ -7,14 +7,34 @@ class bankLinkService {
     const bankPartner = await BankPartner.findOne({name: partnercode});
     if(bankPartner) {
       try {
-        await bankPartner.isValidPartner(timestamp, body, bankPartner.secretKey, csi);
-        await bankPartner.isValidTime(timestamp)
-        return Promise.resolve("Good")
+        await bankPartner.isValidPartner(timestamp, body, csi);
+        await bankPartner.isValidTime(timestamp);
       } catch(e) {
         return Promise.resolve(e.message);
       }
+      return Promise.resolve("Query successful !")
     }
     return Promise.resolve("Your partner code was wrong !")
+  }
+
+  static async transfer(params, body) {
+    const { timestamp, partnercode, csi, detachedsignature } = params;
+    console.log('detachedsignature', body);
+    const bankPartner = await BankPartner.findOne({name: partnercode});
+    console.log("params", params);
+    if (bankPartner) {
+      console.log("ciome hêr")
+      try {
+        const a = await bankPartner.isValidPartner(timestamp, body, csi);
+        const b = await bankPartner.isValidTime(timestamp);
+        const c = await bankPartner.isValidSign(detachedsignature);
+        return Promise.resolve("Success");
+        //Do tranfer stuff
+      } catch (e) {
+        return Promise.resolve(e.message);
+      }
+    }
+    return Promise.resolve("Your partner code was wrong !");
   }
 }
 
