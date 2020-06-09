@@ -1,6 +1,6 @@
 const http = require('http');
 const app = require('../app');
-const PORT = process.env.PORT || '3000';
+const PORT = process.env.PORT || '3001';
 
 app.set('port', PORT);
 
@@ -11,5 +11,5 @@ server.on('listening', () => {
   const bind = typeof addr === 'string'
     ? `pipe ${addr}`
     : `port ${addr.port}`;
-  console.debug(`Listening on port ${bind}`);
+  console.debug(`Listening on ${bind}`);
 });

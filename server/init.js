@@ -21,7 +21,7 @@ mongoose.connection.on('error', (err) => {
 
 mongoose.connection.on('disconnected', () => {
   setTimeout(() => {
-    mongoose.connect(envConf.mongodb, mongoOptions);
+    mongoose.connect(mongodb, mongoOptions);
   }, 5000);
 });
 

@@ -11,10 +11,15 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",
+    "bcrypt": "^5.0.0",
+    "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
     "helmet": "^3.22.0",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "log4js": "^6.2.1",
     "moment": "^2.25.3",
@@ -22,6 +27,9 @@
     "node-rsa": "^1.0.8",
     "nodemon": "^2.0.4",
     "openpgp": "^4.10.4",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "req-flash": "0.0.3",
     "sha1": "^1.1.1",
     "sha256": "^0.2.0"
   }

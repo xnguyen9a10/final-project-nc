@@ -95,30 +95,76 @@ Z30+KiOLqER1zMibyKm4O2LzVKsq0U5BKSKxaF3Wf+6bME92QZ6aDOq+AEBqeV0F
 UkrjNUbLI6QFG6xzeC+akTv7MlZTwasYfagiu5RMN8INapOvye5lCw==
 =u2/4
 -----END PGP PRIVATE KEY BLOCK-----`;
+
 const passphrase = `nguyen`;
+const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+const User = mongoose.model('User');
 
 class Utils {
   static async succeedTransfer(message) {
-    const { keys: [privateKey] } = await openpgp.key.readArmored(privateKeyArmored);
+    const {
+      keys: [privateKey],
+    } = await openpgp.key.readArmored(privateKeyArmored);
     await privateKey.decrypt(passphrase);
     const { data: responseMessage } = await openpgp.encrypt({
       message: openpgp.cleartext.fromText("good"), // CleartextMessage or Message object
-      privateKeys: [privateKey]                             // for signing
-  });
+      privateKeys: [privateKey], // for signing
+    });
 
     return {
-      status: 'successful',
+      status: "successful",
       responseMessage,
+    };
+  }
+
+  static succeed(data) {
+    return {
+      status: "successful",
+      data,
     };
   }
 
   static fail(err, message) {
     return {
-      status: 'failed',
+      status: "failed",
       err,
       message,
     };
   }
+
+  static authenticate (req, res, next) {
+    let accessToken = req.header("Authorization");
+    if (accessToken.startsWith('Bearer ')) {
+      // Remove Bearer from string
+      accessToken = accessToken.slice(7, accessToken.length);
+    }
+
+    jwt.verify(accessToken, "somethingyoudontknow", (err, decoded) => {
+      if (err) {
+        return res.status(401).send(err);
+      }
+      req.userId = decoded._id;
+      next();
+    });
+  };
+
+  static isValidRefreshToken (req, res, next) {
+    const refreshToken = req.headers["refreshtoken"];
+    const id = req.headers.userid;
+
+    return User.findOne({ _id: id, token: refreshToken })
+      .exec()
+      .then((user) => {
+        console.log(user)
+        if(!user) {
+          return res.status(401)
+              .send('401 Unauthorized');
+        }
+        req.user = user;
+        next();
+      });
+  };
 }
 
 module.exports = Utils;

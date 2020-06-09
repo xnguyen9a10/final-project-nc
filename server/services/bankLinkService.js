@@ -19,11 +19,8 @@ class bankLinkService {
 
   static async transfer(params, body) {
     const { timestamp, partnercode, csi, detachedsignature } = params;
-    console.log('detachedsignature', body);
     const bankPartner = await BankPartner.findOne({name: partnercode});
-    console.log("params", params);
     if (bankPartner) {
-      console.log("ciome hêr")
       try {
         const a = await bankPartner.isValidPartner(timestamp, body, csi);
         const b = await bankPartner.isValidTime(timestamp);
