@@ -3,6 +3,8 @@ const UserService = require("../../services/userService");
 const passport = require("passport");
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
+const Customer = mongoose.model("Customer");
+const Employee = mongoose.model("Employee");
 const utils = require("../../utils/utils");
 
 router.post("/user/register", async (req, res) => {
@@ -17,6 +19,13 @@ router.post("/user/register", async (req, res) => {
 
       const user = new User(req.body);
       await user.save();
+      if(user.role === 'customer') {
+        const customer = new Customer({user_id: user._id});
+        await customer.save();
+      } else {
+        const employee = new Employee({user_id: user._id});
+        await employee.save();
+      }
       return res.json(utils.succeed({ user }));
     });
 });
@@ -53,7 +62,7 @@ router.post("/user/login", (req, res) => {
     });
 });
 
-router.get("/me", utils.authenticate, (req, res) => {
+router.get("/me", (req, res) => {
   return res.json(utils.succeed({name:"xyz"}));
 })
 

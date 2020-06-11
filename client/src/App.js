@@ -19,7 +19,7 @@ class App extends React.Component {
   }
 
   getUserInfo = async () => {
-    const res = await httpClient.get('me');
+    const res = await httpClient.get('/customer/info');
     if(res && res.status === "sucessful") {
       this.setState({user: res.data})
     }

@@ -13,7 +13,7 @@ const schema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  roles: 
+  role: 
     {
       type: String,
       default: 'customer',
@@ -33,7 +33,12 @@ schema.set('toObject', { getters: true });
 
 schema.methods.generateAuthToken = async function () {
   const user = this
-  const token = jwt.sign({_id: user._id}, "somethingyoudontknow", {expiresIn: "10s"})
+  const userCopied = user.toJSON();
+
+  delete userCopied.password;
+  delete userCopied.token;
+
+  const token = jwt.sign({user: userCopied}, "somethingyoudontknow", {expiresIn: "1d"})
   return token
 }
 

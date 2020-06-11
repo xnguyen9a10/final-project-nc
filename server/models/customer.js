@@ -6,7 +6,7 @@ const Promise = require('bluebird')
 const schema = new mongoose.Schema({
   user_id: String,
 }, {
-  collection: 'employee',
+  collection: 'customer',
   timestamps: true
 })
 
@@ -14,4 +14,4 @@ schema.set('toJSON', { getters: true });
 schema.set('toObject', { getters: true });
 
 
-module.exports = mongoose.model('Employee', schema);
+module.exports = mongoose.model('Customer', schema);
