@@ -97,9 +97,9 @@ UkrjNUbLI6QFG6xzeC+akTv7MlZTwasYfagiu5RMN8INapOvye5lCw==
 -----END PGP PRIVATE KEY BLOCK-----`;
 
 const passphrase = `nguyen`;
-const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
-const User = mongoose.model('User');
+const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
+const User = mongoose.model("User");
 
 class Utils {
   static async succeedTransfer(message) {
@@ -133,38 +133,63 @@ class Utils {
     };
   }
 
-  static authenticate (req, res, next) {
-    let accessToken = req.header("Authorization");
-    if (accessToken.startsWith('Bearer ')) {
-      // Remove Bearer from string
-      accessToken = accessToken.slice(7, accessToken.length);
-    }
+  // static authenticate(req, res, next) {
+  //   let accessToken = req.header("Authorization");
+  //   if (accessToken && accessToken.startsWith("Bearer ")) {
+  //     // Remove Bearer from string
+  //     accessToken = accessToken.slice(7, accessToken.length);
+  //   }
+  //   jwt.verify(accessToken, "somethingyoudontknow", (err, decoded) => {
+  //     if (err) {
+  //       return res.status(401).send("401 Unauthorized");
+  //     }
+  //     req.user = decoded.user;
+  //     return next();
+  //   });
+  // }
 
-    jwt.verify(accessToken, "somethingyoudontknow", (err, decoded) => {
-      if (err) {
-        return res.status(401).send(err);
+  static requireRole(role) {
+    return (req, res, next) => {
+      // if (this.authenticate(req, res, next)) {
+      if (req.authenticated) {
+        switch (role) {
+          case "admin":
+            if (req.user.role === role) {
+              return next();
+            }
+            break;
+          case "customer":
+            if (req.user.role === role) {
+              return next();
+            }
+            break;
+          case "employee":
+            if (req.user.role === role) {
+              return next();
+            }
+            break;
+          default:
+            return res.status(403).send("403 Forbidden");
+        }
+        return res.status(403).send("403 Forbidden");
       }
-      req.userId = decoded._id;
-      next();
-    });
-  };
+    };
+  }
 
-  static isValidRefreshToken (req, res, next) {
+  static isValidRefreshToken(req, res, next) {
     const refreshToken = req.headers["refreshtoken"];
     const id = req.headers.userid;
 
     return User.findOne({ _id: id, token: refreshToken })
       .exec()
       .then((user) => {
-        console.log(user)
-        if(!user) {
-          return res.status(401)
-              .send('401 Unauthorized');
+        if (!user) {
+          return res.status(401).send("401 Unauthorized");
         }
         req.user = user;
         next();
       });
-  };
+  }
 }
 
 module.exports = Utils;
