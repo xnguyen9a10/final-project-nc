@@ -1,5 +1,4 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.less";
 import { Layout, Menu } from "antd";
 import httpClient from './utils/httpClient';
@@ -11,8 +10,8 @@ import {
 } from "@ant-design/icons";
 
 class App extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       user: {}
