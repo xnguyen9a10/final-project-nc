@@ -18,16 +18,16 @@ import history from './utils/history';
 import { isLogin } from './utils/auth'
 
 ReactDOM.render(
-  <Router history={history}>
+  <BrowserRouter history={history}>
      <Switch>
        <Route exact path={"/login"} render={props => (
          !isLogin() ?
          <LoginComponent />
      : <Redirect to="/" />
        )}/>
-      <PrivateRoute component={App} path="/" exact />
+      <PrivateRoute component={(App)} path="/employee"/>
      </Switch>
-  </Router>,
+  </BrowserRouter>,
   document.getElementById('root')
 );
 

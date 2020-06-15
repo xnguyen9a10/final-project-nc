@@ -5,9 +5,9 @@ const Promise = require('bluebird')
 
 const schema = new mongoose.Schema({
   user_id: String,
-}, {
+  }, {
   collection: 'employee',
-  timestamps: true
+  timestamps: true,
 })
 
 schema.set('toJSON', { getters: true });

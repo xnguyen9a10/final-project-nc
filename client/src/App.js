@@ -2,7 +2,14 @@ import React from "react";
 import "./App.less";
 import { Layout, Menu } from "antd";
 import httpClient from './utils/httpClient';
-
+import LoginComponent from './components/login/login';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Switch,
+} from 'react-router-dom'
+import createCustomer from './components/employee/createCustomer'
 import {
   UploadOutlined,
   UserOutlined,
@@ -20,8 +27,8 @@ class App extends React.Component {
 
   getUserInfo = async () => {
     const res = await httpClient.get('/customer/info');
-    if(res && res.status === "sucessful") {
-      this.setState({user: res.data})
+    if (res && res.status === "sucessful") {
+      this.setState({ user: res.data })
     }
   }
 
@@ -31,7 +38,6 @@ class App extends React.Component {
 
   render() {
     const { Header, Content, Footer, Sider } = Layout;
-
     return (
       <Layout style={{ height: "100vh" }}>
         <Sider
@@ -47,7 +53,6 @@ class App extends React.Component {
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["4"]}>
             <Menu.Item key="1" icon={<UserOutlined />}>
-              nav 1
             </Menu.Item>
             <Menu.Item key="2" icon={<VideoCameraOutlined />}>
               nav 2
@@ -70,7 +75,11 @@ class App extends React.Component {
               className="site-layout-background"
               style={{ padding: 24, minHeight: 360 }}
             >
-              content
+              <Switch>
+                <Route exact path="/employee/create-customer" component={createCustomer} />
+                <Route exact path='/employee/about' component={() => <h1>Create Customer</h1>} />
+              </Switch>
+
             </div>
           </Content>
           <Footer style={{ textAlign: "center" }}>
@@ -78,7 +87,6 @@ class App extends React.Component {
           </Footer>
         </Layout>
       </Layout>
-      // <div className="logo" />
     );
   }
 }

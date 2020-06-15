@@ -5,10 +5,15 @@ const Promise = require('bluebird')
 
 const schema = new mongoose.Schema({
   user_id: String,
-}, {
-  collection: 'customer',
+  phone: String,
+  paymentAccount:{
+    ID: String,
+    balance: Number
+  }},
+  {collection: 'customer',
   timestamps: true
 })
+
 
 schema.set('toJSON', { getters: true });
 schema.set('toObject', { getters: true });

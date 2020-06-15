@@ -25,7 +25,6 @@ instance.interceptors.response.use(
   (resp) => resp.data,
   (error) => {
     const { response } = error;
-    console.log(error.response.config);
     if (response) {
       switch (response.status) {
         case 401:

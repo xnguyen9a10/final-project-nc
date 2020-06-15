@@ -23,10 +23,9 @@ function requireLogin(req, res, next) {
   });
 }
 
-router.use(requireLogin);
-
-router.use('/', bankLink);
 router.use('/', user);
+router.use(requireLogin);
+router.use('/', bankLink);
 router.use('/', employee);
 
 module.exports = router;
