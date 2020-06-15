@@ -29,9 +29,11 @@ router.post("/employee/create-customer", async (req, res) => {
           paymentAccount: {
             ID:OTP,
             balance:0
-          }
+          },
+          savingAccount:[
+            {}
+          ]
         });
-      console.log(customer)
       await customer.save();
       return res.json(utils.succeed({ customer }));
     });

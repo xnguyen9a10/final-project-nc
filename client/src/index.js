@@ -12,22 +12,27 @@ import {
   Router,
   Route,
   Switch,
+  withRouter
 } from 'react-router-dom';
 import PrivateRoute from './components/common/PrivateRoute';
 import history from './utils/history';
 import { isLogin } from './utils/auth'
+import createCustomer from './components/employee/createCustomer';
+
+const AppComponent=withRouter(App)
 
 ReactDOM.render(
-  <BrowserRouter history={history}>
+  <Router history={history}>
      <Switch>
        <Route exact path={"/login"} render={props => (
          !isLogin() ?
          <LoginComponent />
      : <Redirect to="/" />
        )}/>
-      <PrivateRoute component={(App)} path="/employee"/>
+      <PrivateRoute component={(createCustomer)} path="/employee"/>
+      <AppComponent/>
      </Switch>
-  </BrowserRouter>,
+  </Router>,
   document.getElementById('root')
 );
 

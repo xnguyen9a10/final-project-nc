@@ -1,28 +1,16 @@
 import React from "react";
 import { Form, Input, Button, Checkbox } from 'antd';
+import axios from 'axios';
 
 class createCustomer extends React.Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            customer:{
-                
-            }
-        };
     }
+    onFinish = async (values) => {
+        const result = await axios.post("http://localhost:3001/employee/create-customer", values)
+        console.log(result)
+      };
     render() {
-        const layout = {
-            labelCol: { span: 8 },
-            wrapperCol: { span: 16 },
-        };
-        const tailLayout = {
-            wrapperCol: { offset: 8, span: 16 },
-        };
-
-        const onFinish = values => {
-            console.log('Success:', values);
-        };
 
         const onFinishFailed = errorInfo => {
             console.log('Failed:', errorInfo);
@@ -31,7 +19,7 @@ class createCustomer extends React.Component {
             <Form
                 name="basic"
                 initialValues={{ remember: true }}
-                onFinish={onFinish}
+                onFinish={this.onFinish}
                 onFinishFailed={onFinishFailed}
             >
                 <Form.Item
