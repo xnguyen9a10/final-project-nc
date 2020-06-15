@@ -29,7 +29,7 @@ ReactDOM.render(
          <LoginComponent />
      : <Redirect to="/" />
        )}/>
-      <PrivateRoute component={(createCustomer)} path="/employee"/>
+      {/* <PrivateRoute component={(createCustomer)} path="/employee"/> */}
       <AppComponent/>
      </Switch>
   </Router>,

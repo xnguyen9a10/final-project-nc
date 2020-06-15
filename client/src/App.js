@@ -15,6 +15,7 @@ import {
   UserOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
+import PrivateRoute from "./components/common/PrivateRoute";
 
 class App extends React.Component {
   constructor(props) {
@@ -76,8 +77,8 @@ class App extends React.Component {
               style={{ padding: 24, minHeight: 360 }}
             >
               <Switch>
-                <Route exact path="/employee/create-customer" component={createCustomer} />
-                <Route exact path='/employee/about' component={() => <h1>Create Customer</h1>} />
+                <PrivateRoute exact path="/employee/create-customer" component={createCustomer} />
+                <PrivateRoute exact path='/employee/about' component={() => <h1>Create Customer</h1>} />
               </Switch>
 
             </div>
