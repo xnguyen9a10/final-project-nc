@@ -100,7 +100,7 @@ const passphrase = `nguyen`;
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
-
+const ObjectId = require('mongodb').ObjectId; 
 class Utils {
   static async succeedTransfer(message) {
     const {
@@ -180,9 +180,10 @@ class Utils {
     const refreshToken = req.headers["refreshtoken"];
     const id = req.headers.userid;
 
-    return User.findOne({ _id: id, token: refreshToken })
+    return User.findOne({ _id: ObjectId(id), token: refreshToken })
       .exec()
       .then((user) => {
+        console.log(user)
         if (!user) {
           return res.status(401).send("401 Unauthorized");
         }

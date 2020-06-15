@@ -15,7 +15,7 @@ function requireLogin(req, res, next) {
 
   jwt.verify(accessToken, "somethingyoudontknow", (err, decoded) => {
     if (err) {
-      return res.redirect("/login");
+      return res.status(401).send("Not authenticated");
     }
     req.user = decoded.user;
     req.authenticated = true;
