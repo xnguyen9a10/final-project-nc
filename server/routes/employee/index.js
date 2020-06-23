@@ -3,7 +3,8 @@ const passport = require("passport");
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
 const utils = require("../../utils/utils");
-const Customer = mongoose.model("Customer")
+const Customer = mongoose.model("Customer");
+const Account = mongoose.model("Account");
 
 router.post("/employee/create-customer", async (req, res) => {
   const { username, fullname, email, password, phone } = req.body;
@@ -27,16 +28,34 @@ router.post("/employee/create-customer", async (req, res) => {
           user_id: user._id,
           phone: req.body.phone,
           paymentAccount: {
-            ID:OTP,
-            balance:0
+            ID: OTP
           },
-          savingAccount:[
-            {}
+          savingAccount: [
           ]
         });
       await customer.save();
+      const account = new Account({
+        account_id: customer.paymentAccount.ID,
+        balance: 0
+      })
+      await account.save()
       return res.json(utils.succeed({ customer }));
     });
+});
+
+router.post("/employee/recharge-account", async (req, res) => {
+  const { accountnumber, amount } = req.body;
+  await Account.findOneAndUpdate(
+    {account_id:accountnumber},
+    {
+    $inc:{
+      balance: amount
+    }
+  }).exec((err,result)=>{
+    if(err) throw err
+    if(result===null) return res.json("Tài khoản không tồn tại")
+    else return res.json("Nạp tiền thành công")
+  })
 });
 
 module.exports = router;

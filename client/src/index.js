@@ -18,6 +18,7 @@ import PrivateRoute from './components/common/PrivateRoute';
 import history from './utils/history';
 import { isLogin } from './utils/auth'
 import createCustomer from './components/employee/createCustomer';
+import rechargeAccount from './components/employee/rechargeAccount'
 
 const AppComponent=withRouter(App)
 
@@ -29,7 +30,8 @@ ReactDOM.render(
          <LoginComponent />
      : <Redirect to="/" />
        )}/>
-      {/* <PrivateRoute component={(createCustomer)} path="/employee"/> */}
+      <PrivateRoute component={(createCustomer)} path="/employee/create-customer"/>
+      <PrivateRoute component={(rechargeAccount)} path="/employee/recharge-account"/>
       <AppComponent/>
      </Switch>
   </Router>,

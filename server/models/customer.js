@@ -3,17 +3,24 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Promise = require('bluebird')
 
+const account = new mongoose.Schema({
+  account_id:String,
+  balance:Number
+},
+{
+  collection:'account',
+  timestamps:true
+})
+
 const schema = new mongoose.Schema({
   user_id: String,
   phone: String,
-  paymentAccount: {
-    ID: String,
-    balance: Number
+  paymentAccount:{ 
+    ID: String
   },
-  savingAccount:[
+  savingAccount:[ 
     {
-      ID:String,
-      balance:Number
+      ID:String
     }
   ]
 },
@@ -27,5 +34,8 @@ const schema = new mongoose.Schema({
 schema.set('toJSON', { getters: true });
 schema.set('toObject', { getters: true });
 
+account.set('toJSON', { getters: true });
+account.set('toObject', { getters: true });
 
+module.exports = mongoose.model('Account', account);
 module.exports = mongoose.model('Customer', schema);
