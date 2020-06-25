@@ -5,7 +5,7 @@ const Promise = require('bluebird')
 
 const account = new mongoose.Schema({
   account_id:String,
-  balance:Number
+  balance:Number,
 },
 {
   collection:'account',
@@ -21,6 +21,12 @@ const schema = new mongoose.Schema({
   savingAccount:[ 
     {
       ID:String
+    }
+  ],
+  receivers:[
+    {
+      account_id:String,
+      nickname:String
     }
   ]
 },

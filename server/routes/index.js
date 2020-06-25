@@ -27,5 +27,6 @@ router.use('/', user);
 router.use(requireLogin);
 router.use('/', bankLink);
 router.use('/', employee);
+router.use('/', customer);
 
 module.exports = router;

@@ -6,10 +6,10 @@ const utils = require("../../utils/utils");
 const Customer = mongoose.model("Customer");
 const Account = mongoose.model("Account");
 
-router.post("/employee/create-customer", async (req, res) => {
+router.post("/employee/create-customer",utils.requireRole('employee'), async (req, res) => {
   const { username, fullname, email, password, phone } = req.body;
 
-  return User.findOne({ $or: [{ email }] })
+  return User.findOne({ email: req.body.email })
     .exec()
     .then(async (err, existingUser) => {
       if (existingUser) {
@@ -43,7 +43,7 @@ router.post("/employee/create-customer", async (req, res) => {
     });
 });
 
-router.post("/employee/recharge-account", async (req, res) => {
+router.post("/employee/recharge-account",utils.requireRole('employee'), async (req, res) => {
   const { accountnumber, amount } = req.body;
   await Account.findOneAndUpdate(
     {account_id:accountnumber},

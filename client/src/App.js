@@ -10,6 +10,7 @@ import {
   Switch,
 } from 'react-router-dom'
 import createCustomer from './components/employee/createCustomer'
+import rechargeAccount from './components/employee/rechargeAccount'
 import {
   UploadOutlined,
   UserOutlined,
@@ -53,10 +54,11 @@ class App extends React.Component {
         >
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["4"]}>
-            <Menu.Item key="1" icon={<UserOutlined />}>
+            <Menu.Item key="1" icon={<UserOutlined />}> 
+            <Link to="/employee/create-customer">Tạo tài khoản khách hàng</Link>
             </Menu.Item>
             <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-              nav 2
+            <Link to="/employee/recharge-account">Nạp tiền vào tài khoản</Link>
             </Menu.Item>
             <Menu.Item key="3" icon={<UploadOutlined />}>
               nav 3
@@ -78,7 +80,7 @@ class App extends React.Component {
             >
               <Switch>
                 <PrivateRoute exact path="/employee/create-customer" component={createCustomer} />
-                <PrivateRoute exact path='/employee/about' component={() => <h1>Create Customer</h1>} />
+                <PrivateRoute exact path='/employee/recharge-account' component={rechargeAccount} />
               </Switch>
 
             </div>

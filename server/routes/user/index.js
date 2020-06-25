@@ -9,11 +9,11 @@ const utils = require("../../utils/utils");
 
 router.post("/user/register", async (req, res) => {
   const { fullname, email, password } = req.body;
-
-  return User.findOne({ $or: [{ email }] })
+  return User.findOne({ email: req.body.email })
     .exec()
     .then(async (err, existingUser) => {
       if (existingUser) {
+        console.log(existingUser)
         return res.json(utils.fail(err,"Email is already existed, please use another one."));
       }
 

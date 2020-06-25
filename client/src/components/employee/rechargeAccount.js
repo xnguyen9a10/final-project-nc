@@ -8,14 +8,8 @@ class rechargeAccount extends React.Component {
     super(props);
   }
   onFinish = async (values) => {
-    // const result = await axios.post(
-    //   "http://localhost:3001/employee/create-customer",
-    //   values
-    // );
     const result = await httpClient.post('/employee/recharge-account', values);
-    if (result && result.status === "sucessful") {
-    //   this.setState({ user: res.data })
-    }
+    alert(result)
   };
   render() {
     const onFinishFailed = (errorInfo) => {
@@ -38,10 +32,10 @@ class rechargeAccount extends React.Component {
 
         <Form.Item
           label="Số tiền nạp"
-          name="password"
+          name="amount"
           rules={[{ required: true, message: "Vui lòng nhập số tiền cần nạp" }]}
         >
-          <Input.Password />
+          <Input />
         </Form.Item>
 
         <Form.Item>

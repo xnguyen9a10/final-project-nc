@@ -30,8 +30,8 @@ ReactDOM.render(
          <LoginComponent />
      : <Redirect to="/" />
        )}/>
-      <PrivateRoute component={(createCustomer)} path="/employee/create-customer"/>
-      <PrivateRoute component={(rechargeAccount)} path="/employee/recharge-account"/>
+      {/* <PrivateRoute component={(createCustomer)} path="/employee/create-customer"/> */}
+      {/* <PrivateRoute component={(rechargeAccount)} path="/employee/recharge-account"/> */}
       <AppComponent/>
      </Switch>
   </Router>,
