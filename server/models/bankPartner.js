@@ -51,10 +51,10 @@ schema.set("toObject", { getters: true });
 schema.methods.isValidPartner = function isValidPartner(timestamp, body, csi) {
   console.log(body);
   const _string = timestamp + JSON.stringify(body) + this.secretKey;
-  console.log(_string)
+  console.log(sha1(_string) === csi)
 
   if (sha1(_string) === csi) {
-    return Promise.resolve();
+    return Promise.resolve({messsage: "Hi rsa-bank"});
   } else {
     return Promise.reject(new Error("Wrong Credential !"));
   }

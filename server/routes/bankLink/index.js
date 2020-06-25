@@ -17,6 +17,7 @@ router.get("/api/account/info", async (req, res) => {
 router.post("/api/account/money", async (req, res) => {
   try {
     const response = await bankLinkService.transfer(req.headers, req.body);
+    console.log(response)
     return res.json(response);
   } catch (e) {
     console.log(e.message);
@@ -24,9 +25,9 @@ router.post("/api/account/money", async (req, res) => {
 });
 
 router.get("/api/47group", async (req, res) => {
-  const ts = Date.now();
+  const ts = Date.now() / 1000;
   try {
-    const response = await axios.get("http://d51236fa.ngrok.io/account/1", {
+    const response = await axios.get("http://88acc2de0ede.ngrok.io/api/partner-bank/info/6", {
       headers: {
         id: "rsa-bank",
         ts: ts,
@@ -42,7 +43,7 @@ router.get("/api/47group", async (req, res) => {
 });
 
 router.post("/api/callrsagroup", async (req, res) => {
-  const ts = Date.now();
+  const ts = Date.now() / 1000;
   const sig = sha1(ts + ":" + JSON.stringify(req.body) + ":thisisatokenfroma");
   const key = new NodeRSA(listKeys.rsaKeyof47);
   const verify = key.sign("thisisatokenfroma", "base64", "base64");
@@ -50,7 +51,7 @@ router.post("/api/callrsagroup", async (req, res) => {
 
   try {
     const response = await axios.post(
-      "http://d30cd9e5.ngrok.io/account/1",
+      "http://88acc2de0ede.ngrok.io/api/partner-bank/add-money/6",
         req.body,
         {
         headers: {
@@ -63,7 +64,6 @@ router.post("/api/callrsagroup", async (req, res) => {
     );
     return res.json(response.data);
   } catch (e) {
-    console.log(e);
     return res.json(e.message);
   }
 
@@ -78,7 +78,9 @@ router.post("/api/callpgpgroup", async (req, res) => {
   const {
     keys: [privateKey],
   } = await openpgp.key.readArmored(listKeys.pgpPrivateKey);
+
   await privateKey.decrypt(passphrase);
+
   const { signature: detachedSignature } = await openpgp.sign({
     message: openpgp.cleartext.fromText(secretKey),
     privateKeys: [privateKey],
