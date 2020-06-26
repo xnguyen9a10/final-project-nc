@@ -1,6 +1,5 @@
-export function updateEmployee({data}) {
+export function openAlertAction() {
   return {
-    type: "UPDATE_EMPLOYEE",
-    data
+    type: "ADMIN_OPEN_ALERT",
   }
 }
