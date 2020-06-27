@@ -29,6 +29,7 @@
     "openpgp": "^4.10.4",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
+    "redux-logger": "^3.0.6",
     "req-flash": "0.0.3",
     "sha1": "^1.1.1",
     "sha256": "^0.2.0"

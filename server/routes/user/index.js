@@ -37,7 +37,7 @@ router.post("/user/login", (req, res) => {
     .exec()
     .then((user) => {
       let message;
-
+      console.log(user)
       if (!user) {
         message = "Wrong password or email";
         return res.json(utils.fail(message));

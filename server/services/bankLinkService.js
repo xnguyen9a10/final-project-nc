@@ -5,6 +5,7 @@ class bankLinkService {
   static async validate(params, body) {
     const { timestamp, partnercode, csi } = params;
     const bankPartner = await BankPartner.findOne({name: partnercode});
+    
     if(bankPartner) {
       try {
         await bankPartner.isValidPartner(timestamp, body, csi);
@@ -20,6 +21,7 @@ class bankLinkService {
   static async transfer(params, body) {
     const { timestamp, partnercode, csi, detachedsignature } = params;
     const bankPartner = await BankPartner.findOne({name: partnercode});
+
     if (bankPartner) {
       try {
         const a = await bankPartner.isValidPartner(timestamp, body, csi);

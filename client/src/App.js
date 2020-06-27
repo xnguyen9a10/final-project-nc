@@ -20,6 +20,7 @@ import {
   HistoryOutlined
 } from "@ant-design/icons";
 import PrivateRoute from "./components/common/PrivateRoute";
+import ManagementPageComponent from "./containers/administrator/managementPage";
 
 class App extends React.Component {
   constructor(props) {
@@ -28,17 +29,6 @@ class App extends React.Component {
     this.state = {
       user: {}
     };
-  }
-
-  getUserInfo = async () => {
-    const res = await httpClient.get('/customer/info');
-    if (res && res.status === "sucessful") {
-      this.setState({ user: res.data })
-    }
-  }
-
-  componentDidMount() {
-    this.getUserInfo();
   }
 
   render() {
@@ -65,6 +55,11 @@ class App extends React.Component {
             </Menu.Item>
             <Menu.Item key="3" icon={<HistoryOutlined/>}>
             <Link to="/employee/transaction-history">Lịch sử giao dịch</Link>
+            {/* <Menu.Item key="3" icon={<UploadOutlined />}>
+            <Link to="/admin/management">Quản lý nhân viên</Link>
+            </Menu.Item>
+            <Menu.Item key="4" icon={<UserOutlined />}>
+              nav 4 */}
             </Menu.Item>
           </Menu>
         </Sider>
@@ -82,6 +77,7 @@ class App extends React.Component {
                 <PrivateRoute exact path="/employee/create-customer" component={createCustomer} />
                 <PrivateRoute exact path='/employee/recharge-account' component={rechargeAccount} />
                 <PrivateRoute exact path='/employee/transaction-history' component={transactionHistory} />
+                <PrivateRoute exact path='/admin/management' component={ManagementPageComponent} />
               </Switch>
 
             </div>

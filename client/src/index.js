@@ -1,10 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
-import 'bootstrap/dist/css/bootstrap.css';
-import LoginComponent from './components/login/login';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import { Provider } from 'react-redux';
+import * as serviceWorker from "./serviceWorker";
+import "bootstrap/dist/css/bootstrap.css";
+import LoginComponent from "./components/login/login";
+import store from './store';
+
 import {
   BrowserRouter,
   NavLink,
@@ -12,30 +15,32 @@ import {
   Router,
   Route,
   Switch,
-  withRouter
-} from 'react-router-dom';
-import PrivateRoute from './components/common/PrivateRoute';
-import history from './utils/history';
-import { isLogin } from './utils/auth'
-import createCustomer from './components/employee/createCustomer';
-import rechargeAccount from './components/employee/rechargeAccount'
+  withRouter,
+} from "react-router-dom";
+import PrivateRoute from "./components/common/PrivateRoute";
+import history from "./utils/history";
+import { isLogin } from "./utils/auth";
 
-const AppComponent=withRouter(App)
+const AppComponent = withRouter(App);
 
 ReactDOM.render(
-  <Router history={history}>
-     <Switch>
-       <Route exact path={"/login"} render={props => (
-         !isLogin() ?
-         <LoginComponent />
-     : <Redirect to="/" />
-       )}/>
-      {/* <PrivateRoute component={(createCustomer)} path="/employee/create-customer"/> */}
-      {/* <PrivateRoute component={(rechargeAccount)} path="/employee/recharge-account"/> */}
-      <AppComponent/>
-     </Switch>
-  </Router>,
-  document.getElementById('root')
+  <Provider store={store}>
+    <Router history={history}>
+      <Switch>
+        <Route
+          exact
+          path={"/login"}
+          render={(props) =>
+            !isLogin() ? <LoginComponent /> : <Redirect to="/" />
+          }
+        />
+        {/* <PrivateRoute component={(createCustomer)} path="/employee/create-customer"/> */}
+        {/* <PrivateRoute component={(rechargeAccount)} path="/employee/recharge-account"/> */}
+        <AppComponent />
+      </Switch>
+    </Router>
+  </Provider>,
+  document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change

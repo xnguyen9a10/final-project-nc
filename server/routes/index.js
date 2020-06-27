@@ -1,14 +1,14 @@
-const router = require('express').Router();
-const bankLink = require('./bankLink');
-const user = require('./user');
-const customer = require('./customer');
-const employee=require('./employee')
+const router = require("express").Router();
+const bankLink = require("./bankLink");
+const user = require("./user");
+const customer = require("./customer");
+const employee = require("./employee");
+const admin = require("./admin");
 const jwt = require("jsonwebtoken");
 
-  
 function requireLogin(req, res, next) {
   let accessToken = req.header("Authorization");
-  if ( accessToken && accessToken.startsWith("Bearer ")) {
+  if (accessToken && accessToken.startsWith("Bearer ")) {
     // Remove Bearer from string
     accessToken = accessToken.slice(7, accessToken.length);
   }
@@ -23,10 +23,11 @@ function requireLogin(req, res, next) {
   });
 }
 
-router.use('/', user);
+router.use("/", user);
 router.use(requireLogin);
-router.use('/', bankLink);
-router.use('/', employee);
-router.use('/', customer);
+router.use("/", bankLink);
+router.use("/", employee);
+router.use("/", customer);
+router.use("/", admin);
 
 module.exports = router;
