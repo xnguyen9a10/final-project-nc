@@ -21,8 +21,13 @@ class createCustomer extends React.Component {
     const onFinishFailed = (errorInfo) => {
       console.log("Failed:", errorInfo);
     };
+    const layout = {
+      labelCol: { span: 2 },
+      wrapperCol: { span: 16 },
+    };
     return (
       <Form
+      {...layout}
         name="basic"
         initialValues={{ remember: true }}
         onFinish={this.onFinish}
