@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const Promise = require('bluebird')
 
 const account = new mongoose.Schema({
-  account_id:String,
+  account_id:String, 
   balance:Number,
 },
 {

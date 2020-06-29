@@ -3,7 +3,8 @@ import axios from 'axios';
 const url = "http://localhost:3001/"
 const ACCESS_TOKEN = 'accessToken';
 const REFRESH_TOKEN = 'refreshToken';
-const USER_ID = 'userId'
+const USER_ID = 'userId';
+const ROLE = "role";
 
 export const setAccessToken = (accessToken) => {
   localStorage.setItem(ACCESS_TOKEN, accessToken)
@@ -28,16 +29,22 @@ export const isLogin = () => {
   return true;
 }
 
-export const setSession = (userId, accessToken, refreshToken) => {
+export const isRole = () => {
+  return localStorage.getItem(ROLE);
+}
+
+export const setSession = (userId, accessToken, refreshToken, role) => {
   localStorage.setItem(USER_ID, userId);
   localStorage.setItem(ACCESS_TOKEN, accessToken);
   localStorage.setItem(REFRESH_TOKEN, refreshToken);
+  localStorage.setItem(ROLE, role);
 }
 
 export const removeSession = () => {
   localStorage.removeItem(USER_ID);
   localStorage.removeItem(ACCESS_TOKEN);
   localStorage.removeItem(REFRESH_TOKEN);
+  localStorage.removeItem(ROLE);
 }
 
 export const getNewAccessToken = async () => {

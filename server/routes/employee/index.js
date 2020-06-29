@@ -58,4 +58,14 @@ router.post("/employee/recharge-account",utils.requireRole('employee'), async (r
   })
 });
 
+/**==== NGOC PART */
+const transactionModel = require('../../models/transaction');
+
+router.get('/employee/transactions', utils.requireRole('employee'), async (req,res) => {
+  const result = await transactionModel.all();
+
+  res.status(201).json(result);
+})
+
+
 module.exports = router;
