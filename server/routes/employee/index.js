@@ -5,6 +5,9 @@ const User = mongoose.model("User");
 const utils = require("../../utils/utils");
 const Customer = mongoose.model("Customer");
 const Account = mongoose.model("Account");
+const Transaction = mongoose.model("Transaction");
+
+var ObjectId = mongoose.ObjectId; 
 
 router.post("/employee/create-customer",utils.requireRole('employee'), async (req, res) => {
   const { username, fullname, email, password, phone } = req.body;
@@ -57,5 +60,23 @@ router.post("/employee/recharge-account",utils.requireRole('employee'), async (r
     else return res.json("Nạp tiền thành công")
   })
 });
+
+router.get("/employee/transaction-history/:customerId",utils.requireRole('employee'),async(req,res)=>{
+  const customerId=req.params.customerId
+  Customer.findById()
+});
+
+router.get("/employee/customer-list",utils.requireRole('employee'),async(req,res)=>{
+   await Customer.find({}).exec(((err,result)=>{
+     if (err) throw err
+    var userlist=[]
+    for(let i=0;i<result.length;i++){
+       User.findById(result[i].user_id).exec(((err,user)=>{
+        if(user!==null) userlist.push(user)
+        if(i===result.length-1) return res.json(userlist) 
+      }))
+    }
+  }))
+})
 
 module.exports = router;
