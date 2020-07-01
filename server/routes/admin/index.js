@@ -65,6 +65,8 @@ router.post("/admin/employee/update", async (req, res) => {
       role: employee.role,
     }
   );
+  return res.json(utils.succeed("Update success!"));
+
 });
 
 router.post("/admin/employee/delete", async (req, res) => {
