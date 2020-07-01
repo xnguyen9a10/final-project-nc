@@ -22,3 +22,22 @@ export function stopLoadingAction() {
     type: "ADMIN_STOP_LOADING",
   }
 }
+
+export function toggleModalNewEmployeeAction() {
+  return {
+    type: "ADMIN_TOGGLE_MODAL_EMPLOYEE"
+  }
+}
+
+export function setFormDataAction(record) {
+  return {
+    type: "ADMIN_SET_FORM_DATA_ACTION",
+    record
+  }
+}
+
+export function toggleModalUpdateEmployeeAction() {
+  return {
+    type: "ADMIN_TOGGLE_MODAL_UPDATE_EMPLOYEE"
+  }
+}

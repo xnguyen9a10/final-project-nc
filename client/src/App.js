@@ -48,18 +48,16 @@ class App extends React.Component {
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["4"]}>
             <Menu.Item key="1" icon={<UserOutlined />}> 
-            <Link to="/employee/create-customer">Tạo tài khoản khách hàng</Link>
+              <Link to="/employee/create-customer">Tạo tài khoản khách hàng</Link>
             </Menu.Item>
             <Menu.Item key="2" icon={<MoneyCollectOutlined />}>
-            <Link to="/employee/recharge-account">Nạp tiền vào tài khoản</Link>
+              <Link to="/employee/recharge-account">Nạp tiền vào tài khoản</Link>
             </Menu.Item>
             <Menu.Item key="3" icon={<HistoryOutlined/>}>
-            <Link to="/employee/transaction-history">Lịch sử giao dịch</Link>
-            {/* <Menu.Item key="3" icon={<UploadOutlined />}>
-            <Link to="/admin/management">Quản lý nhân viên</Link>
-            </Menu.Item>
-            <Menu.Item key="4" icon={<UserOutlined />}>
-              nav 4 */}
+             <Link to="/employee/transaction-history">Lịch sử giao dịch</Link>
+             </Menu.Item>
+            <Menu.Item key="4" icon={<UploadOutlined />}>
+              <Link to="/admin/management">Quản lý nhân viên</Link>
             </Menu.Item>
           </Menu>
         </Sider>
@@ -68,10 +66,10 @@ class App extends React.Component {
             className="site-layout-sub-header-background"
             style={{ padding: 0 }}
           />
-          <Content style={{ margin: "24px 16px 0" }}>
+          <Content style={{ margin: "24px 16px 17px 17px" }}>
             <div
               className="site-layout-background"
-              style={{ padding: 24, minHeight: 360 }}
+              style={{ padding: 24 }}
             >
               <Switch>
                 <PrivateRoute exact path="/employee/create-customer" component={createCustomer} />
@@ -82,9 +80,9 @@ class App extends React.Component {
 
             </div>
           </Content>
-          <Footer style={{ textAlign: "center" }}>
+          {/* <Footer style={{ textAlign: "center" }}>
             Ant Design ©2018 Created by Ant UED
-          </Footer>
+          </Footer> */}
         </Layout>
       </Layout>
     );
