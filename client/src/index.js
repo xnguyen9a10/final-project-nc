@@ -6,9 +6,9 @@ import { Provider } from 'react-redux';
 import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.css";
 import LoginComponent from "./components/login/login";
-import store from './store';
+//import store from './store';
 import CustomerApp from './components/customer/App';
-
+import store from './redux/store/store';
 import {
   BrowserRouter,
   NavLink,
@@ -24,6 +24,7 @@ import { isLogin, isRole } from "./utils/auth";
 
 const AppComponent = withRouter(App);
 //const CustomerComponent = withRouter(CustomerApp);
+const CustomerComponent = withRouter(CustomerApp);
 ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
@@ -36,7 +37,7 @@ ReactDOM.render(
                    }
                    else {
                      if(isRole("customer")){
-                       return <CustomerApp/>
+                       return <CustomerComponent/>
                      }
                     return <AppComponent/>
                    }

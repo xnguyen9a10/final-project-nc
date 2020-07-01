@@ -60,6 +60,10 @@ router.post("/customer/set-receiver",utils.requireRole('customer'),async(req,res
 })
 
 /** ==== NGỌC PART===== */
+const accountModel = require('../../models/account.model');
+const { fail, succeed } = require("../../utils/utils");
+const { message } = require("openpgp");
+const { getByAccountNumber } = require("../../models/account.model");
 
 router.get('/customer/transactions', utils.requireRole("customer"), async(req,res, next)=>{
   const accountNumber = req.body.accountNumber;
@@ -70,7 +74,103 @@ router.get('/customer/transactions', utils.requireRole("customer"), async(req,re
 
 router.post('/customer/transactions', utils.requireRole("customer"), async(req,res,next)=>{
   const result = await transactionModel.insert(req.body);
-  res.status(201).json(result);
+  res.status(200).json(result);
 })
 
+router.post("/customer/get-customer",utils.requireRole('customer'),async(req,res)=>{
+  const {id} = req.body;
+
+  await Customer.findOne({user_id: id}).exec((err,result)=>{
+    if(err){
+      res.status(500).json(err);
+    }
+    else return res.status(200).json(result);
+  })
+})
+
+async function forLoop(accounts, result) {
+  try{
+    console.log('Start')
+    for (let i = 0; i < accounts.length; i++) {
+      a =  await getByAccountNumber() .getByAccountNumber(accounts[i]+"");
+      console.log(a);
+      await result.push(a);    
+    }  
+    console.log('End');
+    return result;
+  }
+  catch(ex){
+    return ex;
+  }
+
+}
+
+async function getOne(account_id){
+  await Account.findOne({account_id: account_id+""}).exec((err,row)=>{
+    if(err){
+      return false;
+    }
+    else {
+      console.log(row);
+      return row
+    }
+  })
+}
+
+
+router.post("/customer/get-account", utils.requireRole("customer"), async(req, res)=> {
+  const account_id = req.body.account
+  console.log(account_id);
+  await Account.findOne({account_id: account_id+""}).exec((err,row)=>{
+    if(err){
+      res.json(fail(err,err.message))
+    }
+    else {
+      res.json(row);
+    }
+  })
+})
+
+router.post("/customer/get-accounts", utils.requireRole("customer"), async(req, res)=> {
+  const {accounts} = req.body;
+  var result = [];
+
+  const propertyPhotoList = [];
+  async function getAccountData(item, index){
+      console.log(item);
+      let response;
+      await getOne(item).then((res)=>{
+        response = res;
+        console.log(res);
+      }).catch((err) => {
+        console.log(err);
+      })
+
+      propertyPhotoList.push(response);
+  }
+  await Promise.all(accounts.map(getAccountData));
+  return res.json(propertyPhotoList);
+  
+   // console.log('End')
+  res.json(succeed(result));
+ /* await (async function main() {
+    try {
+        for (let i = 0; i < accounts.length; i++) {
+          console.log(accounts[i] +"");
+          await Account.findOne({account_id: (accounts[i]+"")}).exec((err,row)=>{
+            if(err){
+              res.status(500).json(err);
+            }
+            else result.push(row);
+          })
+        }
+    }
+    catch (ex) {
+        console.log(ex.message);
+        res.json(fail(message=ex.message));
+    }
+  })();
+  */
+  res.json(succeed(result));
+})
 module.exports = router;

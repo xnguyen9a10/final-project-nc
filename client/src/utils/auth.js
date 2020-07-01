@@ -4,6 +4,7 @@ const url = "http://localhost:3001/"
 const ACCESS_TOKEN = 'accessToken';
 const REFRESH_TOKEN = 'refreshToken';
 const USER_ID = 'userId';
+const USER_NAME = 'userName';
 const ROLE = "role";
 
 export const setAccessToken = (accessToken) => {
@@ -19,7 +20,11 @@ export const getRefreshToken = () => {
 }
 
 export const getUserId = () => {
-  return localStorage.getItem('userId');
+  return localStorage.getItem(USER_ID);
+}
+
+export const getUserName = () => {
+  return localStorage.getItem(USER_NAME);
 }
 
 export const isLogin = () => {
@@ -33,11 +38,12 @@ export const isRole = () => {
   return localStorage.getItem(ROLE);
 }
 
-export const setSession = (userId, accessToken, refreshToken, role) => {
+export const setSession = (userId, userName, accessToken, refreshToken, role) => {
   localStorage.setItem(USER_ID, userId);
   localStorage.setItem(ACCESS_TOKEN, accessToken);
   localStorage.setItem(REFRESH_TOKEN, refreshToken);
   localStorage.setItem(ROLE, role);
+  localStorage.setItem(USER_NAME, userName);
 }
 
 export const removeSession = () => {
@@ -45,13 +51,14 @@ export const removeSession = () => {
   localStorage.removeItem(ACCESS_TOKEN);
   localStorage.removeItem(REFRESH_TOKEN);
   localStorage.removeItem(ROLE);
+  localStorage.removeItem(USER_NAME);
 }
 
 export const getNewAccessToken = async () => {
   const result = await axios.get(url + "user/me/access-token",{
     headers:{
       refreshToken: getRefreshToken(),
-      userId: getUserId()
+      userId: getUserId(),
     }
   })
 
