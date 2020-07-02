@@ -16,21 +16,26 @@ const corsOption = {
   origin: "http://localhost:3001"
 }
 app.use(cors())
+app.use(cookieParser());
+app.use(bodyParser.json({ limit: '500mb' }));
+app.use(bodyParser.urlencoded({ limit: '500mb', extended: true }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(session({ secret: "123", resave: true, saveUninitialized: true }));
 app.use(flash());
 app.use(helmet());
-app.use(bodyParser.json({ limit: '500mb' }));
-app.use(bodyParser.urlencoded({ limit: '500mb', extended: true }));
-app.use(cookieParser());
+
 app.use('/', require('./routes'));
+//app.use('/transaction', require('./routes/transaction/transaction.route'));
+
 app.use((req, res, next) => {
   const err = new Error('Not Found');
   err.status = 404;
 
   next(err);
 });
+
+
 
 module.exports = app;

@@ -5,7 +5,7 @@ const User = mongoose.model("User");
 const utils = require("../../utils/utils");
 const Customer = mongoose.model("Customer");
 const Account = mongoose.model("Account");
-const Transaction = mongoose.model("Transaction");
+const Transaction = require("../../models/transaction") 
 
 var ObjectId = mongoose.ObjectId; 
 
@@ -61,22 +61,59 @@ router.post("/employee/recharge-account",utils.requireRole('employee'), async (r
   })
 });
 
-router.get("/employee/transaction-history/:customerId",utils.requireRole('employee'),async(req,res)=>{
-  const customerId=req.params.customerId
-  Customer.findById()
-});
 
 router.get("/employee/customer-list",utils.requireRole('employee'),async(req,res)=>{
-   await Customer.find({}).exec(((err,result)=>{
+   await Customer.find({}).exec((async(err,result)=>{
      if (err) throw err
-    var userlist=[]
+    var id=[]
     for(let i=0;i<result.length;i++){
-       User.findById(result[i].user_id).exec(((err,user)=>{
-        if(user!==null) userlist.push(user)
-        if(i===result.length-1) return res.json(userlist) 
-      }))
+      //  User.findById(result[i].user_id).exec((async(err,user)=>{
+      //   if(user!==null)  userlist.push(user)
+      //   console.log(i)
+      //   if(i===result.length-1) return res.json(userlist.length) 
+      // }))
+      id.push(result[i].user_id)
     }
+    await User.find({_id: {$in:id}}).exec((err,result)=>{
+      return res.json(result)
+    })
   }))
 })
+router.get("/employee/account-list",utils.requireRole('employee'),async(req,res)=>{
+  await Account.find({}).exec((async(err,result)=>{
+    if (err) throw err
+    return res.json(result)
+ }))
+})
+
+router.get("/employee/transfer-history/:accountId",utils.requireRole('employee'),async(req,res)=>{
+  const accountnumber=req.params.accountId
+  console.log(accountnumber)
+  const result =await transactionModel.getByTransfer(accountnumber)
+  res.status(201).json(result)
+}
+)
+
+router.get("/employee/receive-history/:accountId",utils.requireRole('employee'),async(req,res)=>{
+  const accountnumber=req.params.accountId
+  const result =await transactionModel.getByReceiver(accountnumber)
+  res.status(201).json(result)
+})
+
+router.get("/employee/payment-history/:accountId",utils.requireRole('employee'),async(req,res)=>{
+  const accountnumber=req.params.accountId
+  const result =await transactionModel.getByIspayment(accountnumber)
+  res.status(201).json(result)
+})
+
+/**==== NGOC PART */
+const transactionModel = require('../../models/transaction');
+
+router.get('/employee/transactions', utils.requireRole('employee'), async (req,res) => {
+  const result = await transactionModel.all();
+
+  res.status(201).json(result);
+})
+
 
 module.exports = router;

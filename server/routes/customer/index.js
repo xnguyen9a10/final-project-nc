@@ -5,6 +5,7 @@ const utils = require("../../utils/utils");
 const mongoose = require("mongoose");
 const Customer = mongoose.model("Customer");
 const Account = mongoose.model("Account");
+const transactionModel = require('../../models/transaction');
 
 router.get("/customer/info", utils.requireRole('customer'), async (req, res) => {
   const response = await CustomerService.vidu();
@@ -56,6 +57,20 @@ router.post("/customer/set-receiver",utils.requireRole('customer'),async(req,res
       else return res.json(result)
     })
   })
+})
+
+/** ==== NGỌC PART===== */
+
+router.get('/customer/transactions', utils.requireRole("customer"), async(req,res, next)=>{
+  const accountNumber = req.body.accountNumber;
+  const result = await transactionModel.getByAccountNumber(accountNumber);
+
+  res.status(201).json(result);
+})
+
+router.post('/customer/transactions', utils.requireRole("customer"), async(req,res,next)=>{
+  const result = await transactionModel.insert(req.body);
+  res.status(201).json(result);
 })
 
 module.exports = router;

@@ -9,7 +9,6 @@ import styles from "./login.less";
 import { Helmet } from "react-helmet";
 import Recaptcha from 'react-recaptcha'
 
-
 class LoginComponent extends React.Component {
   constructor(props) {
     super(props)
@@ -17,12 +16,12 @@ class LoginComponent extends React.Component {
       captchaCheck: false
     }
     this.verifyCallback = this.verifyCallback.bind(this)
-    this.onloadCallback=this.onloadCallback.bind(this)
+    this.onloadCallback = this.onloadCallback.bind(this)
   }
   onFinish = async (values) => {
-    const {captchaCheck}=this.state
+    const { captchaCheck } = this.state
     const result = await axios.post("http://localhost:3001/user/login", values)
-    if(!captchaCheck) {
+    if (!captchaCheck) {
       alert("Vui lòng chọn captcha!");
       return
     }
@@ -40,75 +39,74 @@ class LoginComponent extends React.Component {
       console.log(this.state.captchaCheck)
     }
   }
-   onloadCallback() {
+  onloadCallback() {
     console.log(this.state.captchaCheck)
   }
 
   render() {
-
     return (
-      <div className="row justify-content-center">
-        <Helmet>
-          <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-        </Helmet>
-        <div className="card o-hidden border-0 shadow-lg my-5">
-          <Form
-            name="normal_login"
-            className="login-form mt-10"
-            initialValues={{ remember: true }}
-            onFinish={this.onFinish}
-          >
-            <Form.Item
-              name="email"
-              rules={[
-                { required: true, message: "Please input your Email!" },
-              ]}
-            >
-              <Input
-                prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder="Email"
-              />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[
-                { required: true, message: "Please input your Password!" },
-              ]}
-            >
-              <Input
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                type="password"
-                placeholder="Password"
-              />
-            </Form.Item>
-            <Form.Item>
-              <Recaptcha
-                sitekey="6LfYOqoZAAAAAE5-AOkmltvfagYT1cQiF3nBJ175"
-                render="explicit"
-                verifyCallback={this.verifyCallback}
-                onloadCallback={this.onloadCallback}
-              />
-            </Form.Item>
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="login-form-button"
-              >
-                Log in
-                </Button>
-            </Form.Item>
-            <Form.Item>
-              <a className="login-form-forgot" href="">
-                Forgot password
-                </a>
-            </Form.Item>
 
-          </Form>
-        </div>
+ <div className="row justify-content-center">
+      <Helmet>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+      </Helmet>
+      <div className="card o-hidden border-0 shadow-lg my-5 login-warp">
+        <Form
+          name="normal_login"
+          className="login-form mt-10"
+          initialValues={{ remember: true }}
+          onFinish={this.onFinish}
+        >
+          <Form.Item
+            name="email"
+            rules={[
+              { required: true, message: "Please input your Email!" },
+            ]}
+          >
+            <Input
+              prefix={<UserOutlined className="site-form-item-icon" />}
+              placeholder="Email"
+            />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            rules={[
+              { required: true, message: "Please input your Password!" },
+            ]}
+          >
+            <Input
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              type="password"
+              placeholder="Password"
+            />
+          </Form.Item>
+          <Form.Item>
+            <Recaptcha
+              sitekey="6LfYOqoZAAAAAE5-AOkmltvfagYT1cQiF3nBJ175"
+              render="explicit"
+              verifyCallback={this.verifyCallback}
+              onloadCallback={this.onloadCallback}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="login-form-button"
+            >
+              Log in
+                </Button>
+          </Form.Item>
+          <Form.Item>
+            <a className="login-form-forgot" href="">
+              Forgot password
+                </a>
+          </Form.Item>
+
+        </Form>
       </div>
-    );
+          </div>
+    )
   }
 }
-
 export default LoginComponent;

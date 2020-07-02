@@ -9,7 +9,7 @@ class rechargeAccount extends React.Component {
   }
   onFinish = async (values) => {
     const result = await httpClient.post('/employee/recharge-account', values);
-    alert(result)
+    console.log(values)
   };
   render() {
     const onFinishFailed = (errorInfo) => {

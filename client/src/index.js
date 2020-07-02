@@ -7,6 +7,8 @@ import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.css";
 import LoginComponent from "./components/login/login";
 import store from './store';
+import CustomerApp from './components/customer/App';
+import Employee from './components/employee/App'
 
 import {
   BrowserRouter,
@@ -19,10 +21,10 @@ import {
 } from "react-router-dom";
 import PrivateRoute from "./components/common/PrivateRoute";
 import history from "./utils/history";
-import { isLogin } from "./utils/auth";
+import { isLogin, isRole } from "./utils/auth";
 
 const AppComponent = withRouter(App);
-
+//const CustomerComponent = withRouter(CustomerApp);
 ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
