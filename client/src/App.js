@@ -53,7 +53,6 @@ class App extends React.Component {
             console.log(collapsed, type);
           }}
         >
-          <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
             <Menu.Item key="1" icon={<UserOutlined />}>
               <Link to="/employee/create-customer">Tạo tài khoản khách hàng</Link>
@@ -74,10 +73,10 @@ class App extends React.Component {
             className="site-layout-sub-header-background"
             style={{ padding: 0 }}
           />
-          <Content style={{ margin: "24px 16px 0" }}>
+          <Content style={{ margin: "24px 16px 17px 17px" }}>
             <div
               className="site-layout-background"
-              style={{ padding: 24, minHeight: 360 }}
+              style={{ padding: 24 }}
             >
               <Switch>
                 <PrivateRoute exact path="/employee/create-customer" component={createCustomer} />
@@ -88,9 +87,9 @@ class App extends React.Component {
 
             </div>
           </Content>
-          <Footer style={{ textAlign: "center" }}>
+          {/* <Footer style={{ textAlign: "center" }}>
             Ant Design ©2018 Created by Ant UED
-          </Footer>
+          </Footer> */}
         </Layout>
       </Layout>
     );
