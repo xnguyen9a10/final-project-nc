@@ -12,7 +12,6 @@ import info_service_icon from '../../images/info_service.svg';
 import transfer1_icon from '../../images/transfer1.svg';
 import transfer2_icon from '../../images/transfer2.svg';
 import info_icon from '../../images/info.svg';
-import axios from 'axios';
 import { Helmet } from "react-helmet";
 import history from "../../utils/history";
 import Profile from './Profile';
@@ -32,10 +31,7 @@ import {
     MoneyCollectOutlined,
     HistoryOutlined
 } from "@ant-design/icons";
-
-import { Card, Button, Form, Col, Alert } from 'react-bootstrap'
-//import PrivateRoute from "./components/common/PrivateRoute";
-//import ManagementPageComponent from "./containers/administrator/managementPage";
+import FundTransfer from './FundTransfer';
 
 function App(props) {
     const { Header, Content, Sider } = Layout;
@@ -264,72 +260,6 @@ function Service() {
     )
 }
 
-function FundTransfer() {
-    const { Content } = Layout;
-    const { register, handleSubmit, watch, errors } = useForm();
-    const onSubmit = data => console.log(data);
-
-    console.log(watch("to_account")); // watch input value by passing the name of it
-    return (
-        <Content style={{ margin: "24px 0px", width: "100%", fontFamily: "'Titillium Web', sans-serif", backgroundColor: "#eee" }}>
-            <div style={{ width: "70%" }}>
-                <Card style={{ width: "100%", backgroundColor: "white", marginLeft: "12px" }}>
-                    <Card.Body>
-                        <Card.Title style={{ fontWeight: "600", fontSize: "24px" }}>Fund Transfer</Card.Title>
-                        <Card.Text style={{ opacity: "0.8", fontSize: "14px" }}>
-                            We will send you a new password connected with your existing ibanking account.
-                        </Card.Text>
-
-                        {/* "handleSubmit" will validate your inputs before invoking "onSubmit" */}                        
-                        <Form onSubmit={handleSubmit(onSubmit)}>
-                            <Form.Row>
-                                <Form.Group as={Col} controlId="formGridEmail">
-                                    <Form.Label>From Account</Form.Label>
-                                    <Form.Control as="select" custom>
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
-                                    </Form.Control>
-                                </Form.Group>
-
-                                <Form.Group as={Col} controlId="formGridPassword">
-                                    <Form.Label>To Account</Form.Label>
-                                     {/* register your input into the hook by invoking the "register" function */}
-                                      {/* include validation with required or other standard HTML validation rules */}
-                                    <Form.Control name="to_account" type="num" placeholder="Input the Account Number" ref={register({ required: true })}/>
-                                    {/* errors will return when field validation fails  */}
-                                    {errors.to_account && <Alert variant="danger">This field is required</Alert>}
-                                </Form.Group>
-                            </Form.Row>
-                            <Form.Row>
-                                <Form.Group as={Col}>
-                                </Form.Group>
-                                <Form.Group as={Col}>  
-                                    or <Button variant="info" size="sm">Pick</Button>
-                                </Form.Group>
-                            </Form.Row>
-                            <Form.Group controlId="formGridAddress1">
-                                <Form.Label>Amount</Form.Label>
-                                <Form.Control />
-                            </Form.Group>
-
-                            <Form.Group controlId="formGridAddress2">
-                                <Form.Label>Content</Form.Label>
-                                <Form.Control placeholder="Apartment, studio, or floor..." />
-                            </Form.Group>
-                            <Button variant="primary" type="submit">
-                                Transfer
-                            </Button>
-                        </Form>
-                    </Card.Body>
-                </Card>
-            </div>
-        </Content>
-    )
-
-}
 
 function Home(props) {
     return (

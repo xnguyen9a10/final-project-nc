@@ -6,6 +6,7 @@ const REFRESH_TOKEN = 'refreshToken';
 const USER_ID = 'userId';
 const USER_NAME = 'userName';
 const ROLE = "role";
+const EMAIL = "email";
 
 export const setAccessToken = (accessToken) => {
   localStorage.setItem(ACCESS_TOKEN, accessToken)
@@ -27,6 +28,10 @@ export const getUserName = () => {
   return localStorage.getItem(USER_NAME);
 }
 
+export const getEmail = () => {
+  return localStorage.getItem(EMAIL);
+}
+
 export const isLogin = () => {
   if(!getAccessToken()) {
     return false;
@@ -38,12 +43,14 @@ export const isRole = () => {
   return localStorage.getItem(ROLE);
 }
 
-export const setSession = (userId, userName, accessToken, refreshToken, role) => {
+export const setSession = (userId, userName, accessToken, refreshToken,role, email) => {
   localStorage.setItem(USER_ID, userId);
   localStorage.setItem(ACCESS_TOKEN, accessToken);
   localStorage.setItem(REFRESH_TOKEN, refreshToken);
   localStorage.setItem(ROLE, role);
   localStorage.setItem(USER_NAME, userName);
+  localStorage.setItem(EMAIL, email);
+
 }
 
 export const removeSession = () => {
@@ -52,6 +59,7 @@ export const removeSession = () => {
   localStorage.removeItem(REFRESH_TOKEN);
   localStorage.removeItem(ROLE);
   localStorage.removeItem(USER_NAME);
+  localStorage.removeItem(EMAIL);
 }
 
 export const getNewAccessToken = async () => {

@@ -7,3 +7,4 @@ import AllReducer from '../reducers/AllReducer';
 
 const store = createStore(AllReducer, composeWithDevTools(applyMiddleware(thunk,logger)))
 export default store;
+

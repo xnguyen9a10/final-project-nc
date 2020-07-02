@@ -1,5 +1,3 @@
-
-/*=== NGOC PART */
 const mongoose = require('mongoose');
 const db = require('../utils/db');
 const Schema = mongoose.Schema;
@@ -13,6 +11,7 @@ const transaction = new Schema({
     transferAt: Date, // Thời gian chuyển
     content: String, 
     isPayment: Boolean, // Thanh toán nhắn nợ. (bool)
+    isPayFee: Boolean //  Tra phi giao dich
 })
 
 module.exports = {

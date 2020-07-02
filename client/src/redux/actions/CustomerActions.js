@@ -1,9 +1,9 @@
 import {
     FETCH_CUSTOMER_ACCOUNT_FAILURE,
     FETCH_CUSTOMER_ACCOUNT_REQUEST,
-    FETCH_CUSTOMER_ACCOUNT_SUCCESS
+    FETCH_CUSTOMER_ACCOUNT_SUCCESS,
+    
 } from '../consts/consts';
-import axios from 'axios';
 import { getUserId } from '../../utils/auth';
 import httpClient from '../../utils/httpClient';
 

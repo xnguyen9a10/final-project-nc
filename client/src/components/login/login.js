@@ -26,7 +26,12 @@ class LoginComponent extends React.Component {
       return
     }
     if (result.data.status === 'successful') {
-      setSession(result.data.data.userCopied.id, result.data.data.userCopied.fullname, result.data.data.accessToken, result.data.data.refreshToken);
+      setSession(result.data.data.userCopied.id, 
+        result.data.data.userCopied.fullname, 
+        result.data.data.accessToken,
+         result.data.data.refreshToken, 
+         result.data.data.userCopied.role,
+         result.data.data.userCopied.email);
       history.push("/")
     }
   };

@@ -1,34 +1,31 @@
 import {
-    FETCH_CUSTOMER_ACCOUNT_FAILURE,
-    FETCH_CUSTOMER_ACCOUNT_SUCCESS,
-    FETCH_CUSTOMER_ACCOUNT_REQUEST
+    CUSTOMER_TRANSFER_FAILURE,
+    CUSTOMER_TRANSFER_SUCCESS,
+    CUSTOMER_TRANSFER_REQUEST
 } from '../consts/consts'
 
 const initial = {
     loading: false,
-    customer: null,
-    accounts: [],
+    result: null,
     error: "",
 }
 
-
-const CustomerAccountReducer = (prevState = initial, action) => {
+const CustomerTransferReducer = (prevState = initial, action) => {
     switch(action.type){
-        case FETCH_CUSTOMER_ACCOUNT_FAILURE:
+        case CUSTOMER_TRANSFER_FAILURE:
             return {
                 ...prevState,
                 loading: false,
                 error: action.payload
             }
-        case FETCH_CUSTOMER_ACCOUNT_SUCCESS:
+        case CUSTOMER_TRANSFER_SUCCESS:
             return {
                 ...prevState,
                 loading: false,
-                customer: action.payload.customer,
-                accounts: action.payload.accounts
+                result: action.payload,
             }
             
-        case FETCH_CUSTOMER_ACCOUNT_REQUEST:
+        case CUSTOMER_TRANSFER_REQUEST:
             return {
                 ...prevState,
                 loading: true,
@@ -37,4 +34,4 @@ const CustomerAccountReducer = (prevState = initial, action) => {
     }
 }
 
-export default CustomerAccountReducer;
+export default CustomerTransferReducer;
