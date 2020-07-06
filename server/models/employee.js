@@ -5,6 +5,20 @@ const Promise = require('bluebird')
 
 const schema = new mongoose.Schema({
   user_id: String,
+  name: String,
+  code: String,
+  phone: String,
+  address: String,
+  role: 
+    {
+      type: String,
+      default: 'nhanvien',
+      emum: [
+        'giaodichvien',
+        'tindung',
+        'nhanvien'
+      ]
+    }
   }, {
   collection: 'employee',
   timestamps: true,
