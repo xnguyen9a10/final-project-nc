@@ -39,8 +39,8 @@ export const isLogin = () => {
   return true;
 }
 
-export const isRole = () => {
-  return localStorage.getItem(ROLE);
+export const isRole = (role) => {
+  return localStorage.getItem(ROLE) === role;
 }
 
 export const setSession = (userId, userName, accessToken, refreshToken,role, email) => {

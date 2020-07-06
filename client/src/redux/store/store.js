@@ -5,6 +5,8 @@ import thunk from 'redux-thunk'
 import logger from 'redux-logger' 
 import AllReducer from '../reducers/AllReducer';
 
-const store = createStore(AllReducer, composeWithDevTools(applyMiddleware(thunk,logger)))
+const store = createStore(
+  AllReducer,
+  composeWithDevTools(applyMiddleware(thunk, logger))
+);
 export default store;
-

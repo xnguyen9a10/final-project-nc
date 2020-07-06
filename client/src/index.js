@@ -21,7 +21,6 @@ import {
 import PrivateRoute from "./components/common/PrivateRoute";
 import history from "./utils/history";
 import { isLogin, isRole } from "./utils/auth";
-
 const AppComponent = withRouter(App);
 //const CustomerComponent = withRouter(CustomerApp);
 const CustomerComponent = withRouter(CustomerApp);
@@ -29,20 +28,18 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
       <Switch>
-        <Route exact path = "/"
-               render = {
-                 (props) => {
-                   if(!isLogin()){
-                     return <LoginComponent/>;
-                   }
-                   else {
-                     if(isRole("customer")){
-                       return <CustomerComponent/>
-                     }
-                    return <AppComponent/>
-                   }
-                 }
-               }
+        <Route
+          exact
+          path="/"
+          render={(props) => {
+            if (!isLogin()) {
+              return <LoginComponent />;
+            } else {
+              if (isRole("customer")) {
+                return <CustomerComponent />;
+              }
+            }
+          }}
         />
         {/*<Route exact path={"/login"}
           render={
@@ -52,8 +49,7 @@ ReactDOM.render(
         />
         {/* <PrivateRoute component={(createCustomer)} path="/employee/create-customer"/> */}
         {/* <PrivateRoute component={(rechargeAccount)} path="/employee/recharge-account"/> */}
-        {/*<AppComponent />*/}
-        
+        <AppComponent />
       </Switch>
     </Router>
   </Provider>,

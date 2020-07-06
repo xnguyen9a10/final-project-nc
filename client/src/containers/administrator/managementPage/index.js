@@ -6,7 +6,7 @@ import {
   toggleModalNewEmployeeAction,
   setFormDataAction,
   toggleModalUpdateEmployeeAction,
-} from "./actions";
+} from "../../../redux/actions/ManagementPageAction";
 import {
   Table,
   Tag,
@@ -21,12 +21,13 @@ import {
 import httpClient from "../../../utils/httpClient";
 import { extend } from "lodash";
 import { DeleteOutlined, EditFilled, ExclamationCircleOutlined } from "@ant-design/icons";
-import store from '../../../store';
+import store from '../../../redux/store/store';
 const { Option } = Select;
 const { confirm } = Modal;
 
 const mapStateToProps = (state) => {
-  return state.managementPageReducer;
+  console.log(state.ManagementPageReducer)
+  return state.ManagementPageReducer;
 };
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -156,13 +157,7 @@ class ManagementPage extends Component {
       toggleModalNewEmployee,
       toggleModalUpdateEmployee,
     } = this.props;
-    const prefixSelector = (
-      <Form.Item name="prefix" noStyle>
-        <Select style={{ width: 70 }}>
-          <Option value="86">+84</Option>
-        </Select>
-      </Form.Item>
-    );
+  
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
