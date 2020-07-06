@@ -13,8 +13,7 @@ import { VerifyCode } from '../../redux/actions/VerifyCode';
 
 function FundTransfer(props) {
     const isFirstRender = useRef(true);
-
-
+    
     return (
         <> 
         <Modal show={show} onHide={handleClose} animation={false}>
@@ -32,21 +31,4 @@ function FundTransfer(props) {
     )
 }
 
-const mapStateToProps = (state) => {
-    return {
-        customer: state.customer,
-        customerTransfer: state.customerTransfer,
-        requestResult: state.customerRequestTransfer,
-        verifyResult: state.verifyResult
-    }
-}
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        fetchCustomer: () => dispatch(fetchCustomerAccount()),
-        fundTransfer: (data) => dispatch(Transfer(data)),
-        sendRequest: (data) => dispatch(RequestTransfer(data)),
-        verifyCode: (code) => dispatch(VerifyCode(code))
-    }
-}
 export default connect(mapStateToProps, mapDispatchToProps)(FundTransfer);

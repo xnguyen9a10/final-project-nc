@@ -13,10 +13,10 @@ export const TransferFailure = (error) => {
     }
 }
 
-export const TransferSuccess = (data) => {
+export const TransferSuccess = () => {
     return {
-        type: CUSTOMER_TRANSFER_SUCCESS,
-        payload: data
+        type: CUSTOMER_TRANSFER_SUCCESS, 
+        payload: true
     }
 }
 

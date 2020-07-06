@@ -21,7 +21,7 @@ module.exports = {
     getByAccountNumber: (value) => {
         return new Promise((resolve, reject)=>{
             var model = mongoose.model('account', accountModel);
-            return model.findOne({account_id: value}).exec((err,row)=>{
+            return model.find({account_id: value}).exec((err,row)=>{
                 if(err){
                     console.log(err)
                     reject(err);

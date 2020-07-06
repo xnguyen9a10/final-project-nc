@@ -1,10 +1,10 @@
 const router = require("express").Router();
-const passport = require("passport");
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
 const utils = require("../../utils/utils");
 const Customer = mongoose.model("Customer");
 const Account = mongoose.model("Account");
+
 
 router.post("/employee/create-customer",utils.requireRole('employee'), async (req, res) => {
   const { username, fullname, email, password, phone } = req.body;

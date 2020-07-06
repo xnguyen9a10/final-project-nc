@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const db = require('../utils/db');
 const Schema = mongoose.Schema;
 const moment = require('moment');
+
 const { now } = require('lodash');
 
 const transaction = new Schema({
@@ -23,6 +24,7 @@ module.exports = {
         console.log(entity);
         return db.create('transactions', transaction, entity);
     },
+
 
     getByAccountNumber: (value) => {
         return new Promise((resolve, reject)=>{

@@ -6,7 +6,7 @@ import {
 
 const initial = {
     loading: false,
-    result: false,
+    result: null,
     data: null,
     error: "",
 }
@@ -31,7 +31,8 @@ const CustomerTransferReducer = (prevState = initial, action) => {
             return {
                 ...prevState,
                 loading: true,
-                data: action.payload
+                data: action.payload,
+                result: null,
             }
             default: return prevState;
     }

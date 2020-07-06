@@ -14,7 +14,7 @@ const mongoOptions = {
 require('./models');
 
 mongoose.connect(mongodb, mongoOptions);
-
+mongoose.set('useFindAndModify', false);
 mongoose.connection.on('error', (err) => {
   console.error(err);
 });

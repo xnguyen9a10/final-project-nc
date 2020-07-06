@@ -10,6 +10,14 @@ body{
 #sider{
   transition: 0.5s;
 }
+.card-noti {
+  position: relative;
+  animation: mymove 1s;
+}
+@keyframes mymove {
+  from {right: -300px;}
+  to {right: 0px;}
+}
 
 .img-icon:hover {
   opacity: 0.8;

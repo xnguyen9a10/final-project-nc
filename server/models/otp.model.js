@@ -11,7 +11,7 @@ let otpShema = new Schema({
 module.exports = {
     findLatestOTP: (visitorEmail) => {
         return new Promise((resolve, reject)=>{
-            var model = mongoose.model('otp', otpShema);
+            var model = mongoose.model('otps', otpShema);
             return model.find({visitorEmail: visitorEmail}).sort({createAt: -1}).exec((err,records)=>{
                 if(err){
                     console.log(err)

@@ -6,7 +6,7 @@ import {
 
 const initial = {
     loading: false,
-    result: false,
+    result: null,
     error: null,
 }
 
@@ -30,7 +30,7 @@ const VerifyCodeReducer = (prevState = initial, action) => {
             return {
                 ...prevState,
                 loading: true,
-            
+                result: null,
             }
             default: return prevState;
     }

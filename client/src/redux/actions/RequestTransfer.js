@@ -31,11 +31,15 @@ export const RequestTransfer = (data) => {
         dispatch(SendRequest(data));
         var obj = {
             email: getEmail(),
+            ...data
         }
         try {
             var result = await httpClient.post("/customer/transfer-request", obj);
             if (result.status == "successful") {
                 dispatch(RequestSuccess());
+            }
+            else{
+                dispatch(RequestFailure(result.message));
             }
         } catch (err) {
             dispatch(RequestFailure(err.message))
