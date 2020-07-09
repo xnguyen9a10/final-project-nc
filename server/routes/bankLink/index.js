@@ -8,19 +8,21 @@ const sha256 = require("sha256");
 const listKeys = require("../../key");
 const openpgp = require("openpgp");
 
-router.get("/api/account/info", async (req, res) => {
+router.get("/api/account/info/:accountNumber", async (req, res) => {
   console.log(req.headers);
-  const response = await bankLinkService.validate(req.headers, req.body);
-  return res.json(response);
+  const accountNumber = req.params.accountNumber;
+  const response = await bankLinkService.validate(req.headers, req.body, accountNumber);
+  return res.json(utils.succeed(response));
 });
 
 router.post("/api/account/money", async (req, res) => {
+  console.log(req.headers);
   try {
     const response = await bankLinkService.transfer(req.headers, req.body);
-    console.log(response)
-    return res.json(response);
+    console.log(response);
+    return res.json(utils.succeed(response));
   } catch (e) {
-    console.log(e.message);
+    return res.json(utils.fail(e.message));
   }
 });
 
@@ -72,6 +74,7 @@ router.post("/api/transfer/rsagroup", async (req, res) => {
   const key = new NodeRSA(listKeys.rsaKeyof47);
   const verify = key.sign("thisisatokenfroma", "base64", "base64");
   const id = "rsa-bank";
+  
   const body = {
     number: req.body.accountNumber,
     money: req.body.amount,
@@ -120,24 +123,26 @@ router.get("/api/pgpgroup/:account", async (req, res) => {
   //   privateKeys: [privateKey],
   //   detached: true,
   // });
-  const timestamp = new Date()
-  // try {
-  //   const response = await axios.post("http://35.247.178.19/users/customer/get", body,{
-  //     headers: {
-  //       origin: "www.nguyen.com",
-  //       timestamp,
-  //       "authen-hash": sha256(timestamp + secretKey + JSON.stringify(body))
-  //     },
-  //   });
-  //   return res.json(utils.succeed(response.data));
-  // } catch (e) {
-  //   return res.json(utils.fail(e, e.message));
-  // }
-
-  const data = {
-    name : "Nguyen Vi Nam",
-    accountNumber: 123123123,
+  const timestamp = Date.now() / 1000;
+  try {
+    const response = await axios.get("http://35.247.178.19/partner/?id=1",{
+      headers: {
+        name:"nguyenbank",
+        origin: "www.nguyen.com",
+        timestamp,
+        "authen-hash": sha256(timestamp + secretKey + JSON.stringify({}))
+      },
+    });
+    console.log(timestamp + secretKey + JSON.stringify({}))
+    return res.json(utils.succeed(response.data));
+  } catch (e) {
+    return res.json(utils.fail(e, e.message));
   }
+
+  // const data = {
+  //   name : "Nguyen Vi Nam",
+  //   accountNumber: 123123123,
+  // }
   //todo:for testing 
   return res.json(utils.succeed(data));
 });
@@ -147,9 +152,10 @@ router.post('/api/transfer/pgpgroup', async (req, res) => {
   const secretKey = "himom";
 
   const body = {
-    name: "nanibank",
-    id: req.body.accountNumber,
+    from_id: req.body.name,
+    to_id: req.body.accountNumber,
     amount: req.body.amount,
+    message: req.body.content
   }
 
   const {
@@ -165,20 +171,21 @@ router.post('/api/transfer/pgpgroup', async (req, res) => {
   });
   const timestamp = Date.now() / 1000;
 
-  // try {
-  //   const response = await axios.post("http://35.247.178.19/users/customer/get", body,{
-  //     headers: {
-  //       origin: "www.nguyen.com",
-  //       timestamp,
-  //       "authen-hash": sha256(timestamp + secretKey + JSON.stringify(body)),
-  //       sig: detachedSignature
-  //     },
-  //   });
-  //   return res.json(utils.succeed(response.data));
-  // } catch (e) {
-  //   return res.json(utils.fail(e, e.message));
-  // }
-  return res.json(utils.succeed({message: "tranfer success"}));
+  try {
+    const response = await axios.post("http://35.247.178.19/partner/transfer", body,{
+      headers: {
+        origin: "www.nguyen.com",
+        name: "nguyenbank",
+        timestamp,
+        "authen-hash": sha256(timestamp + secretKey + JSON.stringify(body)),
+        sig: new Buffer.from(detachedSignature).toString('base64')
+      },
+    });
+    return res.json(utils.succeed(response.data));
+  } catch (e) {
+    return res.json(utils.fail(e, e.message));
+  }
+  // return res.json(utils.succeed({message: "tranfer success"}));
 })
 
 module.exports = router;

@@ -1,39 +1,48 @@
 const mongoose = require('mongoose');
 const BankPartner = mongoose.model('BankPartner');
-
+const Customer = mongoose.model('Customer');
+const User = mongoose.model('User');
 class bankLinkService {
-  static async validate(params, body) {
+  static async validate(params, body, accountNumber) {
     const { timestamp, partnercode, csi } = params;
     const bankPartner = await BankPartner.findOne({name: partnercode});
-    
     if(bankPartner) {
       try {
         await bankPartner.isValidPartner(timestamp, body, csi);
         await bankPartner.isValidTime(timestamp);
       } catch(e) {
-        return Promise.resolve(e.message);
+        throw new Error(e.message);
       }
-      return Promise.resolve("Query successful !")
+      const customer = await Customer.findOne({"paymentAccount.ID": accountNumber});
+      const user = await User.findOne({_id: customer.user_id});
+      const data = {
+        name: user.fullname
+      }
+      return Promise.resolve(data);
     }
-    return Promise.resolve("Your partner code was wrong !")
+    throw new Error("Your partner code was wrong !")
   }
 
   static async transfer(params, body) {
+    console.log(params);
     const { timestamp, partnercode, csi, detachedsignature } = params;
     const bankPartner = await BankPartner.findOne({name: partnercode});
+    const { name, content, amount, dich } = body;
 
     if (bankPartner) {
       try {
-        const a = await bankPartner.isValidPartner(timestamp, body, csi);
-        const b = await bankPartner.isValidTime(timestamp);
-        const c = await bankPartner.isValidSign(detachedsignature);
+        await bankPartner.isValidPartner(timestamp, body, csi);
+        await bankPartner.isValidTime(timestamp);
+        await bankPartner.isValidSign(detachedsignature);
+        
         return Promise.resolve("Success");
         //Do tranfer stuff
       } catch (e) {
-        return Promise.resolve(e.message);
+        console.log(e, "xxx")
+        throw new Error(e.message);
       }
     }
-    return Promise.resolve("Your partner code was wrong !");
+    throw new Error("Your partner code was wrong !");
   }
 }
 
