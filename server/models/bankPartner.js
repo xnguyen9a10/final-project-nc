@@ -35,8 +35,7 @@ BACKk94c6o2AS9omI/JItDUO9L2TPrMTXpwuA/1hPJR/NPXN5S+u9t3ETXxe3R+p
 5wSiD6V11JLTwTl/4nP2pn5b3xWzRHYcjFIYc5LtdBciQCeSBgkrNCcmp8wo+6QU
 G1eEYWGbnBof0J1e0fUDooQcxMHuhe4pGpGF2AI8RHbNOA==
 =pZyz
------END PGP PUBLIC KEY BLOCK-----
-`;
+-----END PGP PUBLIC KEY BLOCK-----`;
 
 // const pgpKeyTemp = `-----BEGIN PGP PUBLIC KEY BLOCK-----
 // Version: OpenPGP.js v4.10.4
@@ -92,6 +91,7 @@ schema.methods.isValidTime = function isValidTime(timestamp) {
 
 schema.methods.isValidSign = async function isValidSign(detachedSignature) {
     // (async () => {
+      console.log(this.secretKey)
       try {
         const verified = await openpgp.verify({
           message: await openpgp.message.fromText(this.secretKey),
