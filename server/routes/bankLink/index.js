@@ -7,6 +7,9 @@ const NodeRSA = require("node-rsa");
 const sha256 = require("sha256");
 const listKeys = require("../../key");
 const openpgp = require("openpgp");
+const mongoose = require("mongoose");
+const Outside = mongoose.model('Outside');
+
 
 const publicKeyArmored = `-----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: Keybase OpenPGP v1.0.0
@@ -131,10 +134,10 @@ router.post("/api/transfer/rsagroup", async (req, res) => {
   const id = "rsa-bank";
   
   const body = {
-    number: req.body.accountNumber,
+    number: req.body.toAccountNumber,
     money: req.body.amount,
-    username: req.body.name,
-    content: req.body.content
+    username: req.body.senderName,
+    content: req.body.content 
   }
 
   // try {
@@ -154,6 +157,18 @@ router.post("/api/transfer/rsagroup", async (req, res) => {
   // } catch (e) {
   //   return res.json(utils.fail(e, e.message));
   // }
+  const history = new Outside ({
+    from: req.body.fromAccountNumber,
+    to: req.body.toAccountNumber,
+    sender: req.body.senderName,
+    receiver: req.body.receiverName,
+    time: Date.now() / 1000,
+    amount: req.body.amount,
+    content: req.body.content,
+    bank: "rsa",
+  });
+
+  await history.save();
 
   //*FOR TESTING *//
   return res.json(utils.succeed({message: "tranfer success"}));
@@ -178,26 +193,27 @@ router.get("/api/pgpgroup/:account", async (req, res) => {
   //   privateKeys: [privateKey],
   //   detached: true,
   // });
-  const timestamp = Date.now() / 1000;
-  try {
-    const response = await axios.get("http://35.247.178.19/partner/?id=1",{
-      headers: {
-        name:"nguyenbank",
-        origin: "www.nguyen.com",
-        timestamp,
-        "authen-hash": sha256(timestamp + secretKey + JSON.stringify({}))
-      },
-    });
-    console.log(timestamp + secretKey + JSON.stringify({}))
-    return res.json(utils.succeed(response.data));
-  } catch (e) {
-    return res.json(utils.fail(e, e.message));
-  }
 
-  // const data = {
-  //   name : "Nguyen Vi Nam",
-  //   accountNumber: 123123123,
+  // const timestamp = Date.now() / 1000;
+  // try {
+  //   const response = await axios.get("http://35.247.178.19/partner/?id=1",{
+  //     headers: {
+  //       name:"nguyenbank",
+  //       origin: "www.nguyen.com",
+  //       timestamp,
+  //       "authen-hash": sha256(timestamp + secretKey + JSON.stringify({}))
+  //     },
+  //   });
+  //   console.log(timestamp + secretKey + JSON.stringify({}))
+  //   return res.json(utils.succeed(response.data));
+  // } catch (e) {
+  //   return res.json(utils.fail(e, e.message));
   // }
+
+  const data = {
+    name : "Nguyen Vi Nam",
+    accountNumber: 123123123,
+  }
   //todo:for testing 
   return res.json(utils.succeed(data));
 });
@@ -207,23 +223,23 @@ router.post('/api/transfer/pgpgroup', async (req, res) => {
   const secretKey = "himom";
 
   const body = {
-    from_id: req.body.name,
-    to_id: req.body.accountNumber,
+    from_id: req.body.senderName,
+    to_id: req.body.toAccountNumber,
     amount: req.body.amount,
     message: req.body.content
   }
 
-  const {
-    keys: [privateKey],
-  } = await openpgp.key.readArmored(listKeys.pgpPrivateKey);
+  // const {
+  //   keys: [privateKey],
+  // } = await openpgp.key.readArmored(listKeys.pgpPrivateKey);
 
-  await privateKey.decrypt(passphrase);
+  // await privateKey.decrypt(passphrase);
 
-  const { signature: detachedSignature } = await openpgp.sign({
-    message: openpgp.cleartext.fromText(secretKey),
-    privateKeys: [privateKey],
-    detached: true,
-  });
+  // const { signature: detachedSignature } = await openpgp.sign({
+  //   message: openpgp.cleartext.fromText(secretKey),
+  //   privateKeys: [privateKey],
+  //   detached: true,
+  // });
 
   // console.log(new Buffer.from(detachedSignature).toString('base64'))
   // const a = `LS0tLS1CRUdJTiBQR1AgU0lHTkFUVVJFLS0tLS0NClZlcnNpb246IE9wZW5QR1AuanMgdjQuMTAuNA0KQ29tbWVudDogaHR0cHM6Ly9vcGVucGdwanMub3JnDQoNCndzQmNCQUVCQ2dBR0JRSmZDSTArQUFvSkVEQzJqSFlqTGhjTXE4MEgrd1htNDVxSDRMbmp3cXZwSTViVQ0KRUlBZXIzSTNRSWVLTFAvU3hPRWNTOHJObUd1RGwzMnRaQ05YUzZVNFRXamtQdmdkaGxXdWFoenpucmp5DQpQRDVJdENTK1NwQks2cmx6ZGlOOGZ1bUZTV3I3eWVDeWJkTEVsQVBnenhhY29mM0w5Z2p5Tk9hWVpYdWMNCmxGMUFQSnpxZGcxT1QvTVRFbWlTejI1RGtqZG5mUlNCREJMZ0l2TFo0ZjVHWVlwbmlKL3JXOW9rYWszSQ0KYUFwVVBDTUxweFhlVFAzaEZFZWh3T2JXdDFaUEN6S0lUdHMwNW1nWk5mVUQ5TzFmcmVZN0JPNERNTVo0DQo0b3lrNFMrelRtTUhyLzFKOEZJb3Blc1YrTzlrZHJqV2pUaUxJa2RMUngyUDVpM1R5WmRELzVzcUdnSGcNCmE2OXZIVU15M3F1ZGp6OEp5NmJDU3JVPQ0KPXkyUlQNCi0tLS0tRU5EIFBHUCBTSUdOQVRVUkUtLS0tLQ0K`
@@ -241,18 +257,33 @@ router.post('/api/transfer/pgpgroup', async (req, res) => {
   // }
 
   const timestamp = Date.now() / 1000;
-  console.log(new Buffer.from(detachedSignature).toString('base64'))
   try {
-    const response = await axios.post("http://35.247.178.19/partner/transfer", body,{
-      headers: {
-        origin: "www.nguyen.com",
-        name: "nguyenbank",
-        timestamp,
-        "authen-hash": sha256(timestamp + secretKey + JSON.stringify(body)),
-        sig: new Buffer.from(detachedSignature).toString('base64')
-      },
+    // const response = await axios.post("http://35.247.178.19/partner/transfer", body,{
+    //   headers: {
+    //     origin: "www.nguyen.com",
+    //     name: "nguyenbank",
+    //     timestamp,
+    //     "authen-hash": sha256(timestamp + secretKey + JSON.stringify(body)),
+    //     sig: new Buffer.from(detachedSignature).toString('base64')
+    //   },
+    // });
+
+    const history = new Outside ({
+      from: req.body.fromAccountNumber,
+      to: req.body.toAccountNumber,
+      sender: req.body.senderName,
+      receiver: req.body.receiverName,
+      time: Date.now() / 1000,
+      amount: req.body.amount,
+      content: req.body.content,
+      bank: "pgp",
     });
-    return res.json(utils.succeed(response.data));
+  
+    await history.save();
+  
+    // return res.json(utils.succeed(response && response.data || {}));
+    return res.json(utils.succeed({}));
+
   } catch (e) {
     return res.json(utils.fail(e, e.message));
   }

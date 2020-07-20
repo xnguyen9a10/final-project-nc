@@ -21,6 +21,7 @@ import {
 } from "@ant-design/icons";
 import PrivateRoute from "./components/common/PrivateRoute";
 import ManagementPageComponent from "./containers/administrator/managementPage";
+import TransactionPageComponent from "./containers/administrator/transactionPage";
 
 class App extends React.Component {
   constructor(props) {
@@ -59,13 +60,18 @@ class App extends React.Component {
             <Menu.Item key="4" icon={<UploadOutlined />}>
               <Link to="/admin/management">Quản lý nhân viên</Link>
             </Menu.Item>
+            <Menu.Item key="5" icon={<UploadOutlined />}>
+              <Link to="/admin/history">Quản lý liên kết</Link>
+            </Menu.Item>
           </Menu>
         </Sider>
         <Layout>
           <Header
             className="site-layout-sub-header-background"
-            style={{ padding: 0 }}
-          />
+            style={{ padding: 0, alignContent: "flex-end" }}
+          >
+            <p style={{float: "right", marginRight: "10px"}}>Chao moi nguoi</p>
+            </Header>
           <Content style={{ margin: "24px 16px 17px 17px" }}>
             <div
               className="site-layout-background"
@@ -76,6 +82,7 @@ class App extends React.Component {
                 <PrivateRoute exact path='/employee/recharge-account' component={rechargeAccount} />
                 <PrivateRoute exact path='/employee/transaction-history' component={transactionHistory} />
                 <PrivateRoute exact path='/admin/management' component={ManagementPageComponent} />
+                <PrivateRoute exact path='/admin/history' component={TransactionPageComponent} />
               </Switch>
 
             </div>

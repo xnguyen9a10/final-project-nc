@@ -171,10 +171,11 @@ class ManagementPage extends Component {
     
     return (
       <div>
+        <h2>Quản lý nhân viên</h2>
         <Button
           onClick={() => toggleModalNewEmployee()}
           type="primary"
-          style={{ marginBottom: 16 }}
+          style={{ marginBottom: 16, marginTop: 16 }}
         >
           + Thêm nhân viên
         </Button>

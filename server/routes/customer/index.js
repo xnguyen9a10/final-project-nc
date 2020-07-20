@@ -76,7 +76,6 @@ router.get('/customer/transactions', utils.requireRole("customer"), async (req, 
 router.post('/customer/transactions', utils.requireRole("customer"), async (req, res, next) => {
   try {
     const result = await transactionModel.insert(req.body);
-    console.log(result);
     return res.json(succeed(result));
   }
   catch (ex) {
