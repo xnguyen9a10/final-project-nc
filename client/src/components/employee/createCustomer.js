@@ -1,85 +1,124 @@
 import React from "react";
-import { Form, Input, Button, Checkbox } from "antd";
+import { Form, Input, Button, Checkbox, Col } from "antd";
 import axios from "axios";
-import httpClient from '../../utils/httpClient';
+import httpClient from "../../utils/httpClient";
+
+const layout = {
+    labelCol: {
+        span: 3,
+        offset: 6,
+    },
+    wrapperCol: {
+        span: 8,
+    },
+    labelAlign: "left",
+};
 
 class createCustomer extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  onFinish = async (values) => {
-    // const result = await axios.post(
-    //   "http://localhost:3001/employee/create-customer",
-    //   values
-    // );
-    const result = await httpClient.post('/employee/create-customer', values);
-    if (result && result.status === "sucessful") {
-    //   this.setState({ user: res.data })
+    
+
+    constructor(props) {
+        super(props);
     }
-  };
-  render() {
-    const onFinishFailed = (errorInfo) => {
-      console.log("Failed:", errorInfo);
+    onFinish = async (values) => {
+        // const result = await axios.post(
+        //   "http://localhost:3001/employee/create-customer",
+        //   values
+        // );
+        const result = await httpClient.post(
+            "/employee/create-customer",
+            values
+        );
+        if (result && result.status === "sucessful") {
+            //   this.setState({ user: res.data })
+        }
     };
-    const layout = {
-      labelCol: { span: 2 },
-      wrapperCol: { span: 16 },
-    };
-    return (
-      <Form
-      {...layout}
-        name="basic"
-        initialValues={{ remember: true }}
-        onFinish={this.onFinish}
-        onFinishFailed={onFinishFailed}
-      >
-        <Form.Item
-          label="Tên đăng nhập"
-          name="username"
-          rules={[{ required: true, message: "Vui lòng nhập tên đăng nhập!" }]}
-        >
-          <Input />
-        </Form.Item>
+    render() {
+        const onFinishFailed = (errorInfo) => {
+            console.log("Failed:", errorInfo);
+        };
+        // const layout = {
+        //     labelCol: { span: 2 },
+        //     wrapperCol: { span: 16 },
+        // };
+        return (
+            <Form
+                {...layout}
+                name="basic"
+                initialValues={{ remember: true }}
+                onFinish={this.onFinish}
+                onFinishFailed={onFinishFailed}
+            >
+                <Form.Item
+                    label="Tên đăng nhập"
+                    name="username"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Vui lòng nhập tên đăng nhập!",
+                        },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
 
-        <Form.Item
-          label="Mật khẩu"
-          name="password"
-          rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
-        >
-          <Input.Password />
-        </Form.Item>
+                <Form.Item
+                    label="Mật khẩu"
+                    name="password"
+                    rules={[
+                        { required: true, message: "Vui lòng nhập mật khẩu" },
+                    ]}
+                >
+                    <Input.Password />
+                </Form.Item>
 
-        <Form.Item
-          label="Họ tên"
-          name="fullname"
-          rules={[{ required: true, message: "Vui lòng nhập họ tên" }]}
-        >
-          <Input />
-        </Form.Item>
+                <Form.Item
+                    label="Họ tên"
+                    name="fullname"
+                    rules={[
+                        { required: true, message: "Vui lòng nhập họ tên" },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
 
-        <Form.Item
-          label="Email"
-          name="Email"
-          rules={[{ required: true, message: "Vui lòng nhập email" }]}
-        >
-          <Input />
-        </Form.Item>
+                <Form.Item
+                    label="Email"
+                    name="Email"
+                    rules={[{ required: true, message: "Vui lòng nhập email" }]}
+                >
+                    <Input />
+                </Form.Item>
 
-        <Form.Item
-          label="Phone"
-          name="Phone"
-          rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
-        >
-          <Input />
-        </Form.Item>
+                <Form.Item
+                    label="Phone"
+                    name="Phone"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Vui lòng nhập số điện thoại",
+                        },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Tạo tài khoản khách hàng
-          </Button>
-        </Form.Item>
-      </Form>
-    );
-  }
+                <Col
+                    span={8}
+                    offset={8}
+                    style={{ display: "flex", justifyContent: "center" }}
+                >
+                    <Button type="primary" htmlType="submit">
+                        Tạo tài khoản khách hàng
+                    </Button>
+                </Col>
+                {/* <Form.Item offset={8}>
+                    <Button type="primary" htmlType="submit">
+                        Tạo tài khoản khách hàng
+                    </Button>
+                </Form.Item> */}
+            </Form>
+        );
+    }
 }
 export default createCustomer;

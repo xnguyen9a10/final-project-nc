@@ -126,7 +126,7 @@ const  createNewEmployee = async (data) => {
 
 const deleteEmployee = async (data) => {
   const result = await httpClient.post('/admin/employee/delete', data);
-  refreshTable()
+  refreshTable();
 }
 
 const updateEmployee = async (data) => {
