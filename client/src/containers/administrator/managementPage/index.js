@@ -26,7 +26,6 @@ const { Option } = Select;
 const { confirm } = Modal;
 
 const mapStateToProps = (state) => {
-  console.log(state.ManagementPageReducer)
   return state.ManagementPageReducer;
 };
 const mapDispatchToProps = (dispatch) => {
@@ -144,7 +143,7 @@ class ManagementPage extends Component {
     super(props);
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const result = await httpClient.get("/admin/employee");
     this.props.setData(result);
   }

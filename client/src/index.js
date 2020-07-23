@@ -41,13 +41,13 @@ ReactDOM.render(
             }
           }}
         />
-        {/*<Route exact path={"/login"}
+        <Route exact path={"/login"}
           render={
             (props) =>
             !isLogin() ? <LoginComponent /> : <Redirect to="/" />
           }
         />
-        {/* <PrivateRoute component={(createCustomer)} path="/employee/create-customer"/> */}
+        {/* <PrivateRoute component={(createCustomer)} path="/employee/create-customer"/>
         {/* <PrivateRoute component={(rechargeAccount)} path="/employee/recharge-account"/> */}
         <AppComponent />
       </Switch>

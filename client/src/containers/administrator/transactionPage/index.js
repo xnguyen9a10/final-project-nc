@@ -6,7 +6,7 @@ import {
   toggleModalNewEmployeeAction,
   setFormDataAction,
   toggleModalUpdateEmployeeAction,
-} from "../../../redux/actions/ManagementPageAction";
+} from "../../../redux/actions/TransactionPageAction";
 import {
   Table,
   Tag,
@@ -29,38 +29,51 @@ import store from "../../../redux/store/store";
 const { Option } = Select;
 const { confirm } = Modal;
 
-const dataSource = [
+const columns = [
   {
-    key: "1",
-    name: "Mike",
-    age: 32,
-    address: "10 Downing Street",
+    title: "Thời gian",
+    dataIndex: "time",
+    key: "time",
   },
   {
-    key: "2",
-    name: "John",
-    age: 42,
-    address: "10 Downing Street",
+    title: "Tài khoản chuyển",
+    dataIndex: "from",
+    key: "from",
+  },
+  {
+    title: "Số tiền",
+    dataIndex: "amount",
+    key: "address",
+  },
+  {
+    title: "Tài khoản đích",
+    dataIndex: "to",
+    key: "to",
+  },
+  {
+    title: "Nội dung",
+    dataIndex: "to",
+    key: "to",
+  },
+  {
+    title: "Ngân hàng",
+    dataIndex: "bank",
+    key: "bank",
   },
 ];
 
-const columns = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
-    title: "Address",
-    dataIndex: "address",
-    key: "address",
-  },
-];
+const mapStateToProps = (state) => {
+  return state.ManagementPageReducer;
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setData: (data) => dispatch(setDataAction(data)),
+    openAlert: () => dispatch(openAlertAction()),
+    toggleModalNewEmployee: () => dispatch(toggleModalNewEmployeeAction()),
+    toggleModalUpdateEmployee: () => dispatch(toggleModalUpdateEmployeeAction()),
+    setFormData: (record) => dispatch(setFormDataAction(record))
+  };
+};
 
 class TransactionPage extends Component {
   constructor(props) {
@@ -98,7 +111,7 @@ class TransactionPage extends Component {
           </Select>
         </div>
 
-        <Table dataSource={dataSource} columns={columns} />
+        <Table dataSource={[]} columns={columns} />
       </div>
     );
   }
