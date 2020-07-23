@@ -117,12 +117,12 @@ class App extends React.Component {
                     </Header>
                     <Content
                         style={{
-                            margin: "24px 66px 17px 66px",
+                            margin: "24px 40px 17px 40px",
                         }}
                     >
                         <div
                             className="site-layout-background"
-                            style={{ padding: 24, background: "lightblue" }}
+                            style={{ padding: 24, background: "lightblue",height:"700px" }}
                         >
                             <Switch>
                                 <PrivateRoute

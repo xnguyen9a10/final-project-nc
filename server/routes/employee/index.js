@@ -11,16 +11,17 @@ var ObjectId = mongoose.ObjectId;
 
 router.post("/employee/create-customer",utils.requireRole('employee'), async (req, res) => {
   const { username, fullname, email, password, phone } = req.body;
-
-  return User.findOne({ email: req.body.email })
-    .exec()
-    .then(async (err, existingUser) => {
-      if (existingUser) {
+  console.log(req.body.email)
+  return User.find({email:req.body.email,
+                    role:"customer"})
+    .exec(async (err, existingUser) => {
+      if (existingUser.length>0) {
         return res.json(utils.fail(err, "Email is already existed, please use another one."));
       }
-
+      
       const user = new User(req.body);
       await user.save();
+      console.log(user)
       var digits = '0123456789';
       let OTP = '';
       for (let i = 0; i < 9; i++) {
@@ -61,6 +62,9 @@ router.post("/employee/recharge-account",utils.requireRole('employee'), async (r
   })
 });
 
+// router.get("/employee/customer-info/:accountId",utils.requireRole('employee'),async(req,res)=>{
+//   const customer=await 
+// })
 
 router.get("/employee/customer-list",utils.requireRole('employee'),async(req,res)=>{
    await Customer.find({}).exec((async(err,result)=>{
