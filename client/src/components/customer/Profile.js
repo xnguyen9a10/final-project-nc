@@ -43,7 +43,7 @@ function Profile({ customers, fetchProfile }) {
                                                 <Card.Text style={{ opacity: "0.8", fontSize: "12px", marginTop: "20px" }}>
                                                     <div>
                                                         <i className="fa fa-user"></i>
-                                                        <span style={{ marginLeft: "8px" }}> LÊ ĐÌNH NGỌC </span>
+                                                        <span style={{ marginLeft: "8px" }}> NGUYỄN ANH TÚ </span>
                                                     </div>
                                                     <div>
                                                         <i className="fas fa-gift"></i>

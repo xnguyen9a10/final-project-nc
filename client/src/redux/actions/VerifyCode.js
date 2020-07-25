@@ -27,12 +27,14 @@ export const VerifyRequest = () => {
 }
 
 
-export const VerifyCode = (code) => {
+export const VerifyCode = (code,receiverAccountNumber,amount) => {
     return async (dispatch) => {
         dispatch(VerifyRequest());
         var data = {
             code: code,
-            email: getEmail()
+            email: getEmail(),
+            receiverAccountNumber,
+            amount
         }
         try {
             var result = await httpClient.post('/customer/verify-transfer', data);

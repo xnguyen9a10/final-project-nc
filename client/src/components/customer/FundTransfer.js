@@ -56,7 +56,7 @@ function FundTransfer(props) {
     }
 
     const onVerify = () => {
-        props.verifyCode(document.getElementById("code").value);
+        props.verifyCode(document.getElementById("code").value,document.getElementById("receiverAccountNumber").value,document.getElementById("transferAmount").value);
     }
 
     useEffect(() => {
@@ -251,7 +251,7 @@ function FundTransfer(props) {
                                 </Form.Row>
                                 <Form.Group>
                                     <Form.Label >Amount</Form.Label>
-                                    <Form.Control type="number" name="transferAmount" ref={register({ required: true })} />
+                                    <Form.Control type="number" id="transferAmount" name="transferAmount" ref={register({ required: true })} />
                                     {errors.transferAmount && <Alert style={{ padding: "4px", fontSize: "13px" }} variant="danger">This field is required</Alert>}
                                 </Form.Group>
                                 <Form.Group>
@@ -271,15 +271,11 @@ function FundTransfer(props) {
 
                             <Form id="confirm" style={{ marginTop: "20px", display: "none" }} onSubmit={handleSubmit(onVerify)}>
                                 <Alert variant='info' style={{ textAlign: "center" }}>
-                                    An email with a verification code was just sent to <span style={{ fontStyle: "italic", fontWeight: "bold" }}>dinhngoc123@gmail.com</span>
+                                        An email with a verification code was just sent to your email <span style={{ fontStyle: "italic", fontWeight: "bold" }}>.Please check</span>
                                 </Alert>
                                 <Form.Group>
                                     <Form.Control id="code" name="code" placeholder="Verification code..." />
                                     {errors.code && <Alert style={{ padding: "4px", fontSize: "13px" }} variant="danger">This field is required</Alert>}
-                                    {props.verifyResult.error != null ?
-                                        <Alert variant='danger'>{props.verifyResult.error.message}</Alert>
-                                        : ""
-                                    }
                                 </Form.Group>
                                 <Button variant="danger" type="submit">
                                     Confirm
@@ -380,7 +376,7 @@ const mapDispatchToProps = (dispatch) => {
         fetchCustomer: () => dispatch(fetchCustomerAccount()),
         fundTransfer: (data) => dispatch(Transfer(data)),
         sendRequest: (data) => dispatch(RequestTransfer(data)),
-        verifyCode: (code) => dispatch(VerifyCode(code)),
+        verifyCode: (code,receiverAccountNumber,amount) => dispatch(VerifyCode(code,receiverAccountNumber,amount)),
         saveReceiver: (data) => dispatch(SaveReceiver(data)) 
     }
 }

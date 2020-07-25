@@ -111,7 +111,6 @@ const otpModel = require('../../models/otp.model')
 
 router.post("/customer/transfer-request", utils.requireRole("customer"), async (req, res) => {
   const { email, receiverAccountNumber } = req.body;
-  console.log(email);
   try {
     let receiver = null;
     await Account.findOne({ account_id: receiverAccountNumber }).exec((err, row) => {
@@ -139,7 +138,7 @@ router.post("/customer/transfer-request", utils.requireRole("customer"), async (
         console.log(otp);
         var mailOptions = {
           from: 'centurybanking123@gmail.com',
-          to: "dinhngoc123@gmail.com",
+          to: email,
           subject: 'Confirm your transfer',
           html: `
           <div>
@@ -173,7 +172,14 @@ router.post("/customer/transfer-request", utils.requireRole("customer"), async (
 
 router.post("/customer/verify-transfer", utils.requireRole("customer"), async (req, res) => {
   try {
-    var { code, email } = req.body;
+    var { code, email,receiverAccountNumber,amount } = req.body;
+    console.log("SO TIEN CHUYEN LA"+amount)
+    var {user}=req
+    const holder=await Customer.find({user_id:user.id})
+    const accountholder=await Account.find({account_id:holder[0].paymentAccount.ID})
+    const accountreceiver=await Account.find({account_id:receiverAccountNumber})
+    console.log("SO DU TAI KHOAN NGUOI NHAN LA:"+accountreceiver[0].balance)
+    console.log("so du tai khoan nguoi gui la" +accountholder[0].balance)
     var record = await otpModel.findLatestOTP(email);
     var expired = new Date(record.expiredAt);
     console.log(expired.getTime());
@@ -182,9 +188,29 @@ router.post("/customer/verify-transfer", utils.requireRole("customer"), async (r
     if (expired.getTime() < Date.now()) {
       return res.json(utils.fail(1, "The code is expired"));
     }
-
+    console.log("ma OTP nhap vao la"+code)
+    console.log("ma OTP dung la"+record.otp)
     if (record.otp == code) {
+      console.log("Chuyen khoan thanh cong")
+      console.log("Tai khoan nguoi gui"+accountholder[0].balance)
+      if(accountholder[0].balance<amount) return res.json(utils.fail(0,"Balance is not enough money"))
+      else{
+        await Account.findOneAndUpdate(
+          {account_id:holder[0].paymentAccount.ID},
+          {
+          $inc:{
+            balance: -amount
+          }
+        }).exec()
+        await Account.findOneAndUpdate(
+          {account_id:receiverAccountNumber},
+          {
+          $inc:{
+            balance: amount
+          }
+        }).exec()
       return res.json(utils.succeed(true));
+      }
     }
     else {
       return res.json(utils.fail(0, "Code is not correct"));
