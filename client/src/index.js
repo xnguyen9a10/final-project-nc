@@ -11,7 +11,6 @@ import CustomerApp from './components/customer/App';
 import Employee from './components/employee/App'
 
 //import store from './store';
-import CustomerApp from './components/customer/App';
 import store from './redux/store/store';
 import {
   BrowserRouter,
