@@ -6,7 +6,7 @@ import {
   toggleModalNewEmployeeAction,
   setFormDataAction,
   toggleModalUpdateEmployeeAction,
-} from "./actions";
+} from "../../../redux/actions/ManagementPageAction";
 import {
   Table,
   Tag,
@@ -21,12 +21,12 @@ import {
 import httpClient from "../../../utils/httpClient";
 import { extend } from "lodash";
 import { DeleteOutlined, EditFilled, ExclamationCircleOutlined } from "@ant-design/icons";
-import store from '../../../store';
+import store from '../../../redux/store/store';
 const { Option } = Select;
 const { confirm } = Modal;
 
 const mapStateToProps = (state) => {
-  return state.managementPageReducer;
+  return state.ManagementPageReducer;
 };
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -143,7 +143,7 @@ class ManagementPage extends Component {
     super(props);
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const result = await httpClient.get("/admin/employee");
     this.props.setData(result);
   }
@@ -156,13 +156,7 @@ class ManagementPage extends Component {
       toggleModalNewEmployee,
       toggleModalUpdateEmployee,
     } = this.props;
-    const prefixSelector = (
-      <Form.Item name="prefix" noStyle>
-        <Select style={{ width: 70 }}>
-          <Option value="86">+84</Option>
-        </Select>
-      </Form.Item>
-    );
+  
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -176,10 +170,11 @@ class ManagementPage extends Component {
     
     return (
       <div>
+        <h2>Quản lý nhân viên</h2>
         <Button
           onClick={() => toggleModalNewEmployee()}
           type="primary"
-          style={{ marginBottom: 16 }}
+          style={{ marginBottom: 16, marginTop: 16 }}
         >
           + Thêm nhân viên
         </Button>

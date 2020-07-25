@@ -1,9 +1,8 @@
-
-/*=== NGOC PART */
 const mongoose = require('mongoose');
 const db = require('../utils/db');
 const Schema = mongoose.Schema;
 const moment = require('moment');
+
 const { now } = require('lodash');
 
 const transaction = new Schema({
@@ -13,6 +12,7 @@ const transaction = new Schema({
     transferAt: Date, // Thời gian chuyển
     content: String, 
     isPayment: Boolean, // Thanh toán nhắn nợ. (bool)
+    isPayFee: Boolean //  Tra phi giao dich
 })
 
 module.exports = {
@@ -24,6 +24,7 @@ module.exports = {
         console.log(entity);
         return db.create('transactions', transaction, entity);
     },
+
 
     getByAccountNumber: (value) => {
         return new Promise((resolve, reject)=>{

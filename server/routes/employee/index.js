@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const passport = require("passport");
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
 const utils = require("../../utils/utils");
@@ -8,6 +7,7 @@ const Account = mongoose.model("Account");
 const Transaction = require("../../models/transaction") 
 
 var ObjectId = mongoose.ObjectId; 
+
 
 router.post("/employee/create-customer",utils.requireRole('employee'), async (req, res) => {
   const { username, fullname, email, password, phone } = req.body;

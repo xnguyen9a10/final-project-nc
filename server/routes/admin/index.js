@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const { identity } = require("lodash");
 const Employee = mongoose.model("Employee");
 const User = mongoose.model("User");
+const Outside = mongoose.model("Outside");
 const Account = mongoose.model("Account");
 
 // router.get("/admin/employee", utils.requireRole('admin'), async (req, res) => {
@@ -75,6 +76,11 @@ router.post("/admin/employee/delete", async (req, res) => {
   await User.findOneAndDelete({ email: employee.username });
 
   return res.json(utils.succeed("Delete!"));
+});
+
+router.get("/admin/transaction", async (req, res) => {
+  const data = await Outside.find({});
+  return res.json(utils.succeed(data));
 });
 
 module.exports = router;

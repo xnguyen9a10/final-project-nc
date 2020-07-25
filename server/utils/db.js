@@ -29,7 +29,8 @@ module.exports = {
                     reject(err);
                 }
                 else{
-                    resolve(new_entity);
+                    // resolve(new_entity);
+                    resolve(true);
                 }
             })
 

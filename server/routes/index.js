@@ -24,8 +24,8 @@ function requireLogin(req, res, next) {
 }
 
 router.use("/", user);
-router.use(requireLogin);
 router.use("/", bankLink);
+router.use(requireLogin);
 router.use("/", employee);
 router.use("/", customer);
 router.use("/", admin);

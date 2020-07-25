@@ -36,5 +36,54 @@ body{
   .bold{
     font-weight: bold;
   }
-  
-  
+.row{
+  width:100%;
+}
+
+#sider{
+  transition: 0.5s;
+}
+.card-noti {
+  position: relative;
+  animation: mymove 1s;
+}
+@keyframes mymove {
+  from {right: -300px;}
+  to {right: 0px;}
+}
+
+.img-icon:hover {
+  opacity: 0.8;
+  transform: rotate(-25deg);
+  transition: 0.5s;
+}
+.medium-title{
+  color: #d12f37;
+  font-size: 18px;
+}
+.select-list{
+  font-size: 14px;
+  width: 350px;
+}
+
+.col-thrid {
+  width: 33%;
+  padding-left: 24px;
+  padding-right: 12px;
+}
+
+.right{
+  float: right;
+}
+
+.left {
+  float: left
+}
+.margin-bottom-32{
+  padding-bottom: 32px;
+}
+
+.bold{
+  font-weight: bold;
+}
+
