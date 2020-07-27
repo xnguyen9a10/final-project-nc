@@ -11,7 +11,7 @@ import {
 } from 'react-router-dom'
 import createCustomer from './components/employee/createCustomer'
 import rechargeAccount from './components/employee/rechargeAccount'
-import transactionHistory from './components/employee/transactionHistory'
+import transactionHistory from './components/customer/transactionHistory'
 import {
   UploadOutlined,
   UserOutlined,
@@ -55,7 +55,7 @@ class App extends React.Component {
               <Link to="/employee/recharge-account">Nạp tiền vào tài khoản</Link>
             </Menu.Item>
             <Menu.Item key="3" icon={<HistoryOutlined/>}>
-             <Link to="/employee/transaction-history">Lịch sử giao dịch</Link>
+             <Link to="/transaction-history">Lịch sử giao dịch</Link>
              </Menu.Item>
             <Menu.Item key="4" icon={<UploadOutlined />}>
               <Link to="/admin/management">Quản lý nhân viên</Link>
@@ -80,7 +80,7 @@ class App extends React.Component {
               <Switch>
                 <PrivateRoute exact path="/employee/create-customer" component={createCustomer} />
                 <PrivateRoute exact path='/employee/recharge-account' component={rechargeAccount} />
-                <PrivateRoute exact path='/employee/transaction-history' component={transactionHistory} />
+                <PrivateRoute exact path='/transaction-history' component={transactionHistory} />
                 <PrivateRoute exact path='/admin/management' component={ManagementPageComponent} />
                 <PrivateRoute exact path='/admin/history' component={TransactionPageComponent} />
               </Switch>

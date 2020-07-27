@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.css";
 import LoginComponent from "./components/login/login";
+import ForgetPassword from "./forgot-password/forgotpassword"
 //import store from './store';
 import CustomerApp from './components/customer/App';
 import store from './redux/store/store';
@@ -46,6 +47,8 @@ ReactDOM.render(
             (props) =>
             !isLogin() ? <LoginComponent /> : <Redirect to="/" />
           }
+        />
+        <Route exact path={"/forget-password"} component={ForgetPassword}
         />
         {/* <PrivateRoute component={(createCustomer)} path="/employee/create-customer"/>
         {/* <PrivateRoute component={(rechargeAccount)} path="/employee/recharge-account"/> */}

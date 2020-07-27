@@ -38,6 +38,51 @@ module.exports = {
                 }
             })
         })
+    },
+
+    getByTransfer:(value)=>{
+        return new Promise((resolve, reject)=>{
+            var model = mongoose.model('transactions', transaction);
+            return model.find({accountHolderNumber: value,
+            isPayFee:false}).exec((err,rows)=>{
+                if(err){
+                    reject(err);
+                }
+                else{
+                    resolve(rows);
+                }
+            })
+        })
+    },
+
+    getByReceiver:(value)=>{
+        return new Promise((resolve, reject)=>{
+            var model = mongoose.model('transactions', transaction);
+            return model.find({receiverAccountNumber: value,
+            isPayfee:false}).exec((err,rows)=>{
+                if(err){
+                    reject(err);
+                }
+                else{
+                    resolve(rows);
+                }
+            })
+        })
+    },
+
+    getByIspayment:(value)=>{
+        return new Promise((resolve, reject)=>{
+            var model = mongoose.model('transactions', transaction);
+            return model.find({accountHolderNumber: value,
+            isPayFee:true}).exec((err,rows)=>{
+                if(err){
+                    reject(err);
+                }
+                else{
+                    resolve(rows);
+                }
+            })
+        })
     }
 
 }

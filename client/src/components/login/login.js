@@ -8,6 +8,7 @@ import { setSession } from '../../utils/auth';
 import styles from "./login.less";
 import { Helmet } from "react-helmet";
 import Recaptcha from 'react-recaptcha'
+import {Link} from "react-router-dom"
 
 class LoginComponent extends React.Component {
   constructor(props) {
@@ -103,9 +104,10 @@ class LoginComponent extends React.Component {
                 </Button>
           </Form.Item>
           <Form.Item>
-            <a className="login-form-forgot" href="">
-              Forgot password
-                </a>
+            {/* <a className="login-form-forgot" href=""> */}
+            <Link to="/forget-password">Forgot password</Link>
+              
+                {/* </a> */}
           </Form.Item>
 
         </Form>
