@@ -33,7 +33,14 @@ class LoginComponent extends React.Component {
          result.data.data.refreshToken, 
          result.data.data.userCopied.role,
          result.data.data.userCopied.email);
-      history.push("/")
+      
+      if (result.data.data.userCopied.role === 'employee') {
+        history.push("/employee/create-customer")
+      }
+      if (result.data.data.userCopied.role === 'customer') {
+        history.push("/employee/create-customer")
+      }
+
     }
   };
 

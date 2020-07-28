@@ -65,7 +65,7 @@ function App(props) {
                                     document.getElementById("sub_content").style.display = "none";
                                 }
                             }}>
-                            <Link to="/services" /*onClick={(e)=>e.preventDefault()}*/ >DỊCH VỤ</Link>
+                            <Link to="/customer/services" /*onClick={(e)=>e.preventDefault()}*/ >DỊCH VỤ</Link>
                         </Menu.Item>
                         <Menu id="submenu" style={{ borderTop: "0.1px solid lightgrey", borderBottom: "0.1px solid lightgrey", display: "none" }} theme="dark" mode="inline">
                             <Menu.Item key="21">
@@ -82,13 +82,13 @@ function App(props) {
                                 }}>Thông tin tài khoản</Link>
                             </Menu.Item>
                             <Menu.Item key="22">
-                                <Link to="/fund-transfer" style={{ paddingLeft: "20px" }}>Thanh toán</Link>
+                                <Link to="/customer/fund-transfer" style={{ paddingLeft: "20px" }}>Thanh toán</Link>
                             </Menu.Item>
                             <Menu.Item key="23">
-                                <Link to="/change-password" style={{ paddingLeft: "20px" }}>Đổi mật khẩu</Link>
+                                <Link to="/customer/change-password" style={{ paddingLeft: "20px" }}>Đổi mật khẩu</Link>
                             </Menu.Item>
                             <Menu.Item key="24">
-                                <Link to="/transaction-history" style={{ paddingLeft: "20px" }}>Quản lý tài khoản</Link>
+                                <Link to="/customer/transaction-history" style={{ paddingLeft: "20px" }}>Quản lý tài khoản</Link>
                             </Menu.Item>
                         </Menu>
                         <Menu.Item key="3" icon={<HistoryOutlined />}>
@@ -107,18 +107,18 @@ function App(props) {
                     </div>
                     </Header>
                     <Switch>
-                        <Route path="/services" render={(props) => (
+                        <Route path="/customer/services" render={(props) => (
                             <Service props />)
                         }>
                         </Route>
-                        <Route path="/profile">
+                        <Route path="/customer/profile">
                             {<Profile />}
                         </Route>
-                        <Route path="/fund-transfer" component={FundTransfer} />
-                        <Route path="/change-password" component={ChangePassword} />
-                        <Route path="/transaction-history" component={transactionHistory}/>
-                        <Route path="/accountHistory/:accountId" component={accountHistory}/>
-                        <Route exact path="/" component={Home} />
+                        <Route path="/customer/fund-transfer" component={FundTransfer} />
+                        <Route path="/customer/change-password" component={ChangePassword} />
+                        <Route path="/customer/transaction-history" component={transactionHistory}/>
+                        <Route path="/customer/accountHistory/:accountId" component={accountHistory}/>
+                        <Route exact path="/customer" component={Home} />
                     </Switch>
 
                 </Layout>
@@ -141,7 +141,7 @@ function Service() {
             <div className="site-layout-background" style={{ padding: 24, height: "600px" }}>
                 <ul id="list" style={{ display: 'block' }}>
                     <li style={{ display: 'inline-block', width: '25%', paddingLeft: "24px", paddingRight: "24px" }}>
-                        <Link to="/profile" style={{ textDecoration: "none" }} onClick={() => {
+                        <Link to="/customer/profile" style={{ textDecoration: "none" }} onClick={() => {
                             document.getElementById("list").style.display = "none";
 
                         }
@@ -160,7 +160,7 @@ function Service() {
                     </li>
 
                     <li style={{ display: 'inline-block', width: '25%', paddingLeft: "24px", paddingRight: "24px" }}>
-                        <Link to="/fund-transfer" style={{ textDecoration: "none" }} onClick={() => document.getElementById("list").style.display = "none"}>
+                        <Link to="/customer/fund-transfer" style={{ textDecoration: "none" }} onClick={() => document.getElementById("list").style.display = "none"}>
                             <div style={{ margin: "auto" }}>
                                 <div style={{ width: "90%", margin: "auto" }}>
                                     <img src={pay_icon} className="img-icon" style={{ width: "100%" }} />
@@ -175,7 +175,7 @@ function Service() {
                     </li>
 
                     <li style={{ display: 'inline-block', width: '25%', paddingLeft: "24px", paddingRight: "24px" }}>
-                        <Link to="/profile" style={{ textDecoration: "none" }} onClick={() => document.getElementById("list").style.display = "none"}>
+                        <Link to="/customer/profile" style={{ textDecoration: "none" }} onClick={() => document.getElementById("list").style.display = "none"}>
                             <div style={{ margin: "auto" }}>
                                 <div style={{ width: "90%", margin: "auto" }}>
                                     <img src={transfer1_icon} className="img-icon" style={{ width: "100%" }} /><br />
@@ -188,7 +188,7 @@ function Service() {
                     </li>
 
                     <li style={{ display: 'inline-block', width: '25%', paddingLeft: "24px", paddingRight: "24px" }}>
-                        <Link to="/profile" style={{ textDecoration: "none" }} onClick={click}>
+                        <Link to="/customer/profile" style={{ textDecoration: "none" }} onClick={click}>
                             <div style={{ margin: "auto" }}>
                                 <div style={{ width: "90%", margin: "auto" }}>
                                     <img src={transfer2_icon} className="img-icon" style={{ width: "100%" }} /><br />
@@ -201,7 +201,7 @@ function Service() {
                     </li>
 
                     <li style={{ display: 'inline-block', width: '25%', marginTop: "20px", paddingLeft: "24px", paddingRight: "24px" }}>
-                        <Link to="/profile" style={{ textDecoration: "none" }} onClick={click}>
+                        <Link to="/customer/profile" style={{ textDecoration: "none" }} onClick={click}>
                             <div style={{ margin: "auto" }}>
                                 <div style={{ width: "90%", margin: "auto" }}>
                                     <img src={info_service_icon} className="img-icon" style={{ width: "100%" }} />
@@ -216,7 +216,7 @@ function Service() {
                     </li>
 
                     <li style={{ display: 'inline-block', width: '25%', marginTop: "20px", paddingLeft: "24px", paddingRight: "24px" }}>
-                        <Link to="/profile" style={{ textDecoration: "none" }} onClick={click}>
+                        <Link to="/customer/profile" style={{ textDecoration: "none" }} onClick={click}>
                             <div style={{ margin: "auto" }}>
                                 <div style={{ width: "90%", margin: "auto" }}>
                                     <img src={saving_icon} className="img-icon" style={{ width: "100%" }} /><br /></div>
@@ -228,7 +228,7 @@ function Service() {
                     </li>
 
                     <li style={{ display: 'inline-block', width: '25%', marginTop: "20px", paddingLeft: "24px", paddingRight: "24px" }}>
-                        <Link to="/profile" style={{ textDecoration: "none" }} onClick={click}>
+                        <Link to="/customer/profile" style={{ textDecoration: "none" }} onClick={click}>
                             <div style={{ margin: "auto" }}>
                                 <div style={{ width: "90%", margin: "auto" }}>
                                     <img src={pay2_icon} className="img-icon" style={{ width: "100%" }} /></div>
@@ -239,7 +239,7 @@ function Service() {
                         </Link>
                     </li>
                     <li style={{ display: 'inline-block', width: '25%', marginTop: "20px", paddingLeft: "24px", paddingRight: "24px" }}>
-                        <Link to="/profile" style={{ textDecoration: "none" }} onClick={click}>
+                        <Link to="/customer/profile" style={{ textDecoration: "none" }} onClick={click}>
                             <div style={{ margin: "auto" }}>
                                 <div style={{ width: "90%", margin: "auto" }}>
                                     <img src={info_icon} className="img-icon" style={{ width: "100%" }} /><br />
@@ -253,10 +253,10 @@ function Service() {
                 </ul>
 
                 <Switch>
-                    <Route path="/profile" component={Profile} />
-                    <Route path="/fund-transfer" component={FundTransfer} />
-                    <Route path="/change-password" component={ChangePassword} />
-                    <Route exact path="/" component={Service} />
+                    <Route path="/customer/profile" component={Profile} />
+                    <Route path="/customer/fund-transfer" component={FundTransfer} />
+                    <Route path="/customer/change-password" component={ChangePassword} />
+                    <Route exact path="/customer" component={Service} />
                 </Switch>
 
             </div>
