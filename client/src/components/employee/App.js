@@ -45,13 +45,13 @@ class Employee extends React.Component {
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={["4"]}>
             <Menu.Item key="1" icon={<UserOutlined />}> 
-            <Link to="/create-customer">Tạo tài khoản khách hàng</Link>
+            <Link to="/employee/create-customer">Tạo tài khoản khách hàng</Link>
             </Menu.Item>
             <Menu.Item key="2" icon={<MoneyCollectOutlined />}>
-            <Link to="/recharge-account">Nạp tiền vào tài khoản</Link>
+            <Link to="/employee/recharge-account">Nạp tiền vào tài khoản</Link>
             </Menu.Item>
             <Menu.Item key="3" icon={<HistoryOutlined/>}>
-            <Link to="/transaction-history">Lịch sử giao dịch</Link>
+            <Link to="/employee/transaction-history">Lịch sử giao dịch</Link>
             {/* <Menu.Item key="3" icon={<UploadOutlined />}>
             <Link to="/admin/management">Quản lý nhân viên</Link>
             </Menu.Item>
@@ -71,9 +71,9 @@ class Employee extends React.Component {
               style={{ padding: 24, minHeight: 360 }}
             >
               <Switch>
-                <PrivateRoute exact path="/create-customer" component={createCustomer} />
-                <PrivateRoute exact path='/recharge-account' component={rechargeAccount} />
-                <PrivateRoute exact path='/transaction-history' component={transactionHistory} />
+                <PrivateRoute exact path="employee/create-customer" component={createCustomer} />
+                <PrivateRoute exact path='employee/recharge-account' component={rechargeAccount} />
+                <PrivateRoute exact path='employee/transaction-history' component={transactionHistory} />
               </Switch>
 
             </div>

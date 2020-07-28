@@ -15,7 +15,7 @@ class transactionHistory extends React.Component {
   }
   async componentDidMount() {
     const result = await httpClient.get('/employee/account-list');
-    console.log(result)
+    
     this.setState({
       accounts: result
     })
@@ -35,6 +35,7 @@ class transactionHistory extends React.Component {
       }
       dataSource.push(account)
     }
+
     const columns = [
       {
         title: 'STT',

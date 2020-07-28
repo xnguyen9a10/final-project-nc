@@ -30,20 +30,20 @@ class LoginComponent extends React.Component {
       setSession(result.data.data.userCopied.id, 
         result.data.data.userCopied.fullname, 
         result.data.data.accessToken,
-        result.data.data.refreshToken,
-        result.data.data.userCopied.role,
-        result.data.data.userCopied.email
-      );
-
-      if (result.data.data.userCopied.role === "employee") {
-        history.push(`/employee/create-customer`);
-      } else if (result.data.data.userCopied.role === "customer") {
-          history.push(`/`);
-        }
-        if (result.data.data.userCopied.role === "administrator") {
-          history.push(`/`);
-        }
+         result.data.data.refreshToken, 
+         result.data.data.userCopied.role,
+         result.data.data.userCopied.email);
+      
+      if (result.data.data.userCopied.role === 'employee') {
+        history.push("/employee/create-customer")
       }
+      if (result.data.data.userCopied.role === 'customer') {
+        history.push("/customer/profile")
+      }
+      if (result.data.data.userCopied.role === 'administrator') {
+        history.push("/admin/management")
+      }
+    }
   };
 
   async verifyCallback(response) {

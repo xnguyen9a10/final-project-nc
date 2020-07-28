@@ -13,7 +13,6 @@ const initState = {
 
 function managementPageReducer(state = initState, action) {
   const newState = _.cloneDeep(state);
-  console.log(action)
   switch(action.type) {
     case 'ADMIN_OPEN_ALERT': {
       newState.isAlertOpen = true;
