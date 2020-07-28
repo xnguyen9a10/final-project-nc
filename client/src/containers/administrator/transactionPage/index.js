@@ -26,6 +26,8 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import store from "../../../redux/store/store";
+import moment from 'moment';
+
 const { Option } = Select;
 const { confirm } = Modal;
 
@@ -34,6 +36,7 @@ const columns = [
     title: "Thời gian",
     dataIndex: "time",
     key: "time",
+    render: value => moment.unix(value).format("MM/DD/YYYY")
   },
   {
     title: "Tài khoản chuyển",
