@@ -4,14 +4,13 @@ import { Layout } from "antd";
 import { connect } from 'react-redux';
 import { fetchCustomerAccount } from '../../redux/actions/CustomerActions';
 import { getUserName } from '../../utils/auth';
+import _ from 'lodash';
 
 function Profile({ customers, fetchProfile }) {
     const { Content } = Layout;
     useEffect(() => {
         fetchProfile();
     }, [fetchProfile])
-    console.log(localStorage);
-
 
     function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
         try {
@@ -38,8 +37,8 @@ function Profile({ customers, fetchProfile }) {
                                     <div style={{ width: "33%", paddingRight: "12px", float:"left", fontFamily: "'Titillium Web', sans-serif" }}>
                                         <Card key={index} style={{ width: '100%' }}>
                                             <Card.Body>
-                                                <Card.Title style={{ fontWeight: "600" }}> {account.account_id} </Card.Title>
-                                                <Card.Subtitle className="mb-2 text-muted" style={{ fontSize: "13px" }}>ACCOUNT NUMBER</Card.Subtitle>
+                                                <Card.Title style={{ fontWeight: "600" }}> {} </Card.Title>
+                            <Card.Subtitle className="mb-2 text-muted" style={{ fontSize: "13px" }}>{_.get(account, 'account.name', null)}</Card.Subtitle>
                                                 <Card.Text style={{ opacity: "0.8", fontSize: "12px", marginTop: "20px" }}>
                                                     <div>
                                                         <i className="fa fa-user"></i>
@@ -54,7 +53,7 @@ function Profile({ customers, fetchProfile }) {
                                                 </Card.Text>
                                                 <Card.Text>
                                                     <div style={{fontFamily:"'Titillium Web', sans-serif", fontSize:"14px"}}>
-                                                        <span style={{fontWeight:"600", paddingRight:"8px"}}>Available Balance:</span> {formatMoney(account.balance)} VND
+                                                        <span style={{fontWeight:"600", paddingRight:"8px"}}>Available Balance:</span> {formatMoney(_.get(account, 'account.name', 0))} VND
                                                         <div>
                                                         <span style={{fontWeight:"600", paddingRight:"8px"}}>Brand:</span> South VietNam
                                                         </div>

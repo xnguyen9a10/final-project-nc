@@ -69,7 +69,7 @@ function App(props) {
                         </Menu.Item>
                         <Menu id="submenu" style={{ borderTop: "0.1px solid lightgrey", borderBottom: "0.1px solid lightgrey", display: "none" }} theme="dark" mode="inline">
                             <Menu.Item key="21">
-                                <Link to="/profile" style={{ paddingLeft: "20px" }} onClick={(e) => {
+                                <Link to="/customer/profile" style={{ paddingLeft: "20px" }} onClick={(e) => {
                                     var el = document.getElementById("menu");
                                     for (var i = 0; i < el.length; i++) {
                                         el[i].classList.remove('ant-menu-item-selected');
@@ -100,19 +100,19 @@ function App(props) {
                 </Sider>
 
                 <Layout>
-                    <Header className="site-layout-sub-header-background" style={{ backgroundColor: "#00008B" }}>
+                    {/* <Header className="site-layout-sub-header-background" style={{ backgroundColor: "#00008B" }}>
                         <div style={{ textAlign: "center", color: "white", fontSize: "28px" }}>
                             <span><img src={profile_icon} height="50px" style={{ paddingRight: "10px" }} /></span>
                     Thông tin tài khoản
                     </div>
-                    </Header>
+                    </Header> */}
                     <Switch>
                         <Route path="/customer/services" render={(props) => (
                             <Service props />)
                         }>
                         </Route>
                         <Route path="/customer/profile">
-                            {<Profile />}
+                            {<Profile props/>}
                         </Route>
                         <Route path="/customer/fund-transfer" component={FundTransfer} />
                         <Route path="/customer/change-password" component={ChangePassword} />
@@ -139,7 +139,7 @@ function Service() {
     return (
         <Router>
             <div className="site-layout-background" style={{ padding: 24, height: "600px" }}>
-                <ul id="list" style={{ display: 'block' }}>
+                {/* <ul id="list" style={{ display: 'block' }}>
                     <li style={{ display: 'inline-block', width: '25%', paddingLeft: "24px", paddingRight: "24px" }}>
                         <Link to="/customer/profile" style={{ textDecoration: "none" }} onClick={() => {
                             document.getElementById("list").style.display = "none";
@@ -250,7 +250,7 @@ function Service() {
                             </div>
                         </Link>
                     </li>
-                </ul>
+                </ul> */}
 
                 <Switch>
                     <Route path="/customer/profile" component={Profile} />
