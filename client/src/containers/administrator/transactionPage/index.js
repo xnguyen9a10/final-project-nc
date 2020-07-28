@@ -78,16 +78,23 @@ const mapDispatchToProps = (dispatch) => {
 class TransactionPage extends Component {
   constructor(props) {
     super(props);
-    // this.state = {
-    //   data
-    // }
   }
   async componentDidMount() {
     const result = await httpClient.get("/admin/transaction");
     console.log(result);
+    store.dispatch(setDataAction(result.data))
     // this.props.setData(result);
   }
   render() {
+    const {
+      data,
+      // isModalOpen,
+      // isModalUpdateOpen,
+      // toggleModalNewEmployee,
+      // toggleModalUpdateEmployee,
+    } = this.props;
+    console.log(data)
+
     return (
       <div>
         <div class="header" style={{}}>
@@ -105,16 +112,19 @@ class TransactionPage extends Component {
               option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
             }
           >
-            <Option value="jack">RSA Bank</Option>
-            <Option value="lucy">PGP Bank</Option>
-            <Option value="tom">Tất cả</Option>
+            <Option value="rsa">RSA Bank</Option>
+            <Option value="pgp">PGP Bank</Option>
+            <Option value="all">Tất cả</Option>
           </Select>
         </div>
 
-        <Table dataSource={[]} columns={columns} />
+        <Table dataSource={data} columns={columns} />
       </div>
     );
   }
 }
 
-export default TransactionPage;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TransactionPage);

@@ -11,8 +11,9 @@ const initState = {
 }
 
 
-function transactionPageReducer(state = initState, action) {
+function TransactionPageReducer(state = initState, action) {
   const newState = _.cloneDeep(state);
+  console.log(action)
 
   switch(action.type) {
     case 'ADMIN_SET_DATA': {
@@ -44,4 +45,4 @@ function transactionPageReducer(state = initState, action) {
   }
 }
 
-export default managementPageReducer
+export default TransactionPageReducer

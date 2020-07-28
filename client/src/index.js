@@ -32,34 +32,36 @@ import { isLogin, isRole } from "./utils/auth";
 const AppComponent = withRouter(App);
 //const CustomerComponent = withRouter(CustomerApp);
 const CustomerComponent = withRouter(CustomerApp);
+const EmployeeComponenet = withRouter(Employee);
+
 ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
       <Switch>
-        <Route
+        {/* <Route
           exact
-          path="/"
+          path="/customer"
           render={(props) => {
+            console.log(isRole("customer"))
             if (!isLogin()) {
               return <LoginComponent />;
             } else {
               if (isRole("customer")) {
                 return <CustomerComponent />;
-              }
+              } else
             }
           }}
-        />
+        /> */}
         <Route exact path={"/login"}
           render={
             (props) =>
             !isLogin() ? <LoginComponent /> : <Redirect to="/" />
           }
         />
-        <Route exact path={"/forget-password"} component={ForgetPassword}
-        />
+        <Route exact path={"/forget-password"} component={ForgetPassword}/>
+        {!isRole("customer") ? <AppComponent /> : <CustomerComponent />}
         {/* <PrivateRoute component={(createCustomer)} path="/employee/create-customer"/>
         {/* <PrivateRoute component={(rechargeAccount)} path="/employee/recharge-account"/> */}
-        <AppComponent />
       </Switch>
     </Router>
   </Provider>,

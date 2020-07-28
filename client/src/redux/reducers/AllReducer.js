@@ -5,14 +5,14 @@ import CustomerTransferReducer from './CustomerTransferReducer';
 import CustomerRequestTransfer from './CustomerRequestTransferReducer';
 import VerifyCode from './VerifyCodeReducer';
 import ManagementPageReducer from './ManagementPageReducer';
-
+import TransactionPageReducer from './TransactionPageReducer';
 
 const AllReducer = combineReducers({
     customer: CustomerAccountReducer,
     customerTransfer: CustomerTransferReducer,
     customerRequestTransfer: CustomerRequestTransfer,
     verifyResult: VerifyCode,
-    
+    TransactionPageReducer,
     ManagementPageReducer,
 })
 
