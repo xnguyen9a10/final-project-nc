@@ -159,23 +159,24 @@ class App extends React.Component {
                         className="site-layout-sub-header-background"
                         style={{ padding: 0 }}
                     >
-                        <div className="logo">
+                        {/* <div className="logo">
                             <img
                                 src={LogoImg}
                                 alt="logo"
                                 height={60}
                                 width={60}
                             />
-                        </div>
+                        </div> */}
                     </Header>
                     <Content
                         style={{
-                            margin: "24px 40px 17px 40px",
+                            // margin: "24px 40px 17px 40px",
+                            backgroundColor: "#EEEEEE"
                         }}
                     >
                         <div
                             className="site-layout-background"
-                            style={{ padding: 24, background: "lightblue",height:"700px" }}
+                            style={{ padding: 24,height:"700px" }}
                         >
                             <Switch>
                                 <PrivateRoute
@@ -197,6 +198,16 @@ class App extends React.Component {
                                     exact
                                     path={`/employee/accountHistory/:accountId`}
                                     component={accountHistory}
+                                />
+                                <PrivateRoute
+                                    exact
+                                    path="/admin/1"
+                                    component={ManagementPageComponent}
+                                />
+                                <PrivateRoute
+                                    exact
+                                    path={`/admin/2`}
+                                    component={TransactionPageComponent}
                                 />
                             </Switch>
                         </div>

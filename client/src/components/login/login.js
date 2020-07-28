@@ -70,7 +70,12 @@ class LoginComponent extends React.Component {
       if (result.data.data.userCopied.role === "employee") {
         history.push(`/employee/create-customer`);
       } else {
-        history.push(`/profile`);
+        if (result.data.data.userCopied.role === "customer") {
+          history.push(`/`);
+        }
+        if (result.data.data.userCopied.role === "administrator") {
+          history.push(`/`);
+        }
       }
     }
   };
@@ -114,7 +119,9 @@ class LoginComponent extends React.Component {
             backgroundPosition: "center",
           }}
         >
-          <Title style={{margin: "auto", color: "white"}}>Internet Banking</Title>
+          <Title style={{ margin: "auto", color: "white" }}>
+            Internet Banking
+          </Title>
 
           <Form
             name="normal_login"
