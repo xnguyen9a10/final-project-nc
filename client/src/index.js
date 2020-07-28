@@ -37,7 +37,7 @@ ReactDOM.render(
     <Router history={history}>
       <Switch>
         <Route
-          exact
+          // exact
           path="/"
           render={(props) => {
             if (!isLogin()) {
