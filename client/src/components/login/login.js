@@ -2,262 +2,118 @@ import React from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import _ from "lodash";
-import history from "../../utils/history";
-import axios from "axios";
-import { setSession } from "../../utils/auth";
+import history from '../../utils/history';
+import axios from 'axios';
+import { setSession } from '../../utils/auth';
 import styles from "./login.less";
 import { Helmet } from "react-helmet";
-import Recaptcha from "react-recaptcha";
-import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import { Typography } from 'antd';
-const { Title } = Typography;
-
-// class LoginComponent extends React.Component {
-//     constructor(props) {
-//         super(props);
-//         this.state = {
-//             captchaCheck: false,
-//         };
-//         this.verifyCallback = this.verifyCallback.bind(this);
-//         this.onloadCallback = this.onloadCallback.bind(this);
-//     }
-//     onFinish = async (values) => {
-//         const { captchaCheck } = this.state;
-//         const result = await axios.post(
-//             "http://localhost:3001/user/login",
-//             values
-//         );
-//         if (!captchaCheck) {
-//             alert("Vui lòng chọn captcha!");
-//             return;
-//         }
-//         if (result.data.status === "successful") {
-//             setSession(
-//                 result.data.data.userCopied.id,
-//                 result.data.data.accessToken,
-//                 result.data.data.refreshToken
-//             );
-//             history.push("/");
-//         }
-//     };
+import Recaptcha from 'react-recaptcha'
+import {Link} from "react-router-dom"
 
 class LoginComponent extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
-      captchaCheck: false,
-    };
-    this.verifyCallback = this.verifyCallback.bind(this);
-    this.onloadCallback = this.onloadCallback.bind(this);
+      captchaCheck: false
+    }
+    this.verifyCallback = this.verifyCallback.bind(this)
+    this.onloadCallback = this.onloadCallback.bind(this)
   }
   onFinish = async (values) => {
-    const { captchaCheck } = this.state;
-    const result = await axios.post("http://localhost:3001/user/login", values);
+    const { captchaCheck } = this.state
+    const result = await axios.post("http://localhost:3001/user/login", values)
     if (!captchaCheck) {
       alert("Vui lòng chọn captcha!");
-      return;
+      return
     }
-    if (result.data.status === "successful") {
-      setSession(
-        result.data.data.userCopied.id,
-        result.data.data.userCopied.fullname,
+    if (result.data.status === 'successful') {
+      setSession(result.data.data.userCopied.id, 
+        result.data.data.userCopied.fullname, 
         result.data.data.accessToken,
-        result.data.data.refreshToken,
-        result.data.data.userCopied.role,
-        result.data.data.userCopied.email
-      );
-
-      if (result.data.data.userCopied.role === "employee") {
-        history.push(`/employee/create-customer`);
-      } else {
-        if (result.data.data.userCopied.role === "customer") {
-          history.push(`/`);
-        }
-        if (result.data.data.userCopied.role === "administrator") {
-          history.push(`/`);
-        }
-      }
+         result.data.data.refreshToken, 
+         result.data.data.userCopied.role,
+         result.data.data.userCopied.email);
+      history.push("/")
     }
   };
 
   async verifyCallback(response) {
     if (response) {
       await this.setState({
-        captchaCheck: true,
-      });
-      console.log(this.state.captchaCheck);
+        captchaCheck: true
+      })
+      console.log(this.state.captchaCheck)
     }
   }
   onloadCallback() {
-    console.log(this.state.captchaCheck);
+    console.log(this.state.captchaCheck)
   }
 
   render() {
     return (
-      <div
-        className="row justify-content-center login-page"
-        style={{
-          backgroundColor: "#245785",
 
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <Helmet style={{ marginLeft: "10px" }}>
-          <script
-            src="https://www.google.com/recaptcha/api.js"
-            async
-            defer
-          ></script>
-        </Helmet>
-        <div
-          className="card o-hidden border-0  my-5 login-warp"
-          style={{
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
+ <div className="row justify-content-center">
+      <Helmet>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+      </Helmet>
+      <div className="card o-hidden border-0 shadow-lg my-5">
+        <Form
+          name="normal_login"
+          className="login-form mt-10"
+          initialValues={{ remember: true }}
+          onFinish={this.onFinish}
         >
-          <Title style={{ margin: "auto", color: "white" }}>
-            Internet Banking
-          </Title>
-
-          <Form
-            name="normal_login"
-            className="login-form mt-10"
-            initialValues={{ remember: true }}
-            onFinish={this.onFinish}
+          <Form.Item
+            name="email"
+            rules={[
+              { required: true, message: "Please input your Email!" },
+            ]}
           >
-            <Form.Item
-              name="email"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Email!",
-                },
-              ]}
+            <Input
+              prefix={<UserOutlined className="site-form-item-icon" />}
+              placeholder="Email"
+            />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            rules={[
+              { required: true, message: "Please input your Password!" },
+            ]}
+          >
+            <Input
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              type="password"
+              placeholder="Password"
+            />
+          </Form.Item>
+          <Form.Item>
+            <Recaptcha
+              sitekey="6LfYOqoZAAAAAE5-AOkmltvfagYT1cQiF3nBJ175"
+              render="explicit"
+              verifyCallback={this.verifyCallback}
+              onloadCallback={this.onloadCallback}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="login-form-button"
             >
-              <Input
-                size="large"
-                className="form-group"
-                prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder="Email"
-              />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your Password!",
-                },
-              ]}
-            >
-              <Input
-                size="large"
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                type="password"
-                placeholder="Password"
-              />
-            </Form.Item>
-            <Form.Item>
-              <Recaptcha
-                sitekey="6LfYOqoZAAAAAE5-AOkmltvfagYT1cQiF3nBJ175"
-                render="explicit"
-                verifyCallback={this.verifyCallback}
-                onloadCallback={this.onloadCallback}
-                className="recaptcha"
-              />
-            </Form.Item>
-            <Form.Item className="login-btn">
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="btn btn-primary"
-              >
-                Log in
-              </Button>
-            </Form.Item>
-            <Form.Item>
-              <a className="login-form-forgot" href="">
-                Forgot password
-              </a>
-            </Form.Item>
-          </Form>
-        </div>
+              Log in
+                </Button>
+          </Form.Item>
+          <Form.Item>
+            {/* <a className="login-form-forgot" href=""> */}
+            <Link to="/forget-password">Forgot password</Link>
+              
+                {/* </a> */}
+          </Form.Item>
+
+        </Form>
       </div>
-    );
+          </div>
+    )
   }
 }
-
-//   onloadCallback() {
-//     console.log(this.state.captchaCheck)
-//   }
-
-//   render() {
-//     return (
-
-//  <div className="row justify-content-center">
-//       <Helmet>
-//         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-//       </Helmet>
-//       <div className="card o-hidden border-0 shadow-lg my-5">
-//         <Form
-//           name="normal_login"
-//           className="login-form mt-10"
-//           initialValues={{ remember: true }}
-//           onFinish={this.onFinish}
-//         >
-//           <Form.Item
-//             name="email"
-//             rules={[
-//               { required: true, message: "Please input your Email!" },
-//             ]}
-//           >
-//             <Input
-//               prefix={<UserOutlined className="site-form-item-icon" />}
-//               placeholder="Email"
-//             />
-//           </Form.Item>
-//           <Form.Item
-//             name="password"
-//             rules={[
-//               { required: true, message: "Please input your Password!" },
-//             ]}
-//           >
-//             <Input
-//               prefix={<LockOutlined className="site-form-item-icon" />}
-//               type="password"
-//               placeholder="Password"
-//             />
-//           </Form.Item>
-//           <Form.Item>
-//             <Recaptcha
-//               sitekey="6LfYOqoZAAAAAE5-AOkmltvfagYT1cQiF3nBJ175"
-//               render="explicit"
-//               verifyCallback={this.verifyCallback}
-//               onloadCallback={this.onloadCallback}
-//             />
-//           </Form.Item>
-//           <Form.Item>
-//             <Button
-//               type="primary"
-//               htmlType="submit"
-//               className="login-form-button"
-//             >
-//               Log in
-//                 </Button>
-//           </Form.Item>
-//           <Form.Item>
-//             <a className="login-form-forgot" href="">
-//               Forgot password
-//                 </a>
-//           </Form.Item>
-
-//         </Form>
-//       </div>
-// //           </div>
-//     )
-//   }
 export default LoginComponent;

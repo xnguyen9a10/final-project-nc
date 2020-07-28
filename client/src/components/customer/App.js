@@ -32,6 +32,9 @@ import {
     HistoryOutlined
 } from "@ant-design/icons";
 import FundTransfer from './FundTransfer';
+import ChangePassword from './ChangePassword'
+import transactionHistory from "./transactionHistory";
+import accountHistory from './accountHistory';
 
 function App(props) {
     const { Header, Content, Sider } = Layout;
@@ -82,13 +85,10 @@ function App(props) {
                                 <Link to="/fund-transfer" style={{ paddingLeft: "20px" }}>Thanh toán</Link>
                             </Menu.Item>
                             <Menu.Item key="23">
-                                <Link to="/employee/recharge-account" style={{ paddingLeft: "20px" }}>Chuyển khoản hệ thống</Link>
+                                <Link to="/change-password" style={{ paddingLeft: "20px" }}>Đổi mật khẩu</Link>
                             </Menu.Item>
                             <Menu.Item key="24">
-                                <Link to="/employee/recharge-account" style={{ paddingLeft: "20px" }}>Chuyển khoản ngoài hệ thống</Link>
-                            </Menu.Item>
-                            <Menu.Item key="25">
-                                <Link to="/employee/recharge-account" style={{ paddingLeft: "20px" }}>Tiền gửi trực tuyến</Link>
+                                <Link to="/transaction-history" style={{ paddingLeft: "20px" }}>Quản lý tài khoản</Link>
                             </Menu.Item>
                         </Menu>
                         <Menu.Item key="3" icon={<HistoryOutlined />}>
@@ -115,6 +115,9 @@ function App(props) {
                             {<Profile />}
                         </Route>
                         <Route path="/fund-transfer" component={FundTransfer} />
+                        <Route path="/change-password" component={ChangePassword} />
+                        <Route path="/transaction-history" component={transactionHistory}/>
+                        <Route path="/accountHistory/:accountId" component={accountHistory}/>
                         <Route exact path="/" component={Home} />
                     </Switch>
 
@@ -252,6 +255,7 @@ function Service() {
                 <Switch>
                     <Route path="/profile" component={Profile} />
                     <Route path="/fund-transfer" component={FundTransfer} />
+                    <Route path="/change-password" component={ChangePassword} />
                     <Route exact path="/" component={Service} />
                 </Switch>
 

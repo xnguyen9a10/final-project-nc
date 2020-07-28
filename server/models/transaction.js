@@ -44,7 +44,7 @@ module.exports = {
         return new Promise((resolve, reject)=>{
             var model = mongoose.model('transactions', transaction);
             return model.find({accountHolderNumber: value,
-            isPayment:false}).exec((err,rows)=>{
+            isPayFee:false}).exec((err,rows)=>{
                 if(err){
                     reject(err);
                 }
@@ -59,7 +59,7 @@ module.exports = {
         return new Promise((resolve, reject)=>{
             var model = mongoose.model('transactions', transaction);
             return model.find({receiverAccountNumber: value,
-            isPayment:false}).exec((err,rows)=>{
+            isPayfee:false}).exec((err,rows)=>{
                 if(err){
                     reject(err);
                 }
@@ -74,7 +74,7 @@ module.exports = {
         return new Promise((resolve, reject)=>{
             var model = mongoose.model('transactions', transaction);
             return model.find({accountHolderNumber: value,
-            isPayment:true}).exec((err,rows)=>{
+            isPayFee:true}).exec((err,rows)=>{
                 if(err){
                     reject(err);
                 }

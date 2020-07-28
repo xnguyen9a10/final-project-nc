@@ -9,21 +9,13 @@ const transactionModel = require('../../models/transaction');
 const User = mongoose.model("User");
 const nodemailer = require("nodemailer");
 var otpGenerator = require('otp-generator')
+const bcrypt=require('bcryptjs')
+
 
 router.get("/customer/info", utils.requireRole('customer'), async (req, res) => {
   const response = await CustomerService.vidu();
   return res.json(response);
 });
-
-router.get("/customer/account-list", utils.requireRole('customer'), async (req, res) => {
-  const { user } = req
-  await Customer.findOne(
-    { user_id: user.id })
-    .exec((err, result) => {
-      if (err) throw err
-      else return res.json(result)
-    })
-})
 
 router.post("/customer/set-receiver", utils.requireRole('customer'), async (req, res) => {
   const { user } = req
@@ -63,6 +55,40 @@ router.post("/customer/set-receiver", utils.requireRole('customer'), async (req,
   })
 })
 
+router.get("/customer/account-list",utils.requireRole('customer'),async(req,res)=>{
+  const {user}=req
+  const customer=await Customer.find({user_id:user.id})
+ const paymentAccount=await Account.find({account_id:customer[0].paymentAccount.ID})
+ const savingAccount=[]
+ for(let i=0;i<customer[0].savingAccount.length;i++){
+   const account=await Account.find({account_id:customer[0].savingAccount[i].ID})
+   savingAccount.push(account)
+ }
+ const result={paymentAccount,savingAccount}
+ return res.status(201).json(result)
+})
+
+router.get("/customer/transfer-history/:accountId",utils.requireRole('customer'),async(req,res)=>{
+  const accountnumber=req.params.accountId
+  console.log("chuyển khoản")
+  const result =await transactionModel.getByTransfer(accountnumber)
+  res.status(201).json(result)
+}
+)
+
+router.get("/customer/receive-history/:accountId",utils.requireRole('customer'),async(req,res)=>{
+  const accountnumber=req.params.accountId
+  const result =await transactionModel.getByReceiver(accountnumber)
+  res.status(201).json(result)
+})
+
+router.get("/customer/payment-history/:accountId",utils.requireRole('customer'),async(req,res)=>{
+  const accountnumber=req.params.accountId
+  console.log("Nhắc nợ")
+  const result =await transactionModel.getByIspayment(accountnumber)
+  res.status(201).json(result)
+})
+
 /** ==== NGỌC PART===== */
 const { fail, succeed } = require("../../utils/utils");
 
@@ -92,6 +118,25 @@ router.post("/customer/get-customer", utils.requireRole('customer'), async (req,
     }
     else return res.status(200).json(result);
   })
+})
+
+router.post('/customer/change-password',utils.requireRole('customer'),async (req,res)=>{
+  const {confirmpassword,newpassword,oldpassword}=req.body
+  const {user}=req
+  if(confirmpassword!==oldpassword) return res.json(fail("Mật khẩu xác nhận không trùng khớp!"))
+  else if(confirmpassword===newpassword) return res.json(fail("Mật khẩu mới không được trùng với mật khẩu cũ!"))
+  else{
+  const customer=await User.findOne({fullname:user.fullname})
+  const validPass=await bcrypt.compare(oldpassword,customer.password)
+  if(!validPass) return res.json(fail("Mật khẩu cũ không chính xác!"))
+  else {
+      const hashedNewPassword=await bcrypt.hash(newpassword,10)
+
+      const newPassword=await User.findOneAndUpdate({fullname:user.fullname},{password:hashedNewPassword})
+      console.log(newPassword)
+        if(newPassword) res.json(utils.succeed("Thay đổi mật khẩu thành công!"))
+  }
+  }
 })
 
 router.post("/customer/get-account", utils.requireRole("customer"), async (req, res) => {
@@ -182,8 +227,6 @@ router.post("/customer/transfer-request", utils.requireRole("customer"), async (
   }
 })
 
-
-
 router.post("/customer/verify-transfer", utils.requireRole("customer"), async (req, res) => {
   try {
     var { code, email,receiverAccountNumber,amount } = req.body;
@@ -202,8 +245,6 @@ router.post("/customer/verify-transfer", utils.requireRole("customer"), async (r
     if (expired.getTime() < Date.now()) {
       return res.json(utils.fail(1, "The code is expired"));
     }
-    console.log("ma OTP nhap vao la"+code)
-    console.log("ma OTP dung la"+record.otp)
     if (record.otp == code) {
       console.log("Chuyen khoan thanh cong")
       console.log("Tai khoan nguoi gui"+accountholder[0].balance)

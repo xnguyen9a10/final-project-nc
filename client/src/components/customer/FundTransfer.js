@@ -73,17 +73,24 @@ function FundTransfer(props) {
     }, [props.verifyResult.result])
 
     useEffect(() => {
+        if(props.verifyResult.error!==null){
+            setErrorCard(true);
+            setNotiText(props.verifyResult.error.message);
+            return
+        }
+        else
         if (props.customerTransfer.result == true) {
             setSuccessCard(true);
             setNotiText("Transfer Successfully!")
             if(alreadyIn==false){
                 setShow(true);
             }
+            return
         }
-        if (props.customerTransfer.result == false) {
-            setErrorCard(true);
-            setNotiText(props.customerTransfer.error.message);
-        }
+        // if (props.customerTransfer.result == false) {
+        //     setErrorCard(true);
+        //     setNotiText(props.customerTransfer.error.message);
+        // }
     }, [props.customerTransfer.result])
 
     useEffect(()=>{

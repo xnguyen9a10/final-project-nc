@@ -7,6 +7,8 @@ import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.css";
 import LoginComponent from "./components/login/login";
 // import store from './store';
+import ForgetPassword from "./forgot-password/forgotpassword"
+//import store from './store';
 import CustomerApp from './components/customer/App';
 import Employee from './components/employee/App'
 
@@ -52,6 +54,8 @@ ReactDOM.render(
             (props) =>
             !isLogin() ? <LoginComponent /> : <Redirect to="/" />
           }
+        />
+        <Route exact path={"/forget-password"} component={ForgetPassword}
         />
         {/* <PrivateRoute component={(createCustomer)} path="/employee/create-customer"/>
         {/* <PrivateRoute component={(rechargeAccount)} path="/employee/recharge-account"/> */}
