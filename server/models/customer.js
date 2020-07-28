@@ -28,6 +28,22 @@ const schema = new mongoose.Schema({
       account_id:String,
       nickname:String
     }
+  ],
+  debs: [
+    {
+      accountNumberDeb: String,
+      amount: Number,
+      time: String,
+      debType: {
+        type: Number,
+        enum: [1, 2],
+        default :1,
+      },
+      state: {
+        type:Number,
+        enum: [0, 1, 2]
+      },
+    }
   ]
 },
   {
