@@ -9,6 +9,8 @@ import styles from "./login.less";
 import { Helmet } from "react-helmet";
 import Recaptcha from "react-recaptcha";
 import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import { Typography } from 'antd';
+const { Title } = Typography;
 
 // class LoginComponent extends React.Component {
 //     constructor(props) {
@@ -65,11 +67,10 @@ class LoginComponent extends React.Component {
         result.data.data.userCopied.email
       );
 
-      if(result.data.data.userCopied.role === 'employee') {
+      if (result.data.data.userCopied.role === "employee") {
         history.push(`/employee/create-customer`);
       } else {
         history.push(`/profile`);
-
       }
     }
   };
@@ -91,15 +92,14 @@ class LoginComponent extends React.Component {
       <div
         className="row justify-content-center login-page"
         style={{
-          backgroundImage:
-            "url(https://cdn.wallpapersafari.com/4/2/Y8eAKl.jpg)",
+          backgroundColor: "#245785",
 
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <Helmet>
+        <Helmet style={{ marginLeft: "10px" }}>
           <script
             src="https://www.google.com/recaptcha/api.js"
             async
@@ -107,15 +107,15 @@ class LoginComponent extends React.Component {
           ></script>
         </Helmet>
         <div
-          className="card o-hidden border-0 shadow-lg my-5 login-warp"
+          className="card o-hidden border-0  my-5 login-warp"
           style={{
-            backgroundImage:
-              "url(https://lh3.googleusercontent.com/proxy/FDvdEPr-7la6-im3hsJjO-ButhBewABQtx8daMynhWypscjaWddOpprURQKasVXEBWH6oUxQAmIWgGrXS_1wLz2MmtKeENlosi33xT2RAw5btYtqD634PVgN7somSIRLkj9d_PKKUWCQGzXXcVLXBEgEKqo8_sbMBIphgYAQ",
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         >
+          <Title style={{margin: "auto", color: "white"}}>Internet Banking</Title>
+
           <Form
             name="normal_login"
             className="login-form mt-10"
@@ -132,6 +132,7 @@ class LoginComponent extends React.Component {
               ]}
             >
               <Input
+                size="large"
                 className="form-group"
                 prefix={<UserOutlined className="site-form-item-icon" />}
                 placeholder="Email"
@@ -147,6 +148,7 @@ class LoginComponent extends React.Component {
               ]}
             >
               <Input
+                size="large"
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
                 placeholder="Password"
@@ -165,7 +167,7 @@ class LoginComponent extends React.Component {
               <Button
                 type="primary"
                 htmlType="submit"
-                className="btn btn-primary btn-block"
+                className="btn btn-primary"
               >
                 Log in
               </Button>
