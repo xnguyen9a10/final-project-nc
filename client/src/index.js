@@ -40,6 +40,7 @@ ReactDOM.render(
       <Switch>
         <Route
           path="/"
+          exact
           render={(props) => {
             console.log(isRole("customer"))
             if (!isLogin()) {
