@@ -38,9 +38,9 @@ ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
       <Switch>
-        {/* <Route
+        <Route
+          path="/"
           exact
-          path="/customer"
           render={(props) => {
             console.log(isRole("customer"))
             if (!isLogin()) {
@@ -48,10 +48,10 @@ ReactDOM.render(
             } else {
               if (isRole("customer")) {
                 return <CustomerComponent />;
-              } else
+              }
             }
           }}
-        /> */}
+        /> */
         <Route exact path={"/login"}
           render={
             (props) =>
