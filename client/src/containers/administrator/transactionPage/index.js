@@ -84,10 +84,16 @@ class TransactionPage extends Component {
   }
   async componentDidMount() {
     const result = await httpClient.get("/admin/transaction");
-    console.log(result);
+
     store.dispatch(setDataAction(result.data))
     // this.props.setData(result);
   }
+
+  onChange = async (value) => {
+    const result = await httpClient.get("/admin/transactionquery/" + value);
+    store.dispatch(setDataAction(result.data))
+  }
+
   render() {
     const {
       data,
@@ -105,9 +111,9 @@ class TransactionPage extends Component {
           <Select
             showSearch
             style={{ width: 200, float: "right" }}
-            placeholder="Select a person"
+            placeholder="Chọn ngân hàng"
             optionFilterProp="children"
-            // onChange={onChange}
+            onChange={this.onChange}
             // onFocus={onFocus}
             // onBlur={onBlur}
             // onSearch={onSearch}

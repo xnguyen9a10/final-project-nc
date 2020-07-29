@@ -83,4 +83,13 @@ router.get("/admin/transaction", async (req, res) => {
   return res.json(utils.succeed(data));
 });
 
+router.get("/admin/transactionquery/:value", async (req, res) => {
+  if (req.params.value !== "all") {
+    const data = await Outside.find({ bank: req.params.value });
+    return res.json(utils.succeed(data));
+  } else {
+    const data = await Outside.find({});
+    return res.json(utils.succeed(data));
+  }
+});
 module.exports = router;
