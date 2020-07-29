@@ -7,7 +7,7 @@ const Employee = mongoose.model("Employee");
 const User = mongoose.model("User");
 const Outside = mongoose.model("Outside");
 const Account = mongoose.model("Account");
-
+const moment = require('moment');
 // router.get("/admin/employee", utils.requireRole('admin'), async (req, res) => {
 //   return res.json(response);
 // });
@@ -83,13 +83,36 @@ router.get("/admin/transaction", async (req, res) => {
   return res.json(utils.succeed(data));
 });
 
-router.get("/admin/transactionquery/:value", async (req, res) => {
-  if (req.params.value !== "all") {
-    const data = await Outside.find({ bank: req.params.value });
-    return res.json(utils.succeed(data));
-  } else {
+router.get("/admin/transactionquery", async (req, res) => {
+  var select;
+  console.log(req.query)
+  const date1 = new Date(req.query.fromDate);
+  const date2 = new Date(req.query.toDate);
+
+  if(req.query.select && req.query.select !== 'all') {
+    select = req.query.select
+  }
+
+  if (!req.query.fromDate && !req.query.select) {
     const data = await Outside.find({});
+    return data;
+  }
+
+  if(req.query.fromDate && !req.query.select || req.query.select === 'all') {
+    const data = await Outside.find({time: {
+      $gte: moment(date1).startOf("day").unix(),
+      $lte: moment(date2).endOf("day").unix(),
+    }});
     return res.json(utils.succeed(data));
   }
+
+  if(req.query.fromDate && req.query.select) {
+    const data = await Outside.find({bank: req.query.select ,time: {
+      $gte: moment(date1).startOf("day").unix(),
+      $lte: moment(date2).endOf("day").unix(),
+    }});
+    return res.json(utils.succeed(data));
+  }
+
 });
 module.exports = router;
