@@ -39,6 +39,7 @@ const schema = new mongoose.Schema({
         enum: [1, 2],
         default :1,
       },
+      content: String,
       state: {
         type:Number,
         enum: [0, 1, 2]
