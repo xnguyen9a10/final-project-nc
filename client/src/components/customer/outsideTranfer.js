@@ -50,8 +50,7 @@ export default class TransferOutside extends React.Component {
   }
 
   onSelect = (data) => {
-    console.log("onSelect", data);
-    console.log("Recerivers", this.state.receivers);
+    
     const a = _.filter(this.state.receivers, { nickname: data });
     this.setState({
       toAccountNumber: a[0].account_id,
@@ -267,12 +266,12 @@ export default class TransferOutside extends React.Component {
           </Card>
         </Col>
         <Modal
-          title="Basic Modal"
+          title="Thông báo"
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
-          <Form.Item label="Số tiền">
+          <Form.Item label="Tên gợi nhớ">
             <Input
               value={this.state.tengoinho}
               onChange={(value) =>

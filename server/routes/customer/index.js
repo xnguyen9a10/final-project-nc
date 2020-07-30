@@ -188,8 +188,8 @@ router.get("/customer/contacts", utils.requireRole("customer"), async (req, res,
 
 router.post("/customer/create-deb", utils.requireRole("customer"), async (req, res, next) => {
   const deb = req.body;
+  console.log(req.user)
   const userid = req.user.id;
-  deb.content = "";
   deb.time = Date.now();
   deb.state = 1;
   deb.debType = 1;
@@ -198,19 +198,18 @@ router.post("/customer/create-deb", utils.requireRole("customer"), async (req, r
     if (err) {
       return res.json(fail(err, err.message))
     } else {
-      Customer.findOne({ "$or": [{ "paymentAccount.ID": deb.accountNumberDeb }, { "savingAccount.ID": deb.accountNumberDeb }] }).exec((err1, row1) => {
+      return Customer.findOne({ "$or": [{ "paymentAccount.ID": deb.accountNumberDeb }, { "savingAccount.ID": deb.accountNumberDeb }] }).exec((err1, row1) => {
         if (err1) {
           return res.json(fail(err1, err1.message))
         } else {
           deb.debType = 2;
-
-          Customer.findOne({ user_id: userid }).exec((err2, row2) => {
+          console.log("row1", row1)
+          return Customer.findOne({ user_id: userid }).exec((err2, row2) => {
             if (err2) {
               res.json(fail(err2, err2.message))
             } else {
               deb.accountNumberDeb = row2.paymentAccount.ID.toString();
-              console.log(row1.paymentAccount)
-              Customer.findOneAndUpdate({ "$or": [{ "paymentAccount.ID": row1.paymentAccount.ID }, { "savingAccount.ID": row1.paymentAccount.ID }] }, { "$push": { "debs": deb } }).exec((err3, row3) => {
+              return Customer.findOneAndUpdate({ "$or": [{ "paymentAccount.ID": row1.paymentAccount.ID }, { "savingAccount.ID": row1.paymentAccount.ID }] }, { "$push": { "debs": deb } }).exec((err3, row3) => {
                 if (err3) {
                   return res.json(fail(err3, err3.message))
                 } else {
@@ -235,7 +234,6 @@ router.get("/customer/debs/:type", utils.requireRole("customer"), async (req, re
       var result = [];
       if (type == 0) {
         row.debs.forEach(e => {
-          console.log(e)
           if (e.debType != 2 && e.state < 2) {
             result.push(e)
           }
@@ -247,6 +245,7 @@ router.get("/customer/debs/:type", utils.requireRole("customer"), async (req, re
           }
         });
       }
+      console.log(result)
       return res.json(result)
     }
   }))
