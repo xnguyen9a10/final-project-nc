@@ -141,7 +141,6 @@ router.post('/customer/change-password',utils.requireRole('customer'),async (req
 
 router.post("/customer/get-account", utils.requireRole("customer"), async (req, res) => {
   const account_id = req.body.account
-  console.log(account_id);
   await Account.findOne({ account_id: account_id + "" }).exec((err, row) => {
     if (err) {
       return res.json(fail(err, err.message))

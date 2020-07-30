@@ -29,6 +29,14 @@ const schema = new mongoose.Schema({
       nickname:String
     }
   ],
+  outsideReceivers:[
+    {
+      fullname: String,
+      from: String,
+      account_id:String,
+      nickname:String
+    }
+  ],
   debs: [
     {
       accountNumberDeb: String,

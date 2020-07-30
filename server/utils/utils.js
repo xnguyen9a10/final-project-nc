@@ -149,10 +149,8 @@ class Utils {
   // }
   
   static requireRole(role) {
-    
     return (req, res, next) => {
       // if (this.authenticate(req, res, next)) {
-        console.log(req.user);
       if (req.authenticated) {
         console.log(req.user.role);
         switch (role) {
