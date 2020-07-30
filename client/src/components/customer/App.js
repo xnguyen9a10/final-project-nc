@@ -35,6 +35,7 @@ import FundTransfer from './FundTransfer';
 import ChangePassword from './ChangePassword'
 import transactionHistory from "./transactionHistory";
 import accountHistory from './accountHistory';
+import outside from './outsideTranfer';
 
 function App(props) {
     const { Header, Content, Sider } = Layout;
@@ -87,6 +88,9 @@ function App(props) {
                             <Menu.Item key="23">
                                 <Link to="/customer/change-password" style={{ paddingLeft: "20px" }}>Đổi mật khẩu</Link>
                             </Menu.Item>
+                            <Menu.Item key="25" icon={<HistoryOutlined />}>
+                            <Link to="/customer/transfer">Chuyển khoản ngoài hệ thống</Link>
+                        </Menu.Item>
                             <Menu.Item key="24">
                                 <Link to="/customer/transaction-history" style={{ paddingLeft: "20px" }}>Quản lý tài khoản</Link>
                             </Menu.Item>
@@ -94,7 +98,7 @@ function App(props) {
                         <Menu.Item key="3" icon={<HistoryOutlined />}>
                             <Link to="/employee/transaction-history">LIÊN HỆ</Link>
                         </Menu.Item>
-
+                      
                     </Menu>
 
                 </Sider>
@@ -117,7 +121,8 @@ function App(props) {
                         <Route path="/customer/fund-transfer" component={FundTransfer} />
                         <Route path="/customer/change-password" component={ChangePassword} />
                         <Route path="/customer/transaction-history" component={transactionHistory}/>
-                        <Route path="/customer/accountHistory/:accountId" component={accountHistory}/>
+                        <Route path="/customer/accountHistory/:accountId" component={accountHistory}/>                        
+                        <Route path="/customer/transfer" component={outside}/>
                         <Route exact path="/customer" component={Home} />
                     </Switch>
 

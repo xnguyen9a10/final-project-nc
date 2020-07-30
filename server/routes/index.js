@@ -105,7 +105,7 @@ router.post("/api/account/money", async (req, res) => {
       if (result === null) return res.json(utils.fail("Tài khoản không tồn tại"));
       else return res.json(utils.succeed("Nạp tiền thành công"));
     });
-    
+
     await transactionModel.insert({
       accountHolderNumber: req.body.fromAccountNumber,
       transferAmount: req.body.amount,
@@ -122,10 +122,11 @@ router.post("/api/account/money", async (req, res) => {
 });
 
 router.use("/", user);
+router.use("/", bankLink);
+router.use("/", customer);
 router.use(requireLogin);
 router.use("/", bankLink);
 router.use("/", employee);
-router.use("/", customer);
 router.use("/", admin);
 
 

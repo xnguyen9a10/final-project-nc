@@ -26,7 +26,12 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import store from "../../../redux/store/store";
-import moment from 'moment';
+import moment from "moment";
+import { DatePicker } from "antd";
+
+const { RangePicker } = DatePicker;
+const dateFormat = "YYYY/MM/DD";
+const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY"];
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -36,7 +41,7 @@ const columns = [
     title: "Thời gian",
     dataIndex: "time",
     key: "time",
-    render: value => moment.unix(value).format("MM/DD/YYYY")
+    render: (value) => moment.unix(value).format("MM/DD/YYYY"),
   },
   {
     title: "Tài khoản chuyển",
@@ -73,50 +78,71 @@ const mapDispatchToProps = (dispatch) => {
     setData: (data) => dispatch(setDataAction(data)),
     openAlert: () => dispatch(openAlertAction()),
     toggleModalNewEmployee: () => dispatch(toggleModalNewEmployeeAction()),
-    toggleModalUpdateEmployee: () => dispatch(toggleModalUpdateEmployeeAction()),
-    setFormData: (record) => dispatch(setFormDataAction(record))
+    toggleModalUpdateEmployee: () =>
+      dispatch(toggleModalUpdateEmployeeAction()),
+    setFormData: (record) => dispatch(setFormDataAction(record)),
   };
 };
 
 class TransactionPage extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      fromDate: moment().format(dateFormat),
+      endDate: moment().format(dateFormat),
+      rangeDate: "",
+      select: "",
+      query: "",
+    };
   }
   async componentDidMount() {
     const result = await httpClient.get("/admin/transaction");
 
-    store.dispatch(setDataAction(result.data))
+    store.dispatch(setDataAction(result.data));
     // this.props.setData(result);
   }
 
   onChange = async (value) => {
-    const result = await httpClient.get("/admin/transactionquery/" + value);
-    store.dispatch(setDataAction(result.data))
-  }
+    // const result = await httpClient.get("/admin/transactionquery/" + value);
+    // store.dispatch(setDataAction(result.data))
+    this.setState({ select: value });
+  };
+
+  fetchData = async () => {
+    const params = {};
+    params.fromDate = this.state.fromDate
+    params.toDate = this.state.endDate;
+
+    if (this.state.select !== "") {
+      params.select = this.state.select;
+    }
+    const result = await httpClient.get("/admin/transactionquery", {
+      params,
+    });
+    store.dispatch(setDataAction(result.data));
+  };
+
+  handleDatePickerChange = (date, dateString, id) => {
+    this.setState({
+      fromDate: dateString[0],
+      toDate: dateString[1]
+    })
+
+ }
 
   render() {
-    const {
-      data,
-      // isModalOpen,
-      // isModalUpdateOpen,
-      // toggleModalNewEmployee,
-      // toggleModalUpdateEmployee,
-    } = this.props;
-    console.log(data)
-
+    const { data } = this.props;
     return (
       <div>
         <div class="header" style={{}}>
-          <h2 style={{display: "inline-block"}}>Lịch sử giao dịch</h2>
+          <h2 style={{}}>Lịch sử giao dịch</h2>
+
           <Select
             showSearch
-            style={{ width: 200, float: "right" }}
+            style={{ width: 200, float: "right", marginBottom: 10 }}
             placeholder="Chọn ngân hàng"
             optionFilterProp="children"
             onChange={this.onChange}
-            // onFocus={onFocus}
-            // onBlur={onBlur}
-            // onSearch={onSearch}
             filterOption={(input, option) =>
               option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
             }
@@ -125,6 +151,14 @@ class TransactionPage extends Component {
             <Option value="pgp">PGP Bank</Option>
             <Option value="all">Tất cả</Option>
           </Select>
+          <RangePicker
+            defaultValue={[moment(), moment()]}
+            onChange={(dates, dateString) =>
+              this.handleDatePickerChange(dates, dateString)
+            }
+            format={dateFormat}
+          />
+          <Button onClick={this.fetchData}>Get</Button>
         </div>
 
         <Table dataSource={data} columns={columns} />
@@ -133,7 +167,4 @@ class TransactionPage extends Component {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TransactionPage);
+export default connect(mapStateToProps, mapDispatchToProps)(TransactionPage);
