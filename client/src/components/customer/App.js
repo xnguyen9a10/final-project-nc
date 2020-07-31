@@ -29,7 +29,8 @@ import {
     UserOutlined,
     VideoCameraOutlined,
     MoneyCollectOutlined,
-    HistoryOutlined
+    HistoryOutlined,
+    LoginOutlined
 } from "@ant-design/icons";
 import FundTransfer from './FundTransfer';
 import ChangePassword from './ChangePassword'
@@ -40,6 +41,7 @@ import Debs from './debs';
 
 function App(props) {
     const { Header, Content, Sider } = Layout;
+
     return (
       <Router history={history}>
         <Layout style={{ height: "100vh" }}>
@@ -156,6 +158,16 @@ function App(props) {
               </Menu>
               <Menu.Item key="3" icon={<HistoryOutlined />}>
                 <Link to="/employee/transaction-history">LIÊN HỆ</Link>
+              </Menu.Item>
+              <Menu.Item
+                key="4"
+                icon={<LoginOutlined />}
+                onClick={() => {
+                  localStorage.clear();
+                  window.location.replace(`/login`);
+                }}
+              >
+                Đăng xuất
               </Menu.Item>
             </Menu>
           </Sider>

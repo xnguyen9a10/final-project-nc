@@ -11,7 +11,6 @@ const nodemailer = require("nodemailer");
 var otpGenerator = require('otp-generator')
 const bcrypt = require('bcryptjs')
 
-
 router.get("/customer/info", utils.requireRole('customer'), async (req, res) => {
   const response = await CustomerService.vidu();
   return res.json(response);
@@ -240,12 +239,11 @@ router.get("/customer/debs/:type", utils.requireRole("customer"), async (req, re
         });
       } else {
         row.debs.forEach(e => {
-          if (e.debType == type) {
+          if (e.debType == type && e.state !== 0) {
             result.push(e)
           }
         });
       }
-      console.log(result)
       return res.json(result)
     }
   }))
@@ -271,8 +269,8 @@ router.post("/customer/reject-deb", utils.requireRole("customer"), async (req, r
           res.json(fail(err, row));
         } else {
           (Customer.findOne({ "$or": [{ "paymentAccount.ID": change_deb.accountNumberDeb }, { "savingAccount.ID": change_deb.accountNumberDeb }] }).exec((err2, row2) => {
-            if (err2) {
-              res.json(fail(err2, err2.message));
+            if (err2 || row2 === null) {
+              res.json(fail(err2,"Fail"));
             } else {
               row2.debs.forEach(element => {
                 if (element.time == change_deb.time && element.accountNumberDeb == row.paymentAccount.ID) {
@@ -296,7 +294,6 @@ router.post("/customer/reject-deb", utils.requireRole("customer"), async (req, r
   }))
 })
 
-//chua xong nhe ban
 router.post("/customer/solve-deb", utils.requireRole("customer"), async (req, res, next) => {
   const content = req.body;
 
