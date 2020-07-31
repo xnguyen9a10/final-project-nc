@@ -50,13 +50,26 @@ function FundTransfer(props) {
                 if(flag==false){
                     setAlreadyIn(false);
                 }
-            data.receiverAccountNumber = receiverAccountNumber;            
+            data.receiverAccountNumber = receiverAccountNumber;
             props.sendRequest(data);
         }
     }
 
     const onVerify = () => {
-        props.verifyCode(document.getElementById("code").value,document.getElementById("receiverAccountNumber").value,document.getElementById("transferAmount").value);
+        //
+        let receiverAccountNumber = document.getElementById("receiverAccountNumber").value;
+        if (receiverAccountNumber == "") {
+            document.getElementById("alert").style.display = "block";
+        }
+        else {
+            document.getElementById("alert").style.display = "none";
+                props.customer.customer.receivers.forEach(element => {            
+                    if(element.nickname == receiverAccountNumber || element.account_id==receiverAccountNumber){
+                        receiverAccountNumber = element.account_id;
+                    }
+                });
+            }
+        props.verifyCode(document.getElementById("code").value,receiverAccountNumber,document.getElementById("transferAmount").value);
     }
 
     useEffect(() => {
@@ -219,7 +232,7 @@ function FundTransfer(props) {
                                         <Form.Label>From Account</Form.Label>
                                         <Form.Control name="accountHolderNumber" ref={register()} as="select" custom>
                                             <option>{
-                                                props.customer.accounts.length >= 1 ? props.customer.accounts[0].account_id : ""
+                                                props.customer.accounts.length >= 1&&props.customer.accounts[0]!=null ? props.customer.accounts[0].account_id : ""
                                             } </option>
                                         </Form.Control>
                                     </Form.Group>

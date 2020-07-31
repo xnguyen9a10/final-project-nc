@@ -15,6 +15,7 @@ import info_icon from '../../images/info.svg';
 import { Helmet } from "react-helmet";
 import history from "../../utils/history";
 import Profile from './Profile';
+import ReceiversManagement from "./receiversManagement"
 import { useForm } from "react-hook-form";
 import {
     BrowserRouter as Router,
@@ -90,6 +91,9 @@ function App(props) {
                             <Menu.Item key="24">
                                 <Link to="/customer/transaction-history" style={{ paddingLeft: "20px" }}>Quản lý tài khoản</Link>
                             </Menu.Item>
+                            <Menu.Item key="24">
+                                <Link to="/customer/receivers-management" style={{ paddingLeft: "20px" }}>Quản lý danh sách người nhận</Link>
+                            </Menu.Item>
                         </Menu>
                         <Menu.Item key="3" icon={<HistoryOutlined />}>
                             <Link to="/employee/transaction-history">LIÊN HỆ</Link>
@@ -118,6 +122,7 @@ function App(props) {
                         <Route path="/customer/change-password" component={ChangePassword} />
                         <Route path="/customer/transaction-history" component={transactionHistory}/>
                         <Route path="/customer/accountHistory/:accountId" component={accountHistory}/>
+                        <Route path="/customer/receivers-management" component={ReceiversManagement}/>
                         <Route exact path="/customer" component={Home} />
                     </Switch>
 

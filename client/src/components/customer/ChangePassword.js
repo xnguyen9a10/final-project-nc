@@ -26,6 +26,7 @@ class ChangePassword extends React.Component {
           title:"Thành công",  
           content: data,
         });
+        this.componentDidMount()
       }
 
       error(message){
@@ -33,6 +34,7 @@ class ChangePassword extends React.Component {
             title: 'Thất bại',
             content: message,
           });
+          this.componentDidMount()
       }
 
     showModal = () => {

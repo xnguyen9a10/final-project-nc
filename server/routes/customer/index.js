@@ -17,41 +17,132 @@ router.get("/customer/info", utils.requireRole('customer'), async (req, res) => 
   return res.json(response);
 });
 
+router.get("/customer/get-inside-receiver", utils.requireRole('customer'), async (req, res) => {
+  const { user } = req
+  const customer=await Customer.find({user_id:user._id})
+  return res.json(customer[0].receivers)
+});
+
+router.get("/customer/get-outside-receiver", utils.requireRole('customer'), async (req, res) => {
+  const { user } = req
+  var customer=await Customer.find({user_id:user._id})
+  console.log(customer[0])
+  console.log(customer[0].outsideReceivers)
+  return res.json(customer[0].outsideReceivers)
+});
+
+router.post("/customer/delete-receiver/:accountnumber",utils.requireRole('customer'),async(req,res)=>{
+  const {user}=req
+  const customer=await Customer.findOne({user_id:user.id})
+  for(let i=0;i<customer.receivers.length;i++){
+      if(customer.receivers[i].account_id===req.params.accountnumber) {
+        customer.receivers.splice(i,1)
+      }
+  }
+  const update =await Customer.findOneAndUpdate(
+    {user_id:user.id},
+    {receivers:customer.receivers})
+  if(update) return res.json(utils.succeed("Xóa người nhận thành công!"))
+  else res.json(utils.fail("Xóa thất bại!"))
+})
+
+router.post("/customer/delete-receiver/:accountnumber",utils.requireRole('customer'),async(req,res)=>{
+  const {user}=req
+  const customer=await Customer.findOne({user_id:user.id})
+  for(let i=0;i<customer.receivers.length;i++){
+      if(customer.receivers[i].account_id===req.params.accountnumber) {
+        customer.receivers.splice(i,1)
+      }
+  }
+  const update =await Customer.findOneAndUpdate(
+    {user_id:user.id},
+    {receivers:customer.receivers})
+  if(update) return res.json(utils.succeed("Xóa người nhận thành công!"))
+  else res.json(utils.fail("Xóa thất bại!"))
+})
+
 router.post("/customer/set-receiver", utils.requireRole('customer'), async (req, res) => {
   const { user } = req
   const { receiver_nickname, receiver_accountNumber } = req.body
-  console.log(user)
+  console.log("Tên gợi nhớ:"+receiver_nickname)
   //check if accountnumber exist
   await Account.findOne({
     account_id: receiver_accountNumber
   }).exec((err, result) => {
     if (err) throw err
-    if (result === null) return res.json("Tài khoản không tồn tại!")
-    if (receiver_nickname === undefined) {
-      Customer.findOne({
-        paymentAccount: {
-          ID: receiver_accountNumber
-        }
-      }).exec((err, result) => {
-        if (err) throw err
-        if (result === null) return res.json("Tài khoản không tồn tại!")
-        else return res.json(result)
-      })
-    }
-    else Customer.findOneAndUpdate(
-      { user_id: user.id },
-      {
-        $push: {
-          receivers: {
-            nickname: receiver_nickname,
-            account_id: receiver_accountNumber
+    if (result === null) return res.json(utils.fail("Tài khoản không tồn tại!"))
+    else {
+      //if accountnumber exist, check if account in receiver
+      Customer.find({ user_id: user.id }).exec((err,result)=>{
+        const receivers=result[0].receivers
+        console.log("Danh sách người nhận:"+receivers)
+        for(let i=0;i<receivers.length;i++){
+          //if account already in receiver, return error
+          if(receiver_accountNumber==receivers[i].account_id){
+          return res.json(utils.fail("Tài khoản này đã có trong danh sách người nhận!"))
           }
         }
+        if (receiver_nickname === undefined) {
+          console.log("Nếu không có tên gợi nhớ")
+          Customer.findOne({
+            paymentAccount: {
+              ID: receiver_accountNumber
+            }
+          }).exec((err, result) => {
+            var ObjectId = require('mongodb').ObjectId;
+            if (err) throw err
+            if (result === null) return res.json(utils.fail("Tài khoản không tồn tại!"))
+            else User.find(ObjectId(result.user_id))
+            .exec((err,result)=>{
+              if(err) return res.json(utils.fail("Không tìm ra người dùng"))
+              if(result) Customer.findOneAndUpdate(
+              { user_id: user.id },
+              {
+                $push: {
+                  receivers: {
+                    nickname: result[0].fullname,
+                    account_id: receiver_accountNumber
+                  }
+                }
+              })
+              .exec((err, result) => {
+                if (err) return res.json(utils.fail(err)) 
+                else return res.json(utils.succeed("Thêm người nhận thành công!"))
+              })
+ 
+            })
+          })
+        }
+        else {
+          Customer.find({ user_id: user.id }).exec((err,result)=>{
+            const receivers=result[0].receivers
+            for(let i=0;i<receivers.length;i++){
+              if(receiver_accountNumber==receivers[i].account_id)
+              return res.json(utils.fail("Tài khoản này đã có trong danh sách người nhận!"))
+              if(receiver_nickname==receivers[i].nickname)
+              return res.json(utils.fail("Tên này đã có trong danh sách người nhận!"))
+            }
+            if(err){
+            return res.json(err)
+            }
+            else Customer.findOneAndUpdate(
+              { user_id: user.id },
+              {
+                $push: {
+                  receivers: {
+                    nickname: receiver_nickname,
+                    account_id: receiver_accountNumber
+                  }
+                }
+              })
+              .exec((err, result) => {
+                if (err) throw err
+                else return res.json(utils.succeed("Thêm người nhận thành công!"))
+              }) 
+          })
+        }
       })
-      .exec((err, result) => {
-        if (err) throw err
-        else return res.json(result)
-      })
+    }
   })
 })
 
@@ -59,11 +150,12 @@ router.get("/customer/account-list",utils.requireRole('customer'),async(req,res)
   const {user}=req
   const customer=await Customer.find({user_id:user.id})
  const paymentAccount=await Account.find({account_id:customer[0].paymentAccount.ID})
- const savingAccount=[]
+ var savingAccount=[]
  for(let i=0;i<customer[0].savingAccount.length;i++){
    const account=await Account.find({account_id:customer[0].savingAccount[i].ID})
    savingAccount.push(account)
  }
+ console.log(savingAccount)
  const result={paymentAccount,savingAccount}
  return res.status(201).json(result)
 })
@@ -231,6 +323,7 @@ router.post("/customer/verify-transfer", utils.requireRole("customer"), async (r
   try {
     var { code, email,receiverAccountNumber,amount } = req.body;
     console.log("SO TIEN CHUYEN LA"+amount)
+    console.log("SO TAI KHOAN NGUOI NHAN LA: "+receiverAccountNumber)
     var {user}=req
     const holder=await Customer.find({user_id:user.id})
     const accountholder=await Account.find({account_id:holder[0].paymentAccount.ID})

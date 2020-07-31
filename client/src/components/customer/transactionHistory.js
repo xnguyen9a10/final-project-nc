@@ -21,7 +21,7 @@ class transactionHistory extends React.Component {
     })
   }
   handleRowClick(id) {
-    this.props.history.push(`/accountHistory/${id}`);
+    this.props.history.push(`/customer/accountHistory/${id}`);
   }
   render() {
     const { accounts } = this.state
@@ -79,7 +79,8 @@ class transactionHistory extends React.Component {
         title: 'Ngày tạo',
         dataIndex: 'created_at',
         key: 'created_at'
-      }
+      },
+      
     ];
 
 

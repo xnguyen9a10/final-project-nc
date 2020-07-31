@@ -38,7 +38,7 @@ class LoginComponent extends React.Component {
         history.push("/employee/create-customer")
       }
       if (result.data.data.userCopied.role === 'customer') {
-        history.push("/customer/profile")
+        history.push("/")
       }
       if (result.data.data.userCopied.role === 'administrator') {
         history.push("/admin/management")
