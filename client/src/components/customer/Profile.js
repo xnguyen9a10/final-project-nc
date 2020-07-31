@@ -53,7 +53,7 @@ function Profile({ customers, fetchProfile }) {
                                                 </Card.Text>
                                                 <Card.Text>
                                                     <div style={{fontFamily:"'Titillium Web', sans-serif", fontSize:"14px"}}>
-                                                        <span style={{fontWeight:"600", paddingRight:"8px"}}>Available Balance:</span> {formatMoney(_.get(account, 'account.name', 0))} VND
+                                                        <span style={{fontWeight:"600", paddingRight:"8px"}}>Available Balance:</span> {formatMoney(_.get(account, 'account.balance', 0))} VND
                                                         <div>
                                                         <span style={{fontWeight:"600", paddingRight:"8px"}}>Brand:</span> South VietNam
                                                         </div>

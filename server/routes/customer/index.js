@@ -9,7 +9,7 @@ const transactionModel = require('../../models/transaction');
 const User = mongoose.model("User");
 const nodemailer = require("nodemailer");
 var otpGenerator = require('otp-generator')
-const bcrypt=require('bcryptjs')
+const bcrypt = require('bcryptjs')
 
 
 router.get("/customer/info", utils.requireRole('customer'), async (req, res) => {
@@ -160,24 +160,24 @@ router.get("/customer/account-list",utils.requireRole('customer'),async(req,res)
  return res.status(201).json(result)
 })
 
-router.get("/customer/transfer-history/:accountId",utils.requireRole('customer'),async(req,res)=>{
-  const accountnumber=req.params.accountId
+router.get("/customer/transfer-history/:accountId", utils.requireRole('customer'), async (req, res) => {
+  const accountnumber = req.params.accountId
   console.log("chuyển khoản")
-  const result =await transactionModel.getByTransfer(accountnumber)
+  const result = await transactionModel.getByTransfer(accountnumber)
   res.status(201).json(result)
 }
 )
 
-router.get("/customer/receive-history/:accountId",utils.requireRole('customer'),async(req,res)=>{
-  const accountnumber=req.params.accountId
-  const result =await transactionModel.getByReceiver(accountnumber)
+router.get("/customer/receive-history/:accountId", utils.requireRole('customer'), async (req, res) => {
+  const accountnumber = req.params.accountId
+  const result = await transactionModel.getByReceiver(accountnumber)
   res.status(201).json(result)
 })
 
-router.get("/customer/payment-history/:accountId",utils.requireRole('customer'),async(req,res)=>{
-  const accountnumber=req.params.accountId
+router.get("/customer/payment-history/:accountId", utils.requireRole('customer'), async (req, res) => {
+  const accountnumber = req.params.accountId
   console.log("Nhắc nợ")
-  const result =await transactionModel.getByIspayment(accountnumber)
+  const result = await transactionModel.getByIspayment(accountnumber)
   res.status(201).json(result)
 })
 
@@ -212,28 +212,27 @@ router.post("/customer/get-customer", utils.requireRole('customer'), async (req,
   })
 })
 
-router.post('/customer/change-password',utils.requireRole('customer'),async (req,res)=>{
-  const {confirmpassword,newpassword,oldpassword}=req.body
-  const {user}=req
-  if(confirmpassword!==oldpassword) return res.json(fail("Mật khẩu xác nhận không trùng khớp!"))
-  else if(confirmpassword===newpassword) return res.json(fail("Mật khẩu mới không được trùng với mật khẩu cũ!"))
-  else{
-  const customer=await User.findOne({fullname:user.fullname})
-  const validPass=await bcrypt.compare(oldpassword,customer.password)
-  if(!validPass) return res.json(fail("Mật khẩu cũ không chính xác!"))
+router.post('/customer/change-password', utils.requireRole('customer'), async (req, res) => {
+  const { confirmpassword, newpassword, oldpassword } = req.body
+  const { user } = req
+  if (confirmpassword !== oldpassword) return res.json(fail("Mật khẩu xác nhận không trùng khớp!"))
+  else if (confirmpassword === newpassword) return res.json(fail("Mật khẩu mới không được trùng với mật khẩu cũ!"))
   else {
-      const hashedNewPassword=await bcrypt.hash(newpassword,10)
+    const customer = await User.findOne({ fullname: user.fullname })
+    const validPass = await bcrypt.compare(oldpassword, customer.password)
+    if (!validPass) return res.json(fail("Mật khẩu cũ không chính xác!"))
+    else {
+      const hashedNewPassword = await bcrypt.hash(newpassword, 10)
 
-      const newPassword=await User.findOneAndUpdate({fullname:user.fullname},{password:hashedNewPassword})
+      const newPassword = await User.findOneAndUpdate({ fullname: user.fullname }, { password: hashedNewPassword })
       console.log(newPassword)
-        if(newPassword) res.json(utils.succeed("Thay đổi mật khẩu thành công!"))
-  }
+      if (newPassword) res.json(utils.succeed("Thay đổi mật khẩu thành công!"))
+    }
   }
 })
 
 router.post("/customer/get-account", utils.requireRole("customer"), async (req, res) => {
   const account_id = req.body.account
-  console.log(account_id);
   await Account.findOne({ account_id: account_id + "" }).exec((err, row) => {
     if (err) {
       return res.json(fail(err, err.message))
@@ -244,21 +243,194 @@ router.post("/customer/get-account", utils.requireRole("customer"), async (req, 
   })
 })
 
+//------new
+router.post("/customer/information", utils.requireRole("customer"), async (req, res, next) => {
+  const account_id = req.body.account_id;
+  await (Customer.findOne({ "$or": [{ "paymentAccount.ID": account_id }, { "savingAccount.id": account_id }] }).exec((err, row) => {
+    if (err) {
+      return res.json(fail(err, err.message))
+    } else {
+      var id = mongoose.Types.ObjectId(row.user_id);
+      User.findById(id).exec((err, row1) => {
+        if (err) {
+          return res.json(fail(err, err.message))
+        } else {
+          var result = {
+            fullname: row1.fullname,
+            email: row1.email,
+            phone: row.phone
+          }
+          return res.json(result);
+        }
+      })
+    }
+  }))
+})
+
+router.get("/customer/contacts", utils.requireRole("customer"), async (req, res, next) => {
+  //5ef1cd45b2920b49b416ee36
+  await (Customer.findOne({ user_id: req.user.id }).exec((err, row) => {
+    if (err) {
+      return res.json(fail(err, err.message))
+    } else {
+      return res.json(row.receivers)
+    }
+  }))
+})
+
+router.post("/customer/create-deb", utils.requireRole("customer"), async (req, res, next) => {
+  const deb = req.body;
+  console.log(req.user)
+  const userid = req.user.id;
+  deb.time = Date.now();
+  deb.state = 1;
+  deb.debType = 1;
+  var account_id;
+  await Customer.findOneAndUpdate({ user_id: userid }, { "$push": { "debs": deb } }).exec((err, row) => {
+    if (err) {
+      return res.json(fail(err, err.message))
+    } else {
+      return Customer.findOne({ "$or": [{ "paymentAccount.ID": deb.accountNumberDeb }, { "savingAccount.ID": deb.accountNumberDeb }] }).exec((err1, row1) => {
+        if (err1) {
+          return res.json(fail(err1, err1.message))
+        } else {
+          deb.debType = 2;
+          console.log("row1", row1)
+          return Customer.findOne({ user_id: userid }).exec((err2, row2) => {
+            if (err2) {
+              res.json(fail(err2, err2.message))
+            } else {
+              deb.accountNumberDeb = row2.paymentAccount.ID.toString();
+              return Customer.findOneAndUpdate({ "$or": [{ "paymentAccount.ID": row1.paymentAccount.ID }, { "savingAccount.ID": row1.paymentAccount.ID }] }, { "$push": { "debs": deb } }).exec((err3, row3) => {
+                if (err3) {
+                  return res.json(fail(err3, err3.message))
+                } else {
+                  return res.json({ message: "Success" })
+                }
+              })
+            }
+          })
+        }
+      })
+    }
+  })
+})
+
+//0:chua thanh toan, 1:ban than tao, 2:nguoi khac tao
+router.get("/customer/debs/:type", utils.requireRole("customer"), async (req, res, next) => {
+  const type = req.params.type;
+  await (Customer.findOne({ user_id: req.user.id }).exec((err, row) => {
+    if (err) {
+      return res.json(fail(err, err.message))
+    } else {
+      var result = [];
+      if (type == 0) {
+        row.debs.forEach(e => {
+          if (e.debType != 2 && e.state < 2) {
+            result.push(e)
+          }
+        });
+      } else {
+        row.debs.forEach(e => {
+          if (e.debType == type) {
+            result.push(e)
+          }
+        });
+      }
+      console.log(result)
+      return res.json(result)
+    }
+  }))
+})
+
+router.post("/customer/reject-deb", utils.requireRole("customer"), async (req, res, next) => {
+  const content = req.body;
+  const userid = req.user.id;
+  await (Customer.findOne({ user_id: userid }).exec((err, row) => {
+    if (err) {
+      res.json(fail(err, err.message));
+    } else {
+      var change_deb;
+      row.debs.forEach(element => {
+        var id = mongoose.Types.ObjectId(content.deb_id);
+        if (element._id.toString() === id.toString()) {
+          element.state = 0
+          change_deb = element;
+        }
+      });
+      Customer.findOneAndUpdate({ user_id: userid }, { debs: row.debs }).exec((err1, row1) => {
+        if (err1) {
+          res.json(fail(err, row));
+        } else {
+          (Customer.findOne({ "$or": [{ "paymentAccount.ID": change_deb.accountNumberDeb }, { "savingAccount.ID": change_deb.accountNumberDeb }] }).exec((err2, row2) => {
+            if (err2) {
+              res.json(fail(err2, err2.message));
+            } else {
+              row2.debs.forEach(element => {
+                if (element.time == change_deb.time && element.accountNumberDeb == row.paymentAccount.ID) {
+                  element.state = 0
+                }
+              });
+              Customer.findOneAndUpdate({ user_id: row2.user_id }, { debs: row2.debs }).exec((err3, row3) => {
+                if (err3) {
+                  res.json(fail(err3, err3.message))
+                } else {
+                  res.json({
+                    message: "Tu choi thanh cong"
+                  })
+                }
+              })
+            }
+          }))
+        }
+      })
+    }
+  }))
+})
+
+//chua xong nhe ban
+router.post("/customer/solve-deb", utils.requireRole("customer"), async (req, res, next) => {
+  const content = req.body;
+
+  await (Customer.findOne({ user_id: req.user.id }).exec((err, row) => {
+    if (err) {
+      res.json(fail(err, row));
+    } else {
+      row.debs.forEach(element => {
+        var id = mongoose.Types.ObjectId(content.deb_id);
+        if (element._id.toString() === id.toString()) {
+          element.state = 2
+        }
+      });
+      Customer.findOneAndUpdate({ "$or": [{ "paymentAccount.ID": account_id }, { "savingAccount.ID": account_id }] }, { debs: row.debs }).exec((err1, row1) => {
+        if (err1) {
+          res.json(fail(err, row));
+        } else {
+          res.json({
+            "Message": "Thanh toan thanh cong"
+          })
+        }
+      })
+    }
+  }))
+})
+
 /** ==== NGỌC PART===== */
 
-router.get('/customer/transactions', utils.requireRole("customer"), async(req,res, next)=>{
+router.get('/customer/transactions', utils.requireRole("customer"), async (req, res, next) => {
   const accountNumber = req.body.accountNumber;
   const result = await transactionModel.getByAccountNumber(accountNumber);
 
   res.status(201).json(result);
 })
 
-router.post('/customer/transactions', utils.requireRole("customer"), async(req,res,next)=>{
+router.post('/customer/transactions', utils.requireRole("customer"), async (req, res, next) => {
   const result = await transactionModel.insert(req.body);
   res.status(201).json(result);
 })
 
-const otpModel = require('../../models/otp.model')
+const otpModel = require('../../models/otp.model');
+const { rsaKeyof47 } = require("../../key");
 
 router.post("/customer/transfer-request", utils.requireRole("customer"), async (req, res) => {
   const { email, receiverAccountNumber } = req.body;
@@ -340,24 +512,24 @@ router.post("/customer/verify-transfer", utils.requireRole("customer"), async (r
     }
     if (record.otp == code) {
       console.log("Chuyen khoan thanh cong")
-      console.log("Tai khoan nguoi gui"+accountholder[0].balance)
-      if(accountholder[0].balance<amount) return res.json(utils.fail(0,"Balance is not enough money"))
-      else{
+      console.log("Tai khoan nguoi gui" + accountholder[0].balance)
+      if (accountholder[0].balance < amount) return res.json(utils.fail(0, "Balance is not enough money"))
+      else {
         await Account.findOneAndUpdate(
-          {account_id:holder[0].paymentAccount.ID},
+          { account_id: holder[0].paymentAccount.ID },
           {
-          $inc:{
-            balance: -amount
-          }
-        }).exec()
+            $inc: {
+              balance: -amount
+            }
+          }).exec()
         await Account.findOneAndUpdate(
-          {account_id:receiverAccountNumber},
+          { account_id: receiverAccountNumber },
           {
-          $inc:{
-            balance: amount
-          }
-        }).exec()
-      return res.json(utils.succeed(true));
+            $inc: {
+              balance: amount
+            }
+          }).exec()
+        return res.json(utils.succeed(true));
       }
     }
     else {
@@ -406,7 +578,7 @@ router.post("/customer/save-receiver", utils.requireRole("customer"), async (req
         }
       })
     }
-    else{
+    else {
       const entity = {
         nickname,
         account_id

@@ -26,6 +26,7 @@ class LoginComponent extends React.Component {
       alert("Vui lòng chọn captcha!");
       return
     }
+    console.log(result)
     if (result.data.status === 'successful') {
       setSession(result.data.data.userCopied.id, 
         result.data.data.userCopied.fullname, 
@@ -33,13 +34,14 @@ class LoginComponent extends React.Component {
          result.data.data.refreshToken, 
          result.data.data.userCopied.role,
          result.data.data.userCopied.email);
-      
+    
       if (result.data.data.userCopied.role === 'employee') {
         history.push("/employee/create-customer")
       }
       if (result.data.data.userCopied.role === 'customer') {
         history.push("/")
       }
+      console.log(result.data)
       if (result.data.data.userCopied.role === 'administrator') {
         history.push("/admin/management")
       }

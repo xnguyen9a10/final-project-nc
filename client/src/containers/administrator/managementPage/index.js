@@ -43,13 +43,13 @@ const columns = [
     title: "Mã",
     dataIndex: "code",
     key: "code",
-    render: (text) => <a>{text.toUpperCase()}</a>,
+    render: (text) => <a>{text && text.toUpperCase()}</a>,
   },
   {
     title: "Tên",
     dataIndex: "name",
     key: "name",
-    render: (text) => <a>{text.toUpperCase()}</a>,
+    render: (text) => <a>{text && text.toUpperCase()}</a>,
   },
   {
     title: "Số điện thoại",

@@ -41,6 +41,7 @@ ReactDOM.render(
         <Route
         exact
           path="/"
+          exact
           render={(props) => {
             console.log(isRole("customer"))
             if (!isLogin()) {

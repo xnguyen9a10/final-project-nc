@@ -11,10 +11,16 @@ const transaction = new Schema({
     transferAmount: Number, //Khoản tiền nhận. 
     transferAt: Date, // Thời gian chuyển
     content: String, 
-    isPayment: Boolean, // Thanh toán nhắn nợ. (bool)
-    isPayFee: Boolean //  Tra phi giao dich
+    isPayment: {
+        type: Boolean,
+        default: false,
+    }, // Thanh toán nhắn nợ. (bool)
+    isPayFee: Boolean, //  Tra phi giao dich
+    isOutside: {
+        type: Boolean,
+        default: false,
+    },
 })
-
 module.exports = {
     all: ()=> {
         return db.load('transactions', transaction);
@@ -56,6 +62,7 @@ module.exports = {
     },
 
     getByReceiver:(value)=>{
+        console.log(value)
         return new Promise((resolve, reject)=>{
             var model = mongoose.model('transactions', transaction);
             return model.find({receiverAccountNumber: value,
