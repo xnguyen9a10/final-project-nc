@@ -34,6 +34,8 @@ export default class TransferOutside extends React.Component {
       tengoinho: "",
       content: "",
       visible: false,
+      otp: "",
+      modalOTP: "",
     };
   }
   async componentDidMount() {
@@ -50,7 +52,6 @@ export default class TransferOutside extends React.Component {
   }
 
   onSelect = (data) => {
-    
     const a = _.filter(this.state.receivers, { nickname: data });
     this.setState({
       toAccountNumber: a[0].account_id,
@@ -82,7 +83,11 @@ export default class TransferOutside extends React.Component {
     this.setState({ amount: value });
   };
 
-  onSubmit = async () => {
+  onSubmit = (value) => {
+    this.setState({ modalOTP: true });
+  };
+
+  onSubmitCode = async () => {
     const body = {
       fromAccountNumber: this.state.fromAccountNumber,
       toAccountNumber: this.state.toAccountNumber,
@@ -90,7 +95,7 @@ export default class TransferOutside extends React.Component {
       receiverName: this.state.fullname,
       amount: this.state.amount,
       content: this.state.content,
-      fee: this.state.fee === "nguoigui" ? true: false
+      fee: this.state.fee === "nguoigui" ? true : false,
     };
     const seft = this;
 
@@ -100,7 +105,7 @@ export default class TransferOutside extends React.Component {
         Modal.success({
           content: "Chuyển khỏan thành công",
           onOk() {
-            seft.showModal()
+            seft.showModal();
           },
         });
       } else {
@@ -116,7 +121,8 @@ export default class TransferOutside extends React.Component {
         Modal.success({
           content: "Chuyển khỏan thành công",
           onOk() {
-            seft.showModal()          },
+            seft.showModal();
+          },
         });
       } else {
         Modal.error({
@@ -131,9 +137,9 @@ export default class TransferOutside extends React.Component {
       nickname: this.state.tengoinho,
       fullname: this.state.fullname,
       from: this.state.bank,
-      account_id: this.state.toAccountNumber
-    }
-    if(this.state.tengoinho !== "") {
+      account_id: this.state.toAccountNumber,
+    };
+    if (this.state.tengoinho !== "") {
       const result = await httpClient.post("/api/tengoinho", body);
       console.log(result);
     }
@@ -143,7 +149,7 @@ export default class TransferOutside extends React.Component {
     });
   };
 
-  handleCancel = e => {
+  handleCancel = (e) => {
     console.log(e);
     this.setState({
       visible: false,
@@ -153,11 +159,8 @@ export default class TransferOutside extends React.Component {
   render() {
     return (
       <Row>
-        <Col span={12}>
-          <Card
-            title="CHUYỂN KHOẢN NGOÀI HỆ THỐNG"
-            style={{ height: "100vh", width: "50vw" }}
-          >
+        <Col span={24}>
+          <Card title="CHUYỂN KHOẢN NGOÀI HỆ THỐNG" style={{ height: "100vh" }}>
             <Form
               labelCol={{
                 span: 6,
@@ -265,6 +268,37 @@ export default class TransferOutside extends React.Component {
             </Form>
           </Card>
         </Col>
+        {/* <Col span={6}>
+          <Card>
+            <p>
+              {" "}
+              Chuyển tiền liên ngân hàng là một trong những dịch vụ tiện ích mà
+              các ngân hàng cung cấp đến người sử dụng. Tuy nhiên, hiện nay cũng
+              có không ít thắc mắc về dịch vụ này, nhất là với những khách hàng
+              lần đầu tiên sử dụng thẻ ngân hàng. Vậy chuyển khoản liên ngân
+              hàng là gì? Mất bao lâu mới nhận được tiền và có nên sử dụng dịch
+              vụ không?
+              {"\n"}
+            </p>
+            <br />
+            Chuyển tiền tới ngân hàng khác nhanh chóng, không cần đến quầy giao
+            dịch làm thủ tục, phù hợp với người bận rộn vì giúp tiết kiệm thời
+            gian. Giao dịch có thể thực hiện mọi nơi như ngay tại nhà, khi đi du
+            lịch, đi chơi… thông qua Internet Banking hoặc Mobile Banking.<br /> Có
+            thể giao dịch ngoài giờ hành chính, cuối tuần, các ngày lễ tết. Hạn
+            mức chuyển tiền lớn, phù hợp với khách hàng có nhu cầu chuyển khoản
+            thường xuyên. Có mức phí giao dịch cố định dù chuyển tiền sang ngân
+            hàng khác trong cùng tỉnh/thành phố hay khác tỉnh/thành phố. Nếu sử
+            dụng hình thức chuyển khoản nhanh, có thể nhận được tiền gần như
+            ngay lập tức. Dịch vụ chuyển tiền có tính bảo mật cao vì khi thực
+            hiện giao dịch sẽ có một mã OTP gửi về điện thoại. <br />Khi thực hiện
+            giao dịch, hệ thống ngân hàng sẽ hiển thị tình trạng giao dịch: Đã
+            thành công, giao dịch không thành công hay giao dịch đang được xử
+            lý. Vì vậy bạn có thể chủ động nắm rõ về hoạt động thanh toán của
+            mình. Nếu giao dịch không thành công, tài khoản của khách hàng sẽ
+            được hoàn tiền lại.
+          </Card>
+        </Col> */}
         <Modal
           title="Thông báo"
           visible={this.state.visible}
@@ -279,6 +313,24 @@ export default class TransferOutside extends React.Component {
               }
             />
           </Form.Item>
+        </Modal>
+
+        <Modal
+          title="Xác nhận giao dịch !"
+          visible={this.state.modalOTP}
+          onOk={this.confirmOTP}
+          onCancel={() => this.setState({ modalOTP: false })}
+        >
+          <>
+            <p>
+              Mã OTP đã được gửi đến email của bạn, hãy kiểm tra và điền vào
+              dưới đây{" "}
+            </p>
+            <Input
+              onChange={(e) => this.setState({ otp: e.target.value })}
+              placeholder="Nhập mã OTP"
+            />
+          </>
         </Modal>
       </Row>
     );

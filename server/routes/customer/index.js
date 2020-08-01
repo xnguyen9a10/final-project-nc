@@ -296,28 +296,53 @@ router.post("/customer/reject-deb", utils.requireRole("customer"), async (req, r
 
 router.post("/customer/solve-deb", utils.requireRole("customer"), async (req, res, next) => {
   const content = req.body;
+  var time = "1";
 
   await (Customer.findOne({ user_id: req.user.id }).exec((err, row) => {
     if (err) {
       res.json(fail(err, row));
     } else {
       row.debs.forEach(element => {
+        console.log(content, element)
         var id = mongoose.Types.ObjectId(content.deb_id);
-        if (element._id.toString() === id.toString()) {
-          element.state = 2
+        if (element._id.toString() === content.deb_id.toString()) {
+          element.state = 2;
+          time = element.time;  
+        } else {
+          if(element.time === content.time) {
+            element.state = 2
+          }
         }
       });
-      Customer.findOneAndUpdate({ "$or": [{ "paymentAccount.ID": account_id }, { "savingAccount.ID": account_id }] }, { debs: row.debs }).exec((err1, row1) => {
+      return Customer.findOneAndUpdate({ "$or": [{ "debs._id": mongoose.Types.ObjectId(content.deb_id)}, { "savingAccount.ID": row.account_id }] }, { debs: row.debs }).exec((err1, row1) => {
         if (err1) {
           res.json(fail(err, row));
         } else {
-          res.json({
-            "Message": "Thanh toan thanh cong"
-          })
+          return Customer.update(
+            {
+              "debs._id": { $ne: mongoose.Types.ObjectId(content.deb_id) },
+              "debs.time": time,
+            },
+            {
+              $set: {
+                "debs.$.state": 2,
+              },
+            }
+          ).exec((err3, row3) => {
+            if (err3) {
+              res.json(fail(err3, err3.message));
+            } else {
+              row3.debs;
+              res.json({
+                message: "Thanh cong",
+              });
+            }
+            console.log("===================", row3);
+          });
         }
       })
     }
-  }))
+  })) 
 })
 
 /** ==== NGỌC PART===== */

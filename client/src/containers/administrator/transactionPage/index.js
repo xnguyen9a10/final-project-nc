@@ -92,13 +92,14 @@ class TransactionPage extends Component {
       endDate: moment().format(dateFormat),
       rangeDate: "",
       select: "",
+      total: 0,
       query: "",
     };
   }
   async componentDidMount() {
     const result = await httpClient.get("/admin/transaction");
-
-    store.dispatch(setDataAction(result.data));
+    this.setState({total: result.data.money[0].sum})
+    store.dispatch(setDataAction(result.data.data));
     // this.props.setData(result);
   }
 
@@ -119,7 +120,9 @@ class TransactionPage extends Component {
     const result = await httpClient.get("/admin/transactionquery", {
       params,
     });
-    store.dispatch(setDataAction(result.data));
+    console.log(result)
+    this.setState({total: result.data.money[0].sum})
+    store.dispatch(setDataAction(result.data.data));
   };
 
   handleDatePickerChange = (date, dateString, id) => {
@@ -136,7 +139,7 @@ class TransactionPage extends Component {
       <div>
         <div class="header" style={{}}>
           <h2 style={{}}>Lịch sử giao dịch</h2>
-
+          <p>Tổng số tiền đã giao dịch: {this.state.total ? this.state.total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') : 0}</p>
           <Select
             showSearch
             style={{ width: 200, float: "right", marginBottom: 10 }}
@@ -161,7 +164,11 @@ class TransactionPage extends Component {
           <Button onClick={this.fetchData}>Get</Button>
         </div>
 
-        <Table dataSource={data} columns={columns} />
+        <Table
+          pagination={{ pageSize: 8 }}
+          dataSource={data}
+          columns={columns}
+        />
       </div>
     );
   }

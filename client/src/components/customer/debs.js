@@ -55,6 +55,8 @@ export default class Debs extends React.Component {
       receivers: [],
       toAccountNumber: "",
       fullname: "",
+      recordTime: "",
+      tutaikhoan: "",
       otp: "",
       idchuno: "",
       idchunochinhxac: "",
@@ -71,18 +73,20 @@ export default class Debs extends React.Component {
       huynhacnoModal: false,
       tuchoinhacnoModal: false,
       idhuynhacno: "",
+      sotaikhoanchuno: "",
       idtuchoinhacno: "",
       taikhoantrano: "",
       content: "",
       visible: false,
       modalOTP: false,
+      notito: "",
     };
   }
 
   async componentDidMount() {
     socket.on("nhac_no", (data) => {
-      if (data.id === localStorage.getItem("userId")) {
-        openNotification(data.loinhan, data.name);
+      if (data.email === localStorage.getItem("email")) {
+        openNotification("Nhắc nợ thông báo", `${data.name} đã hủy nhắc nợ với lý do: ${data.loinhan}`)
       }
     });
 
@@ -97,6 +101,7 @@ export default class Debs extends React.Component {
 
     const result = await httpClient.get("/customer/debs/1");
     const result2 = await httpClient.get("/customer/debs/2");
+    console.log(result)
     const result3 = await httpClient.post("/customer/get-customer", {
       id: localStorage.getItem("userId"),
     });
@@ -169,8 +174,12 @@ export default class Debs extends React.Component {
           content: seft.state.loinhanhuynhacno,
         });
 
+        const result2 = await httpClient.post('/customer/information', {
+          account_id: seft.state.sotaikhoanchuno
+        })
+      
         socket.emit("nhac_no", {
-          id: this.state.idhuynhacno,
+          email: result2.email,
           name: localStorage.getItem("userName"),
           loinhan: seft.state.loinhanhuynhacno,
         });
@@ -192,8 +201,13 @@ export default class Debs extends React.Component {
           deb_id: seft.state.idtuchoinhacno,
           content: seft.state.loinhan,
         });
+
+        const result2 = await httpClient.post('/customer/information', {
+          account_id: seft.state.tutaikhoan
+        })
+        
         socket.emit("nhac_no", {
-          id: this.state.idtuchoinhacno,
+          email: result2.email,
           name: localStorage.getItem("userName"),
           loinhan: seft.state.loinhan,
         });
@@ -201,14 +215,19 @@ export default class Debs extends React.Component {
     });
   };
 
-  onPressHuyNhacno = (id) => {
-    this.setState({ huynhacnoModal: true, idhuynhacno: id });
+  onPressHuyNhacno = (id, accountNumberDeb) => {
+    this.setState({
+      huynhacnoModal: true,
+      idhuynhacno: id,
+      sotaikhoanchuno: accountNumberDeb,
+    });
   };
 
-  onPressTuchoinhacno = (id) => {
+  onPressTuchoinhacno = (id, accountNumberDeb) => {
     this.setState({
       tuchoinhacnoModal: true,
       idtuchoinhacno: id,
+      tutaikhoan: accountNumberDeb
     });
   };
 
@@ -220,7 +239,7 @@ export default class Debs extends React.Component {
       amount: this.state.sotientrano,
     };
     await httpClient.post("/customer/verify-transfer", body);
-    
+
     await httpClient.post("/customer/transactions", {
       isPayment: true,
       accountHolderNumber: this.state.fromAccountNumber,
@@ -230,9 +249,9 @@ export default class Debs extends React.Component {
       receiverAccountNumber: this.state.taikhoantrano
     });
 
-    const result = await httpClient.post("customer/reject-deb", {
+    const result = await httpClient.post("customer/solve-deb", {
       deb_id: this.state.idchuno,
-      content: this.state.loinhanhuynhacno,
+      time: this.state.recordTime
     });
 
     socket.emit("thanh_toan", {
@@ -246,7 +265,7 @@ export default class Debs extends React.Component {
     });
   };
 
-  onThanhtoan = async (id, toAccountNumber, amount) => {
+  onThanhtoan = async (id, toAccountNumber, amount, time) => {
     const body = {
       receiverAccountNumber: toAccountNumber,
       email: localStorage.getItem("email"),
@@ -257,6 +276,7 @@ export default class Debs extends React.Component {
       taikhoantrano: toAccountNumber,
       sotientrano: amount,
       idchuno: id,
+      recordTime: time
     });
     const result2 = await httpClient.post('/customer/information', {
       account_id: toAccountNumber
@@ -296,11 +316,12 @@ export default class Debs extends React.Component {
           return (
             <Space size="middle">
               {/* <a>Invite {record.name}</a> */}
+              {console.log(record)}
               {record.state !== 2 ? (
                 <Button
                   type="primary"
                   danger
-                  onClick={() => this.onPressHuyNhacno(record._id)}
+                  onClick={() => this.onPressHuyNhacno(record._id, record.accountNumberDeb)}
                 >
                   Hủy
                 </Button>
@@ -342,14 +363,14 @@ export default class Debs extends React.Component {
         render: (text, record) => {
           return (
             <Space size="middle">
-              {/* <a>Invite {record.name}</a> */}
+              {console.log(record)}
               {record.state === 2 && <Tag color="green">Đã thanh toán</Tag>}
               {record.state === 1 && (
                 <>
                   <Button
                     type="primary"
                     danger
-                    onClick={() => this.onPressTuchoinhacno(record._id)}
+                    onClick={() => this.onPressTuchoinhacno(record._id, record.accountNumberDeb)}
                   >
                     Hủy
                   </Button>
@@ -359,7 +380,8 @@ export default class Debs extends React.Component {
                       this.onThanhtoan(
                         record._id,
                         record.accountNumberDeb,
-                        record.amount
+                        record.amount,
+                        record.time
                       )
                     }
                   >
@@ -378,16 +400,23 @@ export default class Debs extends React.Component {
         <Col span={12}>
           <Card
             title="Danh sách nợ đã tạo"
-            extra={
-              <Button
+            // extra={
+            //   <Button
+            //     type="primary"
+            //     onClick={() => this.setState({ visible: true })}
+            //   >
+            //     Tạo nhắc nợ
+            //   </Button>
+            // }
+            style={{ height: "100vh" }}
+          >
+             <Button
                 type="primary"
+                style={{marginBottom: 29}}
                 onClick={() => this.setState({ visible: true })}
               >
                 Tạo nhắc nợ
               </Button>
-            }
-            style={{ height: "100vh" }}
-          >
             <Table
               pagination={{ pageSize: 8 }}
               columns={columns}

@@ -62,11 +62,11 @@ function App(props) {
               id="menu"
               theme="dark"
               mode="inline"
-              defaultSelectedKeys={["4"]}
+              defaultSelectedKeys={["1"]}
             >
               <Menu.Item
                 key="1"
-                icon={<UserOutlined style={{ marginTop: "-10px;" }} />}
+                icon={<UserOutlined style={{ marginTop: "10px;" }} />}
               >
                 <Link to="/">TRANG CHỦ</Link>
               </Menu.Item>
@@ -92,6 +92,7 @@ function App(props) {
               </Menu.Item>
               <Menu
                 id="submenu"
+                defaultSelectedKeys={['21']}
                 style={{
                   borderTop: "0.1px solid lightgrey",
                   borderBottom: "0.1px solid lightgrey",
