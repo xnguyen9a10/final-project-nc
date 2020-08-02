@@ -8,7 +8,7 @@ import createCustomer from "./components/employee/createCustomer";
 import rechargeAccount from "./components/employee/rechargeAccount";
 import transactionHistory from "./components/employee/transactionHistory";
 import accountHistory from "./components/employee/accountHistory";
-import LogoImg from "./images/logo.png";
+import LogoImg from "./logo.png";
 
 import {
     UploadOutlined,

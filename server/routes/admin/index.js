@@ -80,12 +80,19 @@ router.post("/admin/employee/delete", async (req, res) => {
 
 router.get("/admin/transaction", async (req, res) => {
   const data = await Outside.find({});
-  return res.json(utils.succeed(data));
+  const data2 = await Outside.aggregate(
+    [ {
+      $match: {
+       
+      },
+    },
+    { $group: { _id: null, sum: { $sum: "$amount" } } }]
+  );
+  return res.json(utils.succeed({ data, money: data2 }));
 });
 
 router.get("/admin/transactionquery", async (req, res) => {
   var select;
-  console.log(req.query)
   const date1 = new Date(req.query.fromDate);
   const date2 = new Date(req.query.toDate);
 
@@ -95,7 +102,16 @@ router.get("/admin/transactionquery", async (req, res) => {
 
   if (!req.query.fromDate && !req.query.select) {
     const data = await Outside.find({});
-    return data;
+
+    const data2 = await Outside.aggregate(
+      [ {
+        $match: {
+         
+        },
+      },
+      { $group: { _id: "$bank", sum: { $sum: "$amount" } } }]
+    );
+    return res.json(utils.succeed({ data, money: data2 }));
   }
 
   if(req.query.fromDate && !req.query.select || req.query.select === 'all') {
@@ -103,15 +119,42 @@ router.get("/admin/transactionquery", async (req, res) => {
       $gte: moment(date1).startOf("day").unix(),
       $lte: moment(date2).endOf("day").unix(),
     }});
-    return res.json(utils.succeed(data));
+
+    const data2 = await Outside.aggregate(
+      [ {
+        $match: {
+          $and: [
+            { time: { $gte: moment(date1).startOf("day").unix().toString() } },
+            { time: { $lte: moment(date2).endOf("day").unix().toString() } },
+          ],
+        },
+      },
+      { $group: { _id: "$bank", sum: { $sum: "$amount" } } }]
+    );
+  
+    return res.json(utils.succeed({ data, money: data2 }));
   }
 
   if(req.query.fromDate && req.query.select) {
     const data = await Outside.find({bank: req.query.select ,time: {
       $gte: moment(date1).startOf("day").unix(),
       $lte: moment(date2).endOf("day").unix(),
-    }});
-    return res.json(utils.succeed(data));
+    }});  
+
+    const data2 = await Outside.aggregate(
+      [ {
+        $match: {
+          $and: [
+            {bank: req.query.select},
+            { time: { $gte: moment(date1).startOf("day").unix().toString() } },
+            { time: { $lte: moment(date2).endOf("day").unix().toString() } },
+          ],
+        },
+      },
+      { $group: { _id: "$bank", sum: { $sum: "$amount" } } }]
+    );
+
+    return res.json(utils.succeed({data, money: data2}));
   }
 
 });

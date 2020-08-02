@@ -122,7 +122,6 @@ router.post("/api/account/money", async (req, res) => {
 });
 
 router.use("/", user);
-router.use("/", bankLink);
 router.use(requireLogin);
 router.use("/", customer);
 router.use("/", bankLink);
