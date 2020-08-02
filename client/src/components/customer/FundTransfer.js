@@ -69,12 +69,12 @@ function FundTransfer(props) {
                     }
                 });
             }
-        props.verifyCode(document.getElementById("code").value,receiverAccountNumber,document.getElementById("transferAmount").value);
+        props.verifyCode(document.getElementById("code").value,receiverAccountNumber,document.getElementById("transferAmount").value,props.requestResult.data);
     }
 
     useEffect(() => {
         if (isFirstRender.current == false) {
-            props.fundTransfer(props.requestResult.data);
+            // props.fundTransfer(props.requestResult.data);
             document.getElementById("confirm").style.display = "none";
             document.getElementById("confirm").reset();
             document.getElementById("info").reset();
@@ -86,13 +86,7 @@ function FundTransfer(props) {
     }, [props.verifyResult.result])
 
     useEffect(() => {
-        if(props.verifyResult.error!==null){
-            setErrorCard(true);
-            setNotiText(props.verifyResult.error.message);
-            return
-        }
-        else
-        if (props.customerTransfer.result == true) {
+        if (props.verifyResult.result == true) {
             setSuccessCard(true);
             setNotiText("Transfer Successfully!")
             if(alreadyIn==false){
@@ -100,11 +94,12 @@ function FundTransfer(props) {
             }
             return
         }
-        // if (props.customerTransfer.result == false) {
-        //     setErrorCard(true);
-        //     setNotiText(props.customerTransfer.error.message);
-        // }
-    }, [props.customerTransfer.result])
+        else if(props.verifyResult.error!==null) {
+            setErrorCard(true);
+            setNotiText(props.verifyResult.error.message);
+            return
+        }
+    }, [props.verifyResult.result])
 
     useEffect(()=>{
         if(props.requestResult.result==false){
@@ -396,7 +391,7 @@ const mapDispatchToProps = (dispatch) => {
         fetchCustomer: () => dispatch(fetchCustomerAccount()),
         fundTransfer: (data) => dispatch(Transfer(data)),
         sendRequest: (data) => dispatch(RequestTransfer(data)),
-        verifyCode: (code,receiverAccountNumber,amount) => dispatch(VerifyCode(code,receiverAccountNumber,amount)),
+        verifyCode: (code,receiverAccountNumber,amount,requestResult) => dispatch(VerifyCode(code,receiverAccountNumber,amount,requestResult)),
         saveReceiver: (data) => dispatch(SaveReceiver(data)) 
     }
 }
