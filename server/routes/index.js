@@ -64,7 +64,7 @@ A6pN1nNqST9DUku1NJlNmlvU3INNZ30+KiOLqER1zMibyKm4O2LzVKsq0U5BKSKx
 aF3Wf+6bME92QZ6aDOq+AEBqeV0FUkrjNUbLI6QFG6xzeC+akTv7MlZTwasYfagi
 u5RMN8INapOvye5lCw==
 =JFcr
------END PGP PUBLIC KEY BLOCK-----`
+-----END PGP PUBLIC KEY BLOCK-----`;
 
 function requireLogin(req, res, next) {
   let accessToken = req.header("Authorization");
@@ -85,7 +85,11 @@ function requireLogin(req, res, next) {
 
 router.get("/api/account/info/:accountNumber", async (req, res) => {
   const accountNumber = req.params.accountNumber;
-  const response = await bankLinkService.validate(req.headers, req.body, accountNumber);
+  const response = await bankLinkService.validate(
+    req.headers,
+    req.body,
+    accountNumber
+  );
   return res.json(utils.succeed(response));
 });
 
@@ -102,9 +106,19 @@ router.post("/api/account/money", async (req, res) => {
       }
     ).exec((err, result) => {
       if (err) throw err;
-      if (result === null) return res.json(utils.fail("Tài khoản không tồn tại"));
+      if (result === null)
+        return res.json(utils.fail("Tài khoản không tồn tại"));
       else return res.json(utils.succeed("Nạp tiền thành công"));
     });
+
+    await Account.findOneAndUpdate(
+      { account_id: req.body.accountNumber },
+      {
+        $inc: {
+          balance: +req.body.amount,
+        },
+      }
+    );
 
     await transactionModel.insert({
       accountHolderNumber: req.body.fromAccountNumber,
@@ -113,7 +127,7 @@ router.post("/api/account/money", async (req, res) => {
       isPayFee: req.body.fee,
       receiverAccountNumber: req.body.toAccountNumber,
       isOutside: true,
-    })
+    });
 
     return res.json(utils.succeed(response));
   } catch (e) {
@@ -127,6 +141,5 @@ router.use("/", customer);
 router.use("/", bankLink);
 router.use("/", employee);
 router.use("/", admin);
-
 
 module.exports = router;

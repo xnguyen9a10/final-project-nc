@@ -8,7 +8,10 @@ const listKeys = require("../../key");
 const openpgp = require("openpgp");
 const mongoose = require("mongoose");
 const Outside = mongoose.model('Outside');
+const User = mongoose.model('User');
 const Customer = mongoose.model('Customer');
+const Account = mongoose.model("Account");
+
 const transactionModel = require('../../models/transaction');
 
 router.get("/api/rsa-group/:account",utils.requireRole('customer'), async (req, res) => {
@@ -70,6 +73,11 @@ router.post("/api/transfer/rsagroup", utils.requireRole('customer'), async (req,
   const key = new NodeRSA(listKeys.rsaKeyof47);
   const verify = key.sign("thisisatokenfroma", "base64", "base64");
   const id = "rsa-bank";
+
+  const user = await User.findOne({_id: req.user.id});
+  if (user.otp !== req.body.otp) {
+    return res.json(utils.fail({ message: "Sai otp" }));
+  }
   
   const body = {
     number: req.body.toAccountNumber,
@@ -77,14 +85,16 @@ router.post("/api/transfer/rsagroup", utils.requireRole('customer'), async (req,
     username: req.body.senderName,
     content: req.body.content 
   }
-  // const transaction = new Transaction({
-  //   accountHolderNumber: req.body.fromAccountNumber,
-  //   transferAmount: req.body.amount,
-  //   content: req.body.content,
-  //   isPayFee: req.body.fee,
-  //   receiverAccountNumber: req.body.toAccountNumber,
-  //   transferAt: new Date()
-  // })
+
+  await Account.findOneAndUpdate(
+    { account_id: req.body.fromAccountNumber },
+    {
+      $inc: {
+        balance: -+req.body.amount,
+      },
+    }
+  );
+
   await transactionModel.insert({
     accountHolderNumber: req.body.fromAccountNumber,
     transferAmount: req.body.amount,
@@ -176,6 +186,19 @@ router.post('/api/transfer/pgpgroup', utils.requireRole('customer'),async (req, 
   const passphrase = `nguyen`;
   const secretKey = "himom";
   
+  const user = await User.findOne({_id: req.user.id});
+  if (user.otp !== req.body.otp) {
+    return res.json(utils.fail({ message: "Sai otp" }));
+  }
+
+  await Account.findOneAndUpdate(
+    { account_id: req.body.fromAccountNumber },
+    {
+      $inc: {
+        balance: -(+req.body.amount)
+      }
+    })
+
   await transactionModel.insert({
     accountHolderNumber: req.body.fromAccountNumber,
     transferAmount: req.body.amount,
@@ -183,13 +206,13 @@ router.post('/api/transfer/pgpgroup', utils.requireRole('customer'),async (req, 
     isPayFee: req.body.fee,
     receiverAccountNumber: req.body.toAccountNumber,
     isOutside: true,
-  })
+  });
 
   const body = {
     from_id: req.body.senderName,
     to_id: req.body.toAccountNumber,
     amount: req.body.amount,
-    message: req.body.content
+    message: req.body.content,
   }
 
   // const {

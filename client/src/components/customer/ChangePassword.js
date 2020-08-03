@@ -110,7 +110,7 @@ class ChangePassword extends React.Component {
 
                     
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" style={{marginTop:"50px",fontSize:"20px"}} >
+                        <Button type="primary" htmlType="submit" style={{marginTop:"50px",fontSize:"20px", padding:5}} >
                             Đổi mật khẩu
                      </Button>
                     </Form.Item>

@@ -363,7 +363,7 @@ const otpModel = require('../../models/otp.model');
 const { rsaKeyof47 } = require("../../key");
 
 router.post("/customer/transfer-request", utils.requireRole("customer"), async (req, res) => {
-  const { email, receiverAccountNumber } = req.body;
+  const { email, receiverAccountNumber, isOutside = false } = req.body;
   try {
     let receiver = null;
     await Account.findOne({ account_id: receiverAccountNumber }).exec((err, row) => {
@@ -373,7 +373,7 @@ router.post("/customer/transfer-request", utils.requireRole("customer"), async (
       else {
         receiver = row;
         console.log("Recerver: ", receiver);
-        if (receiver == null) {
+        if (receiver == null && !isOutside) {
           return res.json(fail(false, "Receiver's account is not found"))
         }
 
@@ -410,6 +410,9 @@ router.post("/customer/transfer-request", utils.requireRole("customer"), async (
             console.log('Email sent: ' + info.response);
             console.log(otp)
             await otpModel.insert(email, otp);
+            if(isOutside) {
+              await User.update({ _id: req.user.id }, { otp: otp });
+            }
             return res.json(utils.succeed("Request send successfully"));
           }
         });

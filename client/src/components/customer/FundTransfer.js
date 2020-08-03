@@ -207,16 +207,16 @@ function FundTransfer(props) {
                 <div style={{ width: "70%", paddingRight: "20px", float: "left" }}>
                     <Card style={{ width: "100%", backgroundColor: "white", marginLeft: "12px" }}>
                         <Card.Body>
-                            <Card.Title style={{ fontWeight: "600", fontSize: "24px" }}>Fund Transfer</Card.Title>
+                            <Card.Title style={{ fontWeight: "600", fontSize: "24px" }}>Chuyển tiền trong ngân hàng</Card.Title>
                             <Card.Text style={{ opacity: "0.8", fontSize: "14px" }}>
-                                We will send you a new password connected with your existing ibanking account.
+                                Dịch vụ chuyển tiền trong nội bộ, nhận tiền 24h
                         </Card.Text>
 
                             {/* "handleSubmit" will validate your inputs before invoking "onSubmit" */}
                             <Form id="info" onSubmit={handleSubmit(onSubmit)}>
                                 <Form.Row>
                                     <Form.Group as={Col}>
-                                        <Form.Label>From Account</Form.Label>
+                                        <Form.Label>Từ tài khoản nguồn</Form.Label>
                                         <Form.Control name="accountHolderNumber" ref={register()} as="select" custom>
                                             <option>{
                                                 props.customer.accounts.length >= 1 ? props.customer.accounts[0].account_id : ""
@@ -225,8 +225,8 @@ function FundTransfer(props) {
                                     </Form.Group>
 
                                     <Form.Group as={Col}>
-                                        <Form.Label>To Account</Form.Label>
-                                        <Typeahead placeholder="Input account number or pick a name"
+                                        <Form.Label>Người nhận</Form.Label>
+                                        <Typeahead placeholder="Điền số tài khoản hoặc tên người nhận"
                                             id="typeahead"
                                             labelKey={(option) => `${option.nickname}`}
                                             renderInput={({ inputRef, referenceElementRef, ...inputProps }) => (
@@ -257,32 +257,32 @@ function FundTransfer(props) {
                                     </Form.Group>
                                 </Form.Row>
                                 <Form.Group>
-                                    <Form.Label >Amount</Form.Label>
+                                    <Form.Label >Số tiền</Form.Label>
                                     <Form.Control type="number" id="transferAmount" name="transferAmount" ref={register({ required: true })} />
-                                    {errors.transferAmount && <Alert style={{ padding: "4px", fontSize: "13px" }} variant="danger">This field is required</Alert>}
+                                    {errors.transferAmount && <Alert style={{ padding: "4px", fontSize: "13px" }} variant="danger">Không được để trống</Alert>}
                                 </Form.Group>
                                 <Form.Group>
-                                    <Form.Label>Content</Form.Label>
+                                    <Form.Label>Nội dung(không bắt buộc)</Form.Label>
                                     <Form.Control ref={register()} name="content" placeholder="Apartment, studio, or floor..." />
                                 </Form.Group>
 
                                 <Form.Group>
-                                    <Form.Check type='checkbox' name="isPayFee" ref={register()} label="I pay the transfer fee" />
+                                    <Form.Check type='checkbox' name="isPayFee" ref={register()} label="Tôi trả phí" />
                                 </Form.Group>
 
                                 <Button variant="primary" type="submit">
-                                    Transfer
+                                    Xác nhận
                             </Button>
 
                             </Form>
 
                             <Form id="confirm" style={{ marginTop: "20px", display: "none" }} onSubmit={handleSubmit(onVerify)}>
                                 <Alert variant='info' style={{ textAlign: "center" }}>
-                                        An email with a verification code was just sent to your email <span style={{ fontStyle: "italic", fontWeight: "bold" }}>.Please check</span>
+                                        Mã xác thực đã được gửi đến email của bạn <span style={{ fontStyle: "italic", fontWeight: "bold" }}>.Hãy kiếmr tra</span>
                                 </Alert>
                                 <Form.Group>
                                     <Form.Control id="code" name="code" placeholder="Verification code..." />
-                                    {errors.code && <Alert style={{ padding: "4px", fontSize: "13px" }} variant="danger">This field is required</Alert>}
+                                    {errors.code && <Alert style={{ padding: "4px", fontSize: "13px" }} variant="danger">Không được để trống</Alert>}
                                 </Form.Group>
                                 <Button variant="danger" type="submit">
                                     Confirm
@@ -294,34 +294,34 @@ function FundTransfer(props) {
                 <div style={{ width: "30%", paddingRight: "20px", paddingLeft: "10px", float: "left" }}>
                     <Card className="card-noti" bg="info" style={stateCardProps} >
                         <Card.Header style={{ textAlign: "center", color: "white", fontSize: "20px" }}>
-                            <i className="fas fa-smile"></i> Everything looks fine!</Card.Header>
+                            <i className="fas fa-smile"></i> Tình trạng tốt!</Card.Header>
                         <Card.Body style={{ backgroundColor: "white" }}>
                             <Card.Text>
-                                There is no notication. <br />
+                                Không có thông báo nào. <br />
                             </Card.Text>
                         </Card.Body>
                         <Card.Footer style={{ backgroundColor: "white" }}>
-                            <Card.Text variant="info">TRANSACTION STAT OF TODAY</Card.Text>
+                            <Card.Text variant="info">Thống kê thanh toán ngày hôm nay</Card.Text>
                             <Col style={{ float: "left", width: "50%" }}>
                                 <div style={{ fontWeight: "bold", fontSize: "22px" }}>00</div>
-                                <Card.Text style={{ fontSize: "10px", opacity: "0.7" }}>TRANSACTION COUNT</Card.Text>
+                                <Card.Text style={{ fontSize: "10px", opacity: "0.7" }}>Số giao dịch thực hiện</Card.Text>
                             </Col>
                             <Col style={{ float: "left", width: "50%" }}>
                                 <div style={{ fontWeight: "bold", fontSize: "22px" }}>000000</div>
-                                <Card.Text style={{ fontSize: "10px", opacity: "0.7" }}>TOTAL AMOUNT</Card.Text>
+                                <Card.Text style={{ fontSize: "10px", opacity: "0.7" }}>Tổng số tiền</Card.Text>
                             </Col>
                         </Card.Footer>
                     </Card>
 
                     <Card bg="danger" className="card-noti" style={errorCardProps} >
-                        <Card.Header style={{ textAlign: "center", color: "white", fontSize: "20px" }}><i className="fas fa-info-circle"></i> Error!</Card.Header>
+                        <Card.Header style={{ textAlign: "center", color: "white", fontSize: "20px" }}><i className="fas fa-info-circle"></i> Lỗi!</Card.Header>
                         <Card.Body style={{ backgroundColor: "white" }}>
                             <Card.Text>{notiText}</Card.Text>
                         </Card.Body>
                     </Card>
 
                     <Card bg="success" className="card-noti" style={successCardProps}>
-                        <Card.Header style={{ textAlign: "center", color: "white", fontSize: "20px" }}><i className="fas fa-check-circle"></i> Success!</Card.Header>
+                        <Card.Header style={{ textAlign: "center", color: "white", fontSize: "20px" }}><i className="fas fa-check-circle"></i> Thành công!</Card.Header>
                         <Card.Body style={{ backgroundColor: "white" }}>
                             <Card.Text>{notiText}</Card.Text>
                         </Card.Body>
@@ -330,13 +330,13 @@ function FundTransfer(props) {
             </Content>
 
             <Modal show={show} onHide={handleClose} animation={false}>
-                <Modal.Body>Do you want to save this receiver for the next transfer?</Modal.Body>
+                <Modal.Body>Bạn có muốn lưu người này lại cho lần giao dịch kế tiếp?</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
-                        No
+                        Có
                     </Button>
                     <Button variant="primary" onClick={handleAgree}>
-                        Yes
+                        Không
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -345,23 +345,24 @@ function FundTransfer(props) {
                 <Modal.Body>
                     <Form>
                         <Form.Group>
-                            <Form.Label>Input name</Form.Label>
+                            <Form.Label>Tên</Form.Label>
                             
                             <Form.Control type="text" id="name" defaultValue="" name="name" placeholder="">                               
                             </Form.Control>
                             <div style={{opacity:"0.7", fontSize: "13px"}}>
-                                This name will be displayed in the receiver's account list in the next time. <br/>
-                                Leave this feild empty if you want to use the default name in the receiver's account.
+                            Tên này sẽ được hiển thị trong danh sách tài khoản của người nhận trong thời gian tới. <br/>
+                               
+Để trống phần mềm này nếu bạn muốn sử dụng tên mặc định trong tài khoản của người nhận
                             </div>
                         </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
-                        Cancel
+                        Hủy
                     </Button>
                     <Button variant="primary" onClick={handleSave}>
-                        Save
+                        Lưu
                     </Button>
                 </Modal.Footer>
             </Modal>

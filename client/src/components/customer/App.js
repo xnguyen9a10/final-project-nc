@@ -68,7 +68,7 @@ function App(props) {
                 key="1"
                 icon={<UserOutlined style={{ marginTop: "10px;" }} />}
               >
-                <Link to="/">TRANG CHỦ</Link>
+                <Link to="/">Trang chủ</Link>
               </Menu.Item>
               <Menu.Item
                 id="drop_menu"
@@ -87,7 +87,7 @@ function App(props) {
                 <Link
                   to="/customer/services" /*onClick={(e)=>e.preventDefault()}*/
                 >
-                  DỊCH VỤ
+                  Dịch vụ
                 </Link>
               </Menu.Item>
               <Menu
@@ -138,8 +138,8 @@ function App(props) {
                     Đổi mật khẩu
                   </Link>
                 </Menu.Item>
-                <Menu.Item key="25" icon={<HistoryOutlined />}>
-                  <Link to="/customer/transfer">
+                <Menu.Item key="25">
+                  <Link to="/customer/transfer" style={{ paddingLeft: "20px" }}>
                     Chuyển khoản ngoài hệ thống
                   </Link>
                 </Menu.Item>
@@ -158,7 +158,7 @@ function App(props) {
                 </Menu.Item>
               </Menu>
               <Menu.Item key="3" icon={<HistoryOutlined />}>
-                <Link to="/employee/transaction-history">LIÊN HỆ</Link>
+                <Link to="/employee/transaction-history">Liên hệ</Link>
               </Menu.Item>
               <Menu.Item
                 key="4"

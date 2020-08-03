@@ -13,6 +13,7 @@ const schema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  otp: String,
   role: 
     {
       type: String,
