@@ -432,6 +432,7 @@ router.post("/customer/verify-transfer", utils.requireRole("customer"), async (r
     const holder = await Customer.find({ user_id: user.id })
     const accountholder = await Account.find({ account_id: holder[0].paymentAccount.ID })
     const accountreceiver = await Account.find({ account_id: receiverAccountNumber })
+    console.log("nguoi nhan ",accountreceiver);
     console.log("SO DU TAI KHOAN NGUOI NHAN LA:" + accountreceiver[0].balance)
     console.log("so du tai khoan nguoi gui la" + accountholder[0].balance)
     var record = await otpModel.findLatestOTP(email);

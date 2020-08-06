@@ -28,8 +28,8 @@ function FundTransfer(props) {
     const [ notiText, setNotiText] = useState(""); 
     const [showAddReceiver, setShowAddReceiver] = useState(false);
     const [alreadyIn, setAlreadyIn] = useState(false);
-    const [receiver, setReceiver] = useState({});
-
+    const [receiver, setReceiver] = useState("");
+    const [n, setN] = useState({});
     const onSubmit = data => {
         console.log(data);
         let receiverAccountNumber = document.getElementById("receiverAccountNumber").value;
@@ -39,24 +39,30 @@ function FundTransfer(props) {
         else {
             document.getElementById("alert").style.display = "none";
 
-                let flag = false;
-                props.customer.customer.receivers.forEach(element => {            
-                    if(element.nickname == receiverAccountNumber || element.account_id==receiverAccountNumber){
-                        flag=true;
-                        receiverAccountNumber = element.account_id;
-                        setAlreadyIn(true);
-                    }
-                });
-                if(flag==false){
-                    setAlreadyIn(false);
+            let flag = false;
+            props.customer.customer.receivers.forEach(element => {     
+                console.log(element)       
+                if(element.nickname == receiverAccountNumber || element.account_id ==receiverAccountNumber){
+                    flag=true;
+                    receiverAccountNumber = element.account_id;
+                    console.log(receiverAccountNumber);
+                    setAlreadyIn(true);                   
                 }
-            data.receiverAccountNumber = receiverAccountNumber;            
+            });
+            if(flag==false){
+                setAlreadyIn(false);
+            }
+            data.receiverAccountNumber = receiverAccountNumber;     
+            setN(receiverAccountNumber);
+            console.log(data)       
             props.sendRequest(data);
         }
     }
 
     const onVerify = () => {
-        props.verifyCode(document.getElementById("code").value,document.getElementById("receiverAccountNumber").value,document.getElementById("transferAmount").value);
+       // props.verifyCode(document.getElementById("code").value,document.getElementById("receiverAccountNumber").value,document.getElementById("transferAmount").value);
+        props.verifyCode(document.getElementById("code").value, n,document.getElementById("transferAmount").value);
+
     }
 
     useEffect(() => {
@@ -352,7 +358,7 @@ function FundTransfer(props) {
                             <div style={{opacity:"0.7", fontSize: "13px"}}>
                             Tên này sẽ được hiển thị trong danh sách tài khoản của người nhận trong thời gian tới. <br/>
                                
-Để trống phần mềm này nếu bạn muốn sử dụng tên mặc định trong tài khoản của người nhận
+Để trống phần này nếu bạn muốn sử dụng tên mặc định trong tài khoản của người nhận
                             </div>
                         </Form.Group>
                     </Form>
