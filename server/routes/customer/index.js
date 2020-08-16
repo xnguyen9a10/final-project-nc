@@ -477,6 +477,7 @@ router.post('/customer/transactions', utils.requireRole("customer"), async (req,
 
 const otpModel = require('../../models/otp.model');
 const { rsaKeyof47 } = require("../../key");
+const { json } = require("body-parser");
 
 router.post("/customer/transfer-request", utils.requireRole("customer"), async (req, res) => {
   const { email, receiverAccountNumber } = req.body;
@@ -643,4 +644,29 @@ router.post("/customer/save-receiver", utils.requireRole("customer"), async (req
   }
 })
 
+router.post("/customer/edit-receiver", utils.requireRole('customer'), async (req, res) => {
+  try{
+    const { user } = req
+    const {edit_account_id, nickname} = req.body
+  
+    Customer.find({ user_id: user.id }).exec((err, result) => {
+      if(err) { return res.json(err)}
+      const account = result[0];
+      console.log(account)
+      Customer.updateOne(
+            { "_id": account._id, "receivers.account_id": edit_account_id },
+            { $set: {"receivers.$.nickname": nickname}}
+      ).then((obj)=>{
+        
+      return res.json(obj);
+      })
+    })
+  }
+  catch(ex){
+    return res.json(ex.message);
+  }
+})
 module.exports = router;
+
+
+

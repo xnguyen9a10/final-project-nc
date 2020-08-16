@@ -3,10 +3,10 @@ import { Form, Input, Button, Checkbox, Table, Select } from "antd";
 import axios from "axios";
 import httpClient from '../../utils/httpClient';
 import { Link } from "react-router-dom";
-import { Tabs, Radio, Modal } from 'antd';
+import { Tabs, Radio,Modal } from 'antd';
 import { Plus } from "@ant-design/icons"
-
 const { TabPane } = Tabs;
+
 
 class receiversManagement extends React.Component {
   constructor(props) {
@@ -16,7 +16,9 @@ class receiversManagement extends React.Component {
       insideReceivers: {},
       outsideReceivers: {},
       visible: false,
-      visibleOutside:false
+      visibleOutside:false, 
+      show:false,
+      edit_account_id: "",
     }
   }
 
@@ -88,10 +90,37 @@ class receiversManagement extends React.Component {
     });
   };
 
+  onFinishEdit = async(values) =>{
+    var obj = {
+      "edit_account_id": this.state.edit_account_id,
+      "nickname": values.receiver_nickname
+    }
+    console.log(obj);
+    const result = await httpClient.post('/customer/edit-receiver', obj);
+    if(result==true){
+      const insideReceiversList = await httpClient.get(`/customer/get-inside-receiver`);
+      this.setState({
+        insideReceivers: insideReceiversList
+      })
+    }
+  }
+
   onDelete = async (account_id) => {
     const result = await httpClient.post(`/customer/delete-receiver/${account_id}`);
     if (result.status == "failed") this.error(result.err)
     else this.success(result.data)
+  }
+
+  handleClose = _ => {
+    this.setState({
+      show: false,
+    })
+  }
+  onEdit = (account_id, nickname) => {
+    this.setState({
+      show:true,    
+      edit_account_id: account_id,
+    })
   }
 
   createInsideReceiverTable() {
@@ -127,10 +156,13 @@ class receiversManagement extends React.Component {
         key: 'x',
         render: (text, record) => (
           <div>
-            <Button style={{ color: "blue" }}
+            <Button variant="danger"
               onClick={(e) => { this.onDelete(record.AccountNumber); }}
             >
               Xóa
+          </Button>
+          <Button variant="primary" onClick={(e)=>{this.onEdit(record.AccountNumber, record.Nickname)}}>
+              Sửa
           </Button>
           </div>
         ),
@@ -237,7 +269,7 @@ class receiversManagement extends React.Component {
     const outsideReceiverTable = this.createOutsideReceiverTable()
     const { Option } = Select;
     return (
-      <div>
+    <div>
         <Tabs defaultActiveKey="1" type="card" size={size}>
           <TabPane tab="Người nhận nội bộ" key="1">
             <Button type="primary" size="large" onClick={this.openReceiverModal}>Thêm mới</Button>
@@ -343,6 +375,162 @@ class receiversManagement extends React.Component {
               <Button type="primary" htmlType="submit" >
                 Thêm người nhận
                      </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+        <Modal
+          title="Chỉnh sửa người nhận"
+          visible={this.state.visible}
+          onCancel={this.handleCancel}
+          footer={null}
+        >
+          <Form
+            onFinish={this.onFinish}
+            onFinishFailed={onFinishFailed}
+          >
+            <Form.Item
+              name="receiver_accountNumber"
+              rules={
+                [
+                  {
+                    required: true,
+                    message: "Vui lòng nhập số tài khoản",
+                  }
+                ]
+              }
+            >
+              <Input type="text" placeholder="Nhập số tài khoản" />
+            </Form.Item>
+
+            <Form.Item
+              name="receiver_nickname"
+            >
+              <Input type="text" placeholder="Nhập tên gợi nhớ" />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" >
+                Thêm người nhận
+                     </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+        <Modal
+          title="Thêm người nhận"
+          visible={this.state.visible}
+          onCancel={this.handleCancel}
+          footer={null}
+        >
+          <Form
+            onFinish={this.onFinish}
+            onFinishFailed={onFinishFailed}
+          >
+            <Form.Item
+              name="receiver_accountNumber"
+              rules={
+                [
+                  {
+                    required: true,
+                    message: "Vui lòng nhập số tài khoản",
+                  }
+                ]
+              }
+            >
+              <Input type="text" placeholder="Nhập số tài khoản" />
+            </Form.Item>
+
+            <Form.Item
+              name="receiver_nickname"
+            >
+              <Input type="text" placeholder="Nhập tên gợi nhớ" />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" >
+                Thêm người nhận
+                     </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+        <Modal
+          title="Thêm người nhận ngoài ngân hàng"
+          visible={this.state.visibleOutside}
+          onCancel={this.handleCancelOutside}
+          footer={null}
+        >
+          <Form
+            onFinish={this.onFinishOutside}
+            onFinishFailed={onFinishFailed}
+          >
+            <Form.Item
+              name="receiver_accountNumber"
+              rules={
+                [
+                  {
+                    required: true,
+                    message: "Vui lòng nhập số tài khoản",
+                  }
+                ]
+              }
+            >
+              <Input type="text" placeholder="Nhập số tài khoản" />
+            </Form.Item>
+
+            <Form.Item
+              name="receiver_nickname"
+              rules={
+                [
+                  {
+                    required: true,
+                    message: "Vui lòng nhập tên gợi nhớ",
+                  }
+                ]
+              }
+            >
+              <Input type="text" placeholder="Nhập tên gợi nhớ" />
+            </Form.Item>
+            <Form.Item
+            name="type"
+            rules={
+              [
+                {
+                  required: true,
+                  message: "Vui lòng chọn loại ngân hàng",
+                }
+              ]
+            }
+            >
+              <Select
+                
+                placeholder="Chọn loại ngân hàng">
+                <Option value="pgp">pgp</Option>
+                <Option value="rsa">rsa</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" >
+                Thêm người nhận
+                     </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+        <Modal
+          title="Chỉnh sửa người nhận"
+          visible={this.state.show}
+          onCancel={this.handleClose}
+          footer={null}
+        >
+          <Form
+            onFinish={this.onFinishEdit}
+            onFinishFailed={onFinishFailed}
+          >
+            <Form.Item
+              name="receiver_nickname"
+            >
+              <Input type="text" value={this.state.editname} />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" >
+                Cập nhật
+                    </Button>
             </Form.Item>
           </Form>
         </Modal>
