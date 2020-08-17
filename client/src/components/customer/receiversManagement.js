@@ -19,16 +19,23 @@ class receiversManagement extends React.Component {
       visibleOutside:false, 
       show:false,
       edit_account_id: "",
+      insideReceiverTable: {},
+      outsideReceiverTable: {}
     }
   }
 
   async componentDidMount() {
     const insideReceiversList = await httpClient.get(`/customer/get-inside-receiver`);
     const outsideReceiversList = await httpClient.get(`/customer/get-outside-receiver`);
-
     this.setState({
       insideReceivers: insideReceiversList,
-      outsideReceivers: outsideReceiversList
+      outsideReceivers: outsideReceiversList,
+    })
+    const insideReceiver = this.createInsideReceiverTable()
+    const outsideReceiver = this.createOutsideReceiverTable()
+    this.setState({
+      insideReceiverTable: insideReceiver, 
+      outsideReceiverTable: outsideReceiver,
     })
   }
   // Inside receiver
@@ -100,10 +107,22 @@ class receiversManagement extends React.Component {
     if(result==true){
       const insideReceiversList = await httpClient.get(`/customer/get-inside-receiver`);
       this.setState({
-        insideReceivers: insideReceiversList
+        insideReceivers: insideReceiversList,
+        show: false,
+      })
+      
+      this.setState({
+        insideReceivers: insideReceiversList,
+      })
+      const insideReceiver = this.createInsideReceiverTable()
+      const outsideReceiver = this.createOutsideReceiverTable()
+      this.setState({
+        insideReceiverTable: insideReceiver, 
+        outsideReceiverTable: outsideReceiver,
       })
     }
   }
+  
 
   onDelete = async (account_id) => {
     const result = await httpClient.post(`/customer/delete-receiver/${account_id}`);
@@ -265,7 +284,7 @@ class receiversManagement extends React.Component {
       console.log("Failed:", errorInfo);
     };
     const { size } = this.state;
-    const insideReceiverTable = this.createInsideReceiverTable()
+    /*const insideReceiverTable = this.createInsideReceiverTable()*/
     const outsideReceiverTable = this.createOutsideReceiverTable()
     const { Option } = Select;
     return (
@@ -273,7 +292,7 @@ class receiversManagement extends React.Component {
         <Tabs defaultActiveKey="1" type="card" size={size}>
           <TabPane tab="Người nhận nội bộ" key="1">
             <Button type="primary" size="large" onClick={this.openReceiverModal}>Thêm mới</Button>
-            <Table dataSource={insideReceiverTable.dataSource} columns={insideReceiverTable.columns}></Table>
+            <Table dataSource={this.state.insideReceiverTable.dataSource} columns={this.state.insideReceiverTable.columns}></Table>
           </TabPane>
           <TabPane tab="Người nhận ngoài ngân hàng" key="2">
             <Button type="primary" size="large" onClick={this.openReceiverOutsideModal}>Thêm mới</Button>

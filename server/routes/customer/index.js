@@ -657,8 +657,7 @@ router.post("/customer/edit-receiver", utils.requireRole('customer'), async (req
             { "_id": account._id, "receivers.account_id": edit_account_id },
             { $set: {"receivers.$.nickname": nickname}}
       ).then((obj)=>{
-        
-      return res.json(obj);
+        return res.json(true);
       })
     })
   }
