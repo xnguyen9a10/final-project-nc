@@ -70,11 +70,20 @@ export default class TransferOutside extends React.Component {
       if (this.state.bank === "rsa") {
         const result = await httpClient.get("/api/rsa-group/" + value);
         console.log(result);
-        this.setState({ fullname: result.data.name });
+        if(result.data) {
+          this.setState({ fullname: result.data.name });
+        } else {
+          alert("Not found account")
+        }
       }
       if (this.state.bank === "pgp") {
         const result = await httpClient.get("/api/pgpgroup/" + value);
-        this.setState({ fullname: result.data.name });
+        console.log(result)
+        if(result.data) {
+          this.setState({ fullname: result.data.name });
+        } else {
+          alert("Not found account")
+        }
       }
     });
   };

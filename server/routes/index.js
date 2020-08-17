@@ -7,9 +7,12 @@ const employee = require("./employee");
 // const Transaction = mongoose.model("Transaction");
 const admin = require("./admin");
 const bankLinkService = require("../services/bankLinkService");
+const utils = require("../utils/utils")
 const jwt = require("jsonwebtoken");
 const Account = mongoose.model("Account");
 const moment = require("moment");
+const transactionModel = require('../models/transaction');
+
 const publicKeyArmored = `-----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: Keybase OpenPGP v1.0.0
 Comment: https://keybase.io/crypto
@@ -85,34 +88,38 @@ function requireLogin(req, res, next) {
 
 router.get("/api/account/info/:accountNumber", async (req, res) => {
   const accountNumber = req.params.accountNumber;
+  try{
   const response = await bankLinkService.validate(
     req.headers,
     req.body,
     accountNumber
   );
   return res.json(utils.succeed(response));
+  } catch (e) {
+    return res.json(utils.fail("cannot find that account"))
+  }
 });
 
 router.post("/api/account/money", async (req, res) => {
   try {
     const response = await bankLinkService.transfer(req.headers, req.body);
-    const { accountnumber, amount } = req.body;
-    await Account.findOneAndUpdate(
-      { account_id: accountnumber },
-      {
-        $inc: {
-          balance: amount,
-        },
-      }
-    ).exec((err, result) => {
-      if (err) throw err;
-      if (result === null)
-        return res.json(utils.fail("Tài khoản không tồn tại"));
-      else return res.json(utils.succeed("Nạp tiền thành công"));
-    });
+    const { toAccountNumber, amount } = req.body;
+    // await Account.findOneAndUpdate(
+    //   { account_id: toAccountNumber },
+    //   {
+    //     $inc: {
+    //       balance: amount,
+    //     },
+    //   }
+    // ).exec((err, result) => {
+    //   if (err) return res.json(utils.fail(err.message));
+    //   if (result === null)
+    //     return res.json(utils.fail("Tài khoản không tồn tại"));
+    //   else return res.json(utils.succeed("Nạp tiền thành công"));
+    // });
 
     await Account.findOneAndUpdate(
-      { account_id: req.body.accountNumber },
+      { account_id: req.body.toAccountNumber },
       {
         $inc: {
           balance: +req.body.amount,
@@ -124,21 +131,22 @@ router.post("/api/account/money", async (req, res) => {
       accountHolderNumber: req.body.fromAccountNumber,
       transferAmount: req.body.amount,
       content: req.body.content,
-      isPayFee: req.body.fee,
+      isPayFee: req.body.fee || true,
       receiverAccountNumber: req.body.toAccountNumber,
       isOutside: true,
     });
 
     return res.json(utils.succeed(response));
   } catch (e) {
-    return res.json(utils.fail(e.message));
+    console.log(e)
+    return res.json(utils.fail(e));
   }
 });
 
 router.use("/", user);
 router.use(requireLogin);
-router.use("/", customer);
 router.use("/", bankLink);
+router.use("/", customer);
 router.use("/", employee);
 router.use("/", admin);
 

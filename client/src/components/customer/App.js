@@ -196,7 +196,7 @@ function App(props) {
                 component={transactionHistory}
               />
               <Route
-                path="/customer/accountHistory/:accountId"
+                path="/accountHistory/:accountId"
                 component={accountHistory}
               />
               <Route path="/customer/transfer" component={outside} />
