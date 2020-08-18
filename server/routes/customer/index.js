@@ -183,27 +183,123 @@ router.get("/customer/account-list", utils.requireRole('customer'), async (req, 
   return res.status(201).json(result)
 })
 
-router.get("/customer/transfer-history/:accountId", utils.requireRole('customer'), async (req, res) => {
-  const accountnumber = req.params.accountId
-  console.log("chuyển khoản")
-  const result = await transactionModel.getByTransfer(accountnumber)
-  res.status(201).json(result)
-}
-)
-
-router.get("/customer/receive-history/:accountId", utils.requireRole('customer'), async (req, res) => {
-  const accountnumber = req.params.accountId
-  const result = await transactionModel.getByReceiver(accountnumber)
-  res.status(201).json(result)
+router.get("/customer/transfer-history/", utils.requireRole('customer'), async (req, res) => {
+  const {user} = req;
+  try{
+    await Customer.findOne({'user_id':user._id}).exec(async(err,result)=>{
+      if(err){
+        return res.json(fail(err, err.message))
+      }
+      else{
+        accountholder = result.paymentAccount.ID;
+        console.log('accountholder:', accountholder);
+        const list = await transactionModel.getByTransfer(accountholder);
+        
+        return res.json(succeed(list));
+      }
+    })}catch(ex){
+      return res.json(fail(ex,ex.message));
+    }
 })
 
-router.get("/customer/payment-history/:accountId", utils.requireRole('customer'), async (req, res) => {
-  const accountnumber = req.params.accountId
-  console.log("Nhắc nợ")
-  const result = await transactionModel.getByIspayment(accountnumber)
-  res.status(201).json(result)
+
+router.get("/customer/receive-history/", utils.requireRole('customer'), async (req, res) => {
+  const {user} = req;
+
+  try{
+    await Customer.findOne({'user_id':user._id}).exec(async(err,result)=>{
+      if(err){
+        return res.json(fail(err, err.message))
+      }
+      else{
+        accountholder = result.paymentAccount.ID;
+        console.log('accountholder:', accountholder);
+        const list = await transactionModel.getByReceiver(accountholder);
+        
+        return res.json(succeed(list));
+      }
+    })}catch(ex){
+      return res.json(fail(ex,ex.message));
+    }
 })
 
+router.get("/customer/payment-history/", utils.requireRole('customer'), async (req, res) => {
+  const {user} = req;
+
+  try{
+    await Customer.findOne({'user_id':user._id}).exec(async(err,result)=>{
+      if(err){
+        return res.json(fail(err, err.message))
+      }
+      else{
+        accountholder = result.paymentAccount.ID;
+        console.log('accountholder:', accountholder);
+        const list = await transactionModel.getByIspayment(accountholder);
+        return res.json(succeed(list));
+      }
+    })}catch(ex){
+      return res.json(fail(ex,ex.message));
+    }
+})
+
+router.get("/customer/transfer-history/restrict", utils.requireRole('customer'), async (req, res) => {
+  const {user} = req;
+  try{
+    await Customer.findOne({'user_id':user._id}).exec(async(err,result)=>{
+      if(err){
+        return res.json(fail(err, err.message))
+      }
+      else{
+        accountholder = result.paymentAccount.ID;
+        console.log('accountholder:', accountholder);
+        const list = await transactionModel.getByTransfer(accountholder, true);
+        
+        return res.json(succeed(list));
+      }
+    })}catch(ex){
+      return res.json(fail(ex,ex.message));
+    }
+})
+
+
+router.get("/customer/receive-history/restrict", utils.requireRole('customer'), async (req, res) => {
+  const {user} = req;
+
+  try{
+    await Customer.findOne({'user_id':user._id}).exec(async(err,result)=>{
+      if(err){
+        return res.json(fail(err, err.message))
+      }
+      else{
+        accountholder = result.paymentAccount.ID;
+        console.log('accountholder:', accountholder);
+        const list = await transactionModel.getByReceiver(accountholder, true);
+        
+        return res.json(succeed(list));
+      }
+    })}catch(ex){
+      return res.json(fail(ex,ex.message));
+    }
+})
+
+router.get("/customer/payment-history/restrict", utils.requireRole('customer'), async (req, res) => {
+  const {user} = req;
+
+  try{
+    await Customer.findOne({'user_id':user._id}).exec(async(err,result)=>{
+      if(err){
+        return res.json(fail(err, err.message))
+      }
+      else{
+        accountholder = result.paymentAccount.ID;
+        console.log('accountholder:', accountholder);
+        const list = await transactionModel.getByIspayment(accountholder, true);
+        return res.json(succeed(list));
+      }
+    })}catch(ex){
+      return res.json(fail(ex,ex.message));
+    }
+})
 /** ==== NGỌC PART===== */
 const { fail, succeed } = require("../../utils/utils");
 

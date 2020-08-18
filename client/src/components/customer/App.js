@@ -34,7 +34,7 @@ import {
 } from "@ant-design/icons";
 import FundTransfer from './FundTransfer';
 import ChangePassword from './ChangePassword'
-import transactionHistory from "./transactionHistory";
+import TransactionHistory from "./transactionHistory";
 import accountHistory from './accountHistory';
 import outside from './outsideTranfer';
 import Debs from './debs';
@@ -142,8 +142,8 @@ function App(props) {
               <Menu.Item key="27">
                 <Link to="/customer/receivers-management" style={{ paddingLeft: "20px" }}>Quản lý danh sách người nhận</Link>
               </Menu.Item>
-              <Menu.Item key="25" icon={<HistoryOutlined />}>
-                <Link to="/customer/transfer">
+              <Menu.Item key="25">
+                <Link to="/customer/transfer"  style={{ paddingLeft: "20px" }}>
                   Chuyển khoản ngoài hệ thống
                   </Link>
               </Menu.Item>
@@ -151,6 +151,9 @@ function App(props) {
                 <Link to="/customer/debs" style={{ paddingLeft: "20px" }}>
                   Quản lý nhắc nợ
                   </Link>
+              </Menu.Item>
+              <Menu.Item key="28">
+                <Link to="/customer/transaction-history" style={{ paddingLeft: "20px" }}>Lịch sử giao dịch</Link>
               </Menu.Item>
               <Menu.Item key="24">
                 <Link
@@ -198,7 +201,7 @@ function App(props) {
             />
             <Route
               path="/customer/transaction-history"
-              component={transactionHistory}
+              component={TransactionHistory}
             />
             <Route
               path="/customer/accountHistory/:accountId"
