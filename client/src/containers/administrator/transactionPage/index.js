@@ -105,7 +105,6 @@ class TransactionPage extends Component {
 
   onChange = async (value) => {
     // const result = await httpClient.get("/admin/transactionquery/" + value);
-    // store.dispatch(setDataAction(result.data))
     this.setState({ select: value });
   };
 
@@ -121,7 +120,7 @@ class TransactionPage extends Component {
       params,
     });
     console.log(result)
-    this.setState({total: result.data.money[0].sum})
+    this.setState({total: result.data.money[0] && result.data.money[0].sum || 0})
     store.dispatch(setDataAction(result.data.data));
   };
 

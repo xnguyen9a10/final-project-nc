@@ -70,11 +70,20 @@ export default class TransferOutside extends React.Component {
       if (this.state.bank === "rsa") {
         const result = await httpClient.get("/api/rsa-group/" + value);
         console.log(result);
-        this.setState({ fullname: result.data.name });
+        if(result.data) {
+          this.setState({ fullname: result.data.name });
+        } else {
+          alert("Not found account")
+        }
       }
       if (this.state.bank === "pgp") {
         const result = await httpClient.get("/api/pgpgroup/" + value);
-        this.setState({ fullname: result.data.name });
+        console.log(result)
+        if(result.data) {
+          this.setState({ fullname: result.data.name });
+        } else {
+          alert("Not found account")
+        }
       }
     });
   };
@@ -83,8 +92,15 @@ export default class TransferOutside extends React.Component {
     this.setState({ amount: value });
   };
 
-  onSubmit = (value) => {
+  onSubmit = async (value) => {
     this.setState({ modalOTP: true });
+
+    const body = {
+      receiverAccountNumber: this.state.toAccountNumber,
+      email: localStorage.getItem("email"),
+      isOutside: true
+    };
+    const result = await httpClient.post("customer/transfer-request", body);
   };
 
   onSubmitCode = async () => {
@@ -96,6 +112,7 @@ export default class TransferOutside extends React.Component {
       amount: this.state.amount,
       content: this.state.content,
       fee: this.state.fee === "nguoigui" ? true : false,
+      otp: this.state.otp
     };
     const seft = this;
 
@@ -155,6 +172,17 @@ export default class TransferOutside extends React.Component {
       visible: false,
     });
   };
+
+  confirmOTP = async () => {
+    const body = {
+      code: this.state.otp,
+      email: localStorage.getItem("email"),
+      receiverAccountNumber: this.state.toAccountNumber,
+      amount: this.state.amount,
+    };
+
+    this.onSubmitCode();
+  }
 
   render() {
     return (
@@ -321,16 +349,22 @@ export default class TransferOutside extends React.Component {
           onOk={this.confirmOTP}
           onCancel={() => this.setState({ modalOTP: false })}
         >
-          <>
-            <p>
-              Mã OTP đã được gửi đến email của bạn, hãy kiểm tra và điền vào
-              dưới đây{" "}
-            </p>
-            <Input
-              onChange={(e) => this.setState({ otp: e.target.value })}
-              placeholder="Nhập mã OTP"
-            />
-          </>
+          <Form>
+            <Form.Item
+              name="otp"
+              rules={[{ required: true, message: "Hãy nhập mã OTP!" }]}
+            >
+              <p>
+                Mã OTP đã được gửi đến email của bạn, hãy kiểm tra và điền vào
+                dưới đây{" "}
+              </p>
+              <Input
+                onChange={(e) => this.setState({ otp: e.target.value })}
+                placeholder="Nhập mã OTP"
+                validateStatus="warning"
+              />
+            </Form.Item>
+          </Form>
         </Modal>
       </Row>
     );

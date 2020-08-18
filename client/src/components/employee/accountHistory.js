@@ -179,6 +179,8 @@ class accountHistory extends React.Component {
     }
 
     render() {
+      console.log("ádasd")
+
       const { size } = this.state;
       const transferTable=this.createTransferTable()
       const receiverTable=this.createReceiveTable()

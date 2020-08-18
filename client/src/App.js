@@ -109,46 +109,45 @@ class App extends React.Component {
                   style={{
                     display: "flex",
                     justifyContent: "center",
+                    height: 100,
                   }}
                 >
-                  <Link
-                    to="/employee/create-customer"
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      justifyContent: "center",
-                    }}
+                  <div
+                    // to="/employee/create-customer"
+                    // style={{
+                    //   width: "100%",
+                    //   display: "flex",
+                    //   justifyContent: "center",
+                    // }}
                   >
-                    <img src={LogoImg} alt="logo" width={60} height={60} />
-                  </Link>
+                    <img src={LogoImg} alt="logo" width={150} height={100} />
+                  </div>
                 </Menu.Item>
-                <Menu.Item key="1" icon={<UserOutlined />}>
-                  <Link to="/employee/create-customer">
-                    Tạo tài khoản khách hàng
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="2" icon={<MoneyCollectOutlined />}>
-                  <Link to="/employee/recharge-account">
-                    Nạp tiền vào tài khoản
-                  </Link>
-                </Menu.Item>
-                <Menu.Item key="3" icon={<HistoryOutlined />}>
-                  <Link to="/employee/transaction-history">
-                    Lịch sử giao dịch
-                  </Link>
-                </Menu.Item>
-                {isRole("administrator") && (
-                  <Menu.Item key="5" icon={<HistoryOutlined />}>
-                    <Link to="/admin/management">
-                      Quản lý nhân viên
+                {isRole("employee") && (
+                  <Menu.Item key="1" icon={<UserOutlined />}>
+                    <Link to="/employee/create-customer">Tạo tài khoản</Link>
+                  </Menu.Item>
+                )}
+                {isRole("employee") && (
+                  <Menu.Item key="2" icon={<MoneyCollectOutlined />}>
+                    <Link to="/employee/recharge-account">Nạp tiền</Link>
+                  </Menu.Item>
+                )}
+                {isRole("employee") && (
+                  <Menu.Item key="3" icon={<HistoryOutlined />}>
+                    <Link to="/employee/transaction-history">
+                      Lịch sử giao dịch
                     </Link>
                   </Menu.Item>
                 )}
                 {isRole("administrator") && (
+                  <Menu.Item key="5" icon={<HistoryOutlined />}>
+                    <Link to="/admin/management">Quản lý nhân viên</Link>
+                  </Menu.Item>
+                )}
+                {isRole("administrator") && (
                   <Menu.Item key="6" icon={<HistoryOutlined />}>
-                    <Link to="/admin/history">
-                      Lịch sử giao dịch
-                    </Link>
+                    <Link to="/admin/history">Lịch sử giao dịch</Link>
                   </Menu.Item>
                 )}
                 <Menu.Item
@@ -161,19 +160,6 @@ class App extends React.Component {
               </Menu>
             </Sider>
             <Layout>
-              <Header
-                className="site-layout-sub-header-background"
-                style={{ padding: 0 }}
-              >
-                {/* <div className="logo">
-                            <img
-                                src={LogoImg}
-                                alt="logo"
-                                height={60}
-                                width={60}
-                            />
-                        </div> */}
-              </Header>
               <Content
                 style={{
                   // margin: "24px 40px 17px 40px",

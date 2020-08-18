@@ -102,7 +102,26 @@ function App(props) {
               theme="dark"
               mode="inline"
             >
-              <Menu.Item key="21">
+              <Menu.Item
+                key="1"
+                icon={<UserOutlined style={{ marginTop: "10px;" }} />}
+              >
+                <Link to="/">Trang chủ</Link>
+              </Menu.Item>
+              <Menu.Item
+                id="drop_menu"
+                key="2"
+                icon={<MoneyCollectOutlined />}
+                onClick={() => {
+                  document.getElementById("submenu").style.display = "block";
+                  document.getElementById("sider").style.minWidth = "250px";
+                  document.getElementById("sider").style.maxWidth = "250px";
+                  if (document.getElementById("sub_content") != null) {
+                    document.getElementById("sub_content").style.display =
+                      "none";
+                  }
+                }}
+              >
                 <Link
                   to="/customer/profile"
                   style={{ paddingLeft: "20px" }}
