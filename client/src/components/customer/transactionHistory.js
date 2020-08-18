@@ -66,7 +66,7 @@ function TransactionHistory(props) {
   return (
     <>
       <Content style={{ margin: "24px 0px", width: "100%", fontFamily: "'Titillium Web', sans-serif", backgroundColor: "#eee" }}>
-        <div style={{ width: "100%", paddingRight: "20px", float: "left" }}>
+        <div className="site-layout-background" style={{ width: "100%", paddingRight: "20px", float: "left" }}>
           <Card style={{ width: "100%", backgroundColor: "white", marginLeft: "12px" }}>
             <Card.Body>
               <Card.Title style={{ fontWeight: "600", fontSize: "24px" }}>LỊCH SỬ GIAO DỊCH</Card.Title>
