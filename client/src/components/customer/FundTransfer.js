@@ -60,7 +60,7 @@ function FundTransfer(props) {
     }
 
     const onVerify = () => {
-        /*
+        
         let receiverAccountNumber = document.getElementById("receiverAccountNumber").value;
         if (receiverAccountNumber == "") {
             document.getElementById("alert").style.display = "block";
@@ -73,9 +73,9 @@ function FundTransfer(props) {
                     }
                 });
             }
-        props.verifyCode(document.getElementById("code").value,receiverAccountNumber,document.getElementById("transferAmount").value,props.requestResult.data);*/
+        props.verifyCode(document.getElementById("code").value,receiverAccountNumber,document.getElementById("transferAmount").value,props.requestResult.data);
        // props.verifyCode(document.getElementById("code").value,document.getElementById("receiverAccountNumber").value,document.getElementById("transferAmount").value);
-        props.verifyCode(document.getElementById("code").value, n,document.getElementById("transferAmount").value);
+       // props.verifyCode(document.getElementById("code").value, n,document.getElementById("transferAmount").value);
 
     }
 
@@ -348,10 +348,10 @@ function FundTransfer(props) {
                 <Modal.Body>Bạn có muốn lưu người này lại cho lần giao dịch kế tiếp?</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
-                        Có
+                        Không 
                     </Button>
                     <Button variant="primary" onClick={handleAgree}>
-                        Không
+                        Có
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -365,9 +365,7 @@ function FundTransfer(props) {
                             <Form.Control type="text" id="name" defaultValue="" name="name" placeholder="">                               
                             </Form.Control>
                             <div style={{opacity:"0.7", fontSize: "13px"}}>
-                            Tên này sẽ được hiển thị trong danh sách tài khoản của người nhận trong thời gian tới. <br/>
-                               
-Để trống phần này nếu bạn muốn sử dụng tên mặc định trong tài khoản của người nhận
+                            Tên này sẽ được hiển thị trong danh sách tài khoản của người nhận trong thời gian tới. Để trống phần này nếu bạn muốn sử dụng tên mặc định trong tài khoản của người nhận
                             </div>
                         </Form.Group>
                     </Form>

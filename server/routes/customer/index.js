@@ -10,6 +10,7 @@ const User = mongoose.model("User");
 const nodemailer = require("nodemailer");
 var otpGenerator = require('otp-generator')
 const bcrypt = require('bcryptjs')
+const ObjectId = require('mongodb').ObjectId; 
 
 router.get("/customer/info", utils.requireRole('customer'), async (req, res) => {
   const response = await CustomerService.vidu();
@@ -686,15 +687,17 @@ router.post("/customer/verify-transfer", utils.requireRole("customer"), async (r
     return res.json(utils.fail(2, ex.message));
   }
 })
-// Đã đến bước này thì tên không thể sai. 
+// Lưu người nhận: 2TH: có nhập tên gợi nhớ -> lưu bằng tên gợi nhớ, để trống tên gợi nhớ -> Tìm tên bằng stk rồi lưu 
 router.post("/customer/save-receiver", utils.requireRole("customer"), async (req, res) => {
   try {
     var { user_id, nickname, account_id } = req.body;
     var receiver = null;
-
+    // Kiểm tra người dùng nhập số tài khoản
     if (nickname.match(/^[0-9]+$/)) {
       console.log("match");
-      await Customer.findOne({ $or: [{ "paymentAccount.ID": account_id }, { receivers: { $elemMatch: { ID: account_id } } }] }).exec(async (err, result) => {
+      //await Customer.findOne({ $or: [{ "paymentAccount.ID": account_id }, { receivers: { $elemMatch: { ID: account_id } } }] }).exec(async (err, result) => {
+      // tìm người nhận bằng số tài khoản (payment account)
+      await Customer.findOne({ "paymentAccount": {'ID': account_id}}).exec(async (err, result) => {
         if (err) {
           console.log("Find error: ", err)
         }
@@ -702,7 +705,7 @@ router.post("/customer/save-receiver", utils.requireRole("customer"), async (req
         else {
           receiver = result;
           // Từ đây lấy user_id của recevier truy vấn vào bảng user để lấy full name. 
-          await User.findOne({ _id: receiver.user_id }).exec((err, result) => {
+          await User.findOne({ "_id": ObjectId(receiver.user_id)}).exec((err, result) => {
             if (err) {
               console.log("Find user id: ,", err);
             }
