@@ -55,6 +55,7 @@ function TransactionHistory(props) {
   useEffect(async () => {
     let transferdata = await httpClient.get(`/customer/transfer-history/`);
     setTransferHis(transferdata.data);
+    console.log(transferdata)
 
     let receiverdata = await httpClient.get(`/customer/receive-history/`);
     setReceiveHis(receiverdata.data);
@@ -95,6 +96,7 @@ function TransactionHistory(props) {
                       {type == 3 ? <th>Tài khoản người nhận</th> : ""}
                       {type == 2 ? <th>Tài khoản người gửi</th> : ""}
                       <th>Số tiền</th>
+                      <th>Nội dung</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -105,6 +107,7 @@ function TransactionHistory(props) {
                         <td><Moment format="hh:mm DD/MM/YYYY">{obj.transferAt}</Moment></td>
                         <td>{obj.receiverAccountNumber}</td>
                         <td>{obj.transferAmount}</td>
+                        <td>{obj.content}</td>
                       </tr>) : ""
                     }
                     {
@@ -115,6 +118,7 @@ function TransactionHistory(props) {
                           <td><Moment format="hh:mm DD/MM/YYYY">{obj.transferAt}</Moment></td>
                           <td>{obj.accountHolderNumber}</td>
                           <td>{obj.transferAmount}</td>
+                          <td>{obj.content}</td>
                         </tr>) : ""
                     }
                     {
@@ -124,6 +128,7 @@ function TransactionHistory(props) {
                           <td><Moment format="hh:mm DD/MM/YYYY">{obj.transferAt}</Moment></td>
                           <td>{obj.accountHolderNumber}</td>
                           <td>{obj.transferAmount}</td>
+                          <td>{obj.content}</td>
                         </tr>) : ""
                     }
                   </tbody>
