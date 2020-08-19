@@ -119,7 +119,6 @@ router.post("/api/transfer/rsagroup", utils.requireRole('customer'), async (req,
         },
       }
     );
-      console.log(response.data)
     const history = new Outside ({
       from: req.body.fromAccountNumber,
       to: req.body.toAccountNumber,
@@ -274,7 +273,7 @@ router.post('/api/transfer/pgpgroup',utils.requireRole('customer'), async (req, 
       bank: "pgp",
     });
   
-    // await history.save();
+    await history.save();
     console.log(response)
     return res.json(utils.succeed({}));
 
