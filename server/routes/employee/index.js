@@ -51,6 +51,21 @@ router.post("/employee/create-customer",utils.requireRole('employee'), async (re
 
 router.post("/employee/recharge-account",utils.requireRole('employee'), async (req, res) => {
   const { accountnumber, amount } = req.body;
+  const user=await User.findOne({email:accountnumber})
+  if(user){
+    const customer= await Customer.findOne({user_id:user._id})
+    await Account.findOneAndUpdate(
+    {account_id:customer.paymentAccount.ID},
+    {
+    $inc:{
+      balance: amount
+    }
+  }).exec((err,result)=>{
+    if(result===null||err) return res.json("Tài khoản không tồn tại")
+    else return res.json("Nạp tiền thành công")
+  })
+  }
+  else{
   await Account.findOneAndUpdate(
     {account_id:accountnumber},
     {
@@ -58,10 +73,10 @@ router.post("/employee/recharge-account",utils.requireRole('employee'), async (r
       balance: amount
     }
   }).exec((err,result)=>{
-    if(err) throw err
-    if(result===null) return res.json("Tài khoản không tồn tại")
+    if(result===null||err) return res.json("Tài khoản không tồn tại")
     else return res.json("Nạp tiền thành công")
   })
+  }
 });
 
 // router.get("/employee/customer-info/:accountId",utils.requireRole('employee'),async(req,res)=>{
