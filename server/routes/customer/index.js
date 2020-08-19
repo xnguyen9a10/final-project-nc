@@ -741,8 +741,6 @@ router.post("/customer/save-receiver", utils.requireRole("customer"), async (req
         res.json(succeed(entity))
       })
     }
-
-
   }
   catch (ex) {
     res.json(fail(ex, ex.message));
