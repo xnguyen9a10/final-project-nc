@@ -19,7 +19,7 @@ router.get("/api/rsa-group/:account",utils.requireRole('customer'), async (req, 
   const accountNumber = req.params.account;
   const ts = Date.now() / 1000;
   try {
-    const response = await axios.get(`https://a486da25599f.ngrok.io/api/partner-bank/info/${accountNumber}`, {
+    const response = await axios.get(`https://bankdbb.herokuapp.com/api/partner-bank/info/${accountNumber}`, {
       headers: {
         id: "rsa-bank",
         ts: ts,
@@ -108,7 +108,7 @@ router.post("/api/transfer/rsagroup", utils.requireRole('customer'), async (req,
   })
   try {
     const response = await axios.post(
-      "https://a486da25599f.ngrok.io/api/partner-bank/add-money",
+      "https://bankdbb.herokuapp.com/api/partner-bank/add-money",
         body,
         {
         headers: {
@@ -189,34 +189,34 @@ router.get("/api/pgpgroup/:account", utils.requireRole('customer'),async (req, r
   // return res.json(utils.succeed(data));
 });
 
-router.post('/api/transfer/pgpgroup',async (req, res) => {
+router.post('/api/transfer/pgpgroup',utils.requireRole('customer'), async (req, res) => {
   const passphrase = `nguyen`;
   const secretKey = "himom";
   
-  // const user = await User.findOne({_id: req.user.id});
-  // if (user.otp !== req.body.otp) {
-  //   return res.json(utils.fail({ message: "Sai otp" }));
-  // }
+  const user = await User.findOne({_id: req.user.id});
+  if (user.otp !== req.body.otp) {
+    return res.json(utils.fail({ message: "Sai otp" }));
+  }
 
-  // await Account.findOneAndUpdate(
-  //   { account_id: req.body.fromAccountNumber },
-  //   {
-  //     $inc: {
-  //       balance: -(+req.body.amount)
-  //     }
-  //   })
+  await Account.findOneAndUpdate(
+    { account_id: req.body.fromAccountNumber },
+    {
+      $inc: {
+        balance: -(+req.body.amount)
+      }
+    })
 
-  // await transactionModel.insert({
-  //   accountHolderNumber: req.body.fromAccountNumber,
-  //   transferAmount: req.body.amount,
-  //   content: req.body.content,
-  //   isPayFee: req.body.fee,
-  //   receiverAccountNumber: req.body.toAccountNumber,
-  //   isOutside: true,
-  // });
+  await transactionModel.insert({
+    accountHolderNumber: req.body.fromAccountNumber,
+    transferAmount: req.body.amount,
+    content: req.body.content,
+    isPayFee: req.body.fee,
+    receiverAccountNumber: req.body.toAccountNumber,
+    isOutside: true,
+  });
 
   const body = {
-    from_id: req.body.senderName,
+    from_id: req.body.fromAccountNumber,
     to_id: req.body.toAccountNumber,
     amount: req.body.amount,
     message: req.body.content,
@@ -263,16 +263,16 @@ router.post('/api/transfer/pgpgroup',async (req, res) => {
     });
     console.log("gogogogo2")
 
-    // const history = new Outside ({
-    //   from: req.body.fromAccountNumber,
-    //   to: req.body.toAccountNumber,
-    //   sender: req.body.senderName,
-    //   receiver: req.body.receiverName,
-    //   time: Date.now() / 1000,
-    //   amount: req.body.amount,
-    //   content: req.body.content,
-    //   bank: "pgp",
-    // });
+    const history = new Outside ({
+      from: req.body.fromAccountNumber,
+      to: req.body.toAccountNumber,
+      sender: req.body.senderName,
+      receiver: req.body.receiverName,
+      time: Date.now() / 1000,
+      amount: req.body.amount,
+      content: req.body.content,
+      bank: "pgp",
+    });
   
     // await history.save();
     console.log(response)
