@@ -52,7 +52,7 @@ module.exports = {
         if (restrict== false){
             return new Promise((resolve, reject)=>{
                 var model = mongoose.model('transactions', transaction);
-                return model.find({accountHolderNumber: value, isPayment:false} ).sort({transferAt:1}).exec((err,rows)=>{
+                return model.find({accountHolderNumber: value, isPayment:false} ).sort({transferAt:-1}).exec((err,rows)=>{
                     if(err){
                         reject(err);
                     }
@@ -65,7 +65,7 @@ module.exports = {
         else {
             return new Promise((resolve, reject)=>{
                 var model = mongoose.model('transactions', transaction);
-                return model.find({accountHolderNumber: value, isPayment:false,  transferAt: { $gt: now-t } } ).sort({transferAt:1}).exec((err,rows)=>{
+                return model.find({accountHolderNumber: value, isPayment:false,  transferAt: { $gt: now-t } } ).sort({transferAt:-1}).exec((err,rows)=>{
                     if(err){
                         reject(err);
                     }
@@ -83,7 +83,7 @@ module.exports = {
             return new Promise((resolve, reject)=>{
                 var model = mongoose.model('transactions', transaction);
                 return model.find({receiverAccountNumber: value,
-                }).sort({transferAt:1}).exec((err,rows)=>{
+                }).sort({transferAt:-1}).exec((err,rows)=>{
                     if(err){
                         reject(err);
                     }
@@ -99,7 +99,7 @@ module.exports = {
             return new Promise((resolve, reject)=>{
                 var model = mongoose.model('transactions', transaction);
                 return model.find({receiverAccountNumber: value, transferAt: { $gt: now-t } 
-                }).sort({transferAt:1}).exec((err,rows)=>{
+                }).sort({transferAt:-1}).exec((err,rows)=>{
                     if(err){
                         reject(err);
                     }
@@ -116,7 +116,7 @@ module.exports = {
             return new Promise((resolve, reject)=>{
                 var model = mongoose.model('transactions', transaction);
                 return model.find({accountHolderNumber: value,
-                isPayment:true}).sort({transferAt:1}).exec((err,rows)=>{
+                isPayment:true}).sort({transferAt:-1}).exec((err,rows)=>{
                     if(err){
                         reject(err);
                     }
@@ -132,7 +132,7 @@ module.exports = {
             return new Promise((resolve, reject)=>{
                 var model = mongoose.model('transactions', transaction);
                 return model.find({accountHolderNumber: value, transferAt: { $gt: now-t },
-                isPayment:true}).sort({transferAt:1}).exec((err,rows)=>{
+                isPayment:true}).sort({transferAt:-1}).exec((err,rows)=>{
                     if(err){
                         reject(err);
                     }

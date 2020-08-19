@@ -118,6 +118,7 @@ function TransactionHistory(props) {
                         <tr key={obj._id}>
                           <td>{idx + 1}</td>
                           <td><Moment format="hh:mm DD/MM/YYYY">{obj.transferAt}</Moment></td>
+                          <td>{obj.isOutside? "Ngoài hệ thống": "Trong hệ thống"}</td>
                           <td>{obj.accountHolderNumber}</td>
                           <td>{obj.transferAmount}</td>
                           <td>{obj.content}</td>
@@ -128,6 +129,7 @@ function TransactionHistory(props) {
                         <tr key={obj._id}>
                           <td>{idx + 1}</td>
                           <td><Moment format="hh:mm DD/MM/YYYY">{obj.transferAt}</Moment></td>
+                          <td>{obj.isOutside? "Ngoài hệ thống": "Trong hệ thống"}</td>
                           <td>{obj.accountHolderNumber}</td>
                           <td>{obj.transferAmount}</td>
                           <td>{obj.content}</td>
