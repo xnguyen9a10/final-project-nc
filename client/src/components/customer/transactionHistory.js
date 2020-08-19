@@ -13,9 +13,9 @@ import { forEach } from "lodash";
 function TransactionHistory(props) {
   const { Content } = Layout;
   const [type, setType] = useState(0);
-  const [transferHis, setTransferHis] = useState({});
-  const [receiveHis, setReceiveHis] = useState({});
-  const [payHis, setPayHis] = useState({});
+  const [transferHis, setTransferHis] = useState([]);
+  const [receiveHis, setReceiveHis] = useState([]);
+  const [payHis, setPayHis] = useState([]);
 
   const onTypeChanged = (param) => {
     if (param.target.value == 1) {
