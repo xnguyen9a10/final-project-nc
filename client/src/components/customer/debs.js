@@ -101,7 +101,6 @@ export default class Debs extends React.Component {
 
     const result = await httpClient.get("/customer/debs/1");
     const result2 = await httpClient.get("/customer/debs/2");
-    console.log(result)
     const result3 = await httpClient.post("/customer/get-customer", {
       id: localStorage.getItem("userId"),
     });
@@ -127,7 +126,22 @@ export default class Debs extends React.Component {
     Modal.success({
       content: "Tạo nhắc nợ thành công",
     });
-
+    const result1 = await httpClient.get("/customer/debs/1");
+    const result2 = await httpClient.get("/customer/debs/2");
+    const result3 = await httpClient.post("/customer/get-customer", {
+      id: localStorage.getItem("userId"),
+    });
+    this.setState({
+      fromAccountNumber:
+        result3 && result3.paymentAccount && result3.paymentAccount.ID,
+      receivers: result3 && result3.receivers,
+    });
+    this.setState({
+      data: result1,
+      data2: result2,
+      datathanhtoan: _.filter(result2, (o) => o.state === 2),
+      datachuathanhtoan: _.filter(result2, (o) => o.state === 1),
+    });
     this.setState({
       visible: false,
     });

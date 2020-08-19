@@ -60,8 +60,8 @@ const columns = [
   },
   {
     title: "Nội dung",
-    dataIndex: "to",
-    key: "to",
+    dataIndex: "content",
+    key: "content ",
   },
   {
     title: "Ngân hàng",
