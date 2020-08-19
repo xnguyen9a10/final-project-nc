@@ -84,18 +84,51 @@ export default class Debs extends React.Component {
   }
 
   async componentDidMount() {
-    socket.on("nhac_no", (data) => {
+    socket.on("nhac_no", async (data) => {
       if (data.email === localStorage.getItem("email")) {
-        openNotification("Nhắc nợ thông báo", `${data.name} đã hủy nhắc nợ với lý do: ${data.loinhan}`)
+        openNotification("Nhắc nợ thông báo", `${data.name} đã hủy nhắc nợ với lý do: ${data.loinhan}`);
+        const result1 = await httpClient.get("/customer/debs/1");
+        const result2 = await httpClient.get("/customer/debs/2");
+        const result3 = await httpClient.post("/customer/get-customer", {
+          id: localStorage.getItem("userId"),
+        });
+        this.setState({
+          fromAccountNumber:
+            result3 && result3.paymentAccount && result3.paymentAccount.ID,
+          receivers: result3 && result3.receivers,
+        });
+        this.setState({
+          data: result1,
+          data2: result2,
+          datathanhtoan: _.filter(result2, (o) => o.state === 2),
+          datachuathanhtoan: _.filter(result2, (o) => o.state === 1),
+        });
       }
     });
 
-    socket.on("thanh_toan", (data) => {
+    socket.on("thanh_toan", async (data) => {
       if (data.email === localStorage.getItem("email")) {
         openNotification(
           "Thông báo",
           `${data.name} đã thanh toán khoản nợ ${data.sotien}`
         );
+
+        const result1 = await httpClient.get("/customer/debs/1");
+        const result2 = await httpClient.get("/customer/debs/2");
+        const result3 = await httpClient.post("/customer/get-customer", {
+          id: localStorage.getItem("userId"),
+        });
+        this.setState({
+          fromAccountNumber:
+            result3 && result3.paymentAccount && result3.paymentAccount.ID,
+          receivers: result3 && result3.receivers,
+        });
+        this.setState({
+          data: result1,
+          data2: result2,
+          datathanhtoan: _.filter(result2, (o) => o.state === 2),
+          datachuathanhtoan: _.filter(result2, (o) => o.state === 1),
+        });
       }
     });
 
@@ -273,7 +306,6 @@ export default class Debs extends React.Component {
       deb_id: this.state.idchuno,
       time: this.state.recordTime
     });
-
     socket.emit("thanh_toan", {
       email: this.state.idchunochinhxac,
       name: localStorage.getItem("userName"),
