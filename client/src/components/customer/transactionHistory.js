@@ -52,7 +52,7 @@ function TransactionHistory(props) {
     }
   }
 
-  useEffect(async () => {
+  useEffect( async() => {
     let transferdata = await httpClient.get(`/customer/transfer-history/`);
     setTransferHis(transferdata.data);
     console.log(transferdata)
@@ -92,6 +92,7 @@ function TransactionHistory(props) {
                     <tr>
                       <th>#</th>
                       <th>Ngày</th>
+                      <th>Loại ngân hàng</th>
                       {type == 1 ?<th>Tài khoản người nhận</th> : ""}
                       {type == 3 ? <th>Tài khoản người nhận</th> : ""}
                       {type == 2 ? <th>Tài khoản người gửi</th> : ""}
@@ -105,6 +106,7 @@ function TransactionHistory(props) {
                       <tr key={obj._id}>
                         <td>{idx + 1}</td>
                         <td><Moment format="hh:mm DD/MM/YYYY">{obj.transferAt}</Moment></td>
+                        <td>{obj.isOutside? "Ngoài hệ thống": "Trong hệ thống"}</td>
                         <td>{obj.receiverAccountNumber}</td>
                         <td>{obj.transferAmount}</td>
                         <td>{obj.content}</td>
