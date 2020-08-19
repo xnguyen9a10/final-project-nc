@@ -234,7 +234,7 @@ function FundTransfer(props) {
                                         <Form.Label>Từ tài khoản nguồn</Form.Label>
                                         <Form.Control name="accountHolderNumber" ref={register()} as="select" custom>
                                             <option>{
-                                                props.customer.accounts.length >= 1&&props.customer.accounts[0]!=null ? props.customer.accounts[0].account_id : ""
+                                                props.customer.customer?props.customer.customer.paymentAccount.ID : ""
                                             } </option>
                                         </Form.Control>
                                     </Form.Group>
