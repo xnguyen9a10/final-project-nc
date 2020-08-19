@@ -4,6 +4,8 @@ import { Tabs, Radio, Layout } from 'antd';
 // import react boostrap
 import { Card, Button, Form, Modal, Table, Alert } from 'react-bootstrap';
 import { useForm } from "react-hook-form";
+import { getUserId } from '../../utils/auth';
+
 const { TabPane } = Tabs;
 
 function ReceiversManagement(props) {
@@ -37,11 +39,20 @@ function ReceiversManagement(props) {
   const onCreateReceiver = async(data) => {
     let result = null;
     if(isOutside==false){
-      var obj = {
+      /*var obj = {
         receiver_nickname: data.new_nickname,
         receiver_accountNumber: data.new_account
+      }*/
+      var obj = {
+        user_id: getUserId(),
+        nickname: data.new_nickname,// Là tên đã lưu || tên sai(dạng số sai hoặc tên sai) || số tài khoản đúng. 
+        account_id: data.new_account
       }
-      result = await httpClient.post('/customer/set-receiver', obj);
+      if (obj.nickname==''){
+        obj.nickname = obj.account_id;
+      }
+      //result = await httpClient.post('/customer/set-receiver', obj);
+      result = await httpClient.post(`/customer/save-receiver`,obj);
     }
     else{
       var obj = {

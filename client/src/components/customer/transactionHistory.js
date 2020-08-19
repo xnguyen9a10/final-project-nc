@@ -13,9 +13,9 @@ import { forEach } from "lodash";
 function TransactionHistory(props) {
   const { Content } = Layout;
   const [type, setType] = useState(0);
-  const [transferHis, setTransferHis] = useState({});
-  const [receiveHis, setReceiveHis] = useState({});
-  const [payHis, setPayHis] = useState({});
+  const [transferHis, setTransferHis] = useState([]);
+  const [receiveHis, setReceiveHis] = useState([]);
+  const [payHis, setPayHis] = useState([]);
 
   const onTypeChanged = (param) => {
     if (param.target.value == 1) {
@@ -133,7 +133,7 @@ function TransactionHistory(props) {
                           <td>{idx + 1}</td>
                           <td><Moment format="hh:mm DD/MM/YYYY">{obj.transferAt}</Moment></td>
                           <td>{obj.isOutside? "Ngoài hệ thống": "Trong hệ thống"}</td>
-                          <td>{obj.accountHolderNumber}</td>
+                          <td>{obj.receiverAccountNumber}</td>
                           <td>{obj.transferAmount}</td>
                           <td>{obj.content}</td>
                         </tr>) : ""
