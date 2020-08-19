@@ -82,7 +82,7 @@ module.exports = {
         if (restrict== false){
             return new Promise((resolve, reject)=>{
                 var model = mongoose.model('transactions', transaction);
-                return model.find({receiverAccountNumber: value,
+                return model.find({receiverAccountNumber: value,isPayment:false
                 }).sort({transferAt:1}).exec((err,rows)=>{
                     if(err){
                         reject(err);
@@ -98,7 +98,7 @@ module.exports = {
             const t = 30*1000*24*3600
             return new Promise((resolve, reject)=>{
                 var model = mongoose.model('transactions', transaction);
-                return model.find({receiverAccountNumber: value, transferAt: { $gt: now-t } 
+                return model.find({receiverAccountNumber: value, isPayment:false,transferAt: { $gt: now-t } 
                 }).sort({transferAt:1}).exec((err,rows)=>{
                     if(err){
                         reject(err);
