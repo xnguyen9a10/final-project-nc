@@ -238,8 +238,14 @@ export default class Debs extends React.Component {
       receiverAccountNumber: this.state.taikhoantrano,
       amount: this.state.sotientrano,
     };
-    await httpClient.post("/customer/verify-transfer", body);
-
+    const resultx = await httpClient.post("/customer/verify-transfer", body);
+    if(resultx.status !== "successful") {
+      Modal.error({
+        title: 'Thất bại',
+        content: 'Sai OTP',
+      });
+    } else {
+      
     await httpClient.post("/customer/transactions", {
       isPayment: true,
       accountHolderNumber: this.state.fromAccountNumber,
@@ -263,6 +269,7 @@ export default class Debs extends React.Component {
     Modal.success({
       content: "Thanh toán nợ thành công",
     });
+  }
   };
 
   onThanhtoan = async (id, toAccountNumber, amount, time) => {
