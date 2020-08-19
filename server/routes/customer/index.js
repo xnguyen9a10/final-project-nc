@@ -697,7 +697,9 @@ router.post("/customer/save-receiver", utils.requireRole("customer"), async (req
       console.log("match");
       //await Customer.findOne({ $or: [{ "paymentAccount.ID": account_id }, { receivers: { $elemMatch: { ID: account_id } } }] }).exec(async (err, result) => {
       // tìm người nhận bằng số tài khoản (payment account)
-      await Customer.findOne({ "paymentAccount": {'ID': account_id}}).exec(async (err, result) => {
+      //await Customer.findOne({ "paymentAccount": {'ID': account_id}}).exec(async (err, result) => {
+      await Customer.findOne({ $or: [{"paymentAccount": {'ID': account_id}}, { 'savingAccount': { $elemMatch: { ID: account_id } } }]}).exec(async (err, result) => {
+
         if (err) {
           console.log("Find error: ", err)
         }
