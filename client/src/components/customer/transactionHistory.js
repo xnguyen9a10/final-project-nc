@@ -52,7 +52,7 @@ function TransactionHistory(props) {
     }
   }
 
-  useEffect( async() => {
+  const load_data = async() =>{
     let transferdata = await httpClient.get(`/customer/transfer-history/`);
     setTransferHis(transferdata.data);
     console.log(transferdata)
@@ -62,6 +62,9 @@ function TransactionHistory(props) {
 
     let paydata = await httpClient.get(`/customer/payment-history/`); 
     setPayHis(paydata.data);
+  }
+  useEffect( () => {
+    load_data()
   }, [])
 
   return (

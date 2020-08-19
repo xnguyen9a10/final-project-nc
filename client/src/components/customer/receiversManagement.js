@@ -142,12 +142,16 @@ function ReceiversManagement(props) {
     }
   }
 
-  useEffect(async () => {
+  const load_data = async() => {
     let insideList = await httpClient.get(`/customer/get-inside-receiver`);
     let outsideList = await httpClient.get(`/customer/get-outside-receiver`);
 
     setReceiversInsideList(insideList);
     setReceiversOutsideList(outsideList);
+  }
+
+  useEffect(() => {
+   load_data()
   }, [])
 
   useEffect(() =>{
