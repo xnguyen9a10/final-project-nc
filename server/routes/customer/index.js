@@ -765,6 +765,29 @@ router.post("/customer/edit-receiver", utils.requireRole('customer'), async (req
     return res.json(ex.message);
   }
 })
+
+
+router.post("/customer/edit-outside-receiver", utils.requireRole('customer'), async (req, res) => {
+  try{
+    const { user } = req
+    const {edit_account_id, nickname, from} = req.body
+  
+    Customer.find({ user_id: user.id }).exec((err, result) => {
+      if(err) { return res.json(err)}
+      const account = result[0];
+      console.log(account)
+      Customer.updateOne(
+            { "_id": account._id, "outsideReceivers.account_id": edit_account_id },
+            { $set: {"outsideReceivers.$.nickname": nickname, "outsideReceivers.$.from":from}}
+      ).then((obj)=>{
+        return res.json(true);
+      })
+    })
+  }
+  catch(ex){
+    return res.json(ex.message);
+  }
+})
 module.exports = router;
 
 

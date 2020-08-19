@@ -16,6 +16,7 @@ function ReceiversManagement(props) {
   const [failureModal, setFailureModal] = useState(false);
   const [errMess, setErrMess] = useState("");
   const [accEdited, setAccEdited] = useState("");
+  const [typeEdited, setTypeEdited] = useState("");
   const [nameEdited, setNameEdited] = useState("");
   const [isOutside, setIsOutside] = useState(false);
 
@@ -64,7 +65,14 @@ function ReceiversManagement(props) {
     }
   }
 
-  const onEditReceiver = (account_id, nickname) => {
+  const onEditReceiver = (account_id, nickname,flag, type) => {
+    if(flag==false){
+      setIsOutside(false);
+    }
+    else{
+      setIsOutside(true);
+      setTypeEdited(type);
+    }
     setAccEdited(account_id);
     setNameEdited(nickname);
     setShowUpdateModal(true);
@@ -75,8 +83,14 @@ function ReceiversManagement(props) {
       "edit_account_id": accEdited, 
       "nickname": data.updated_nickname
     }
-    console.log(obj);
-    const result = await httpClient.post('/customer/edit-receiver', obj);
+    let result = null;
+    if(isOutside==false){
+      result = await httpClient.post('/customer/edit-receiver', obj);
+    }
+    else{
+      obj.from = data.type;
+      result = await httpClient.post('/customer/edit-outside-receiver', obj);
+    }
     if(result==true){
       let insideList = await httpClient.get(`/customer/get-inside-receiver`);
       let outsideList = await httpClient.get(`/customer/get-outside-receiver`);
@@ -93,6 +107,7 @@ function ReceiversManagement(props) {
   }
 
   const onDeleteReceiverClick = (account_id, nickname, flag) => {
+  
     if(flag == true){
       setIsOutside(true);
     }
@@ -190,6 +205,7 @@ function ReceiversManagement(props) {
                           <th>#</th>
                           <th>Tên gợi nhớ</th>
                           <th>Số tài khoản</th>
+                          <th>Loại ngân hàng</th>
                           <th></th>
                         </tr>
                       </thead>
@@ -200,11 +216,12 @@ function ReceiversManagement(props) {
                             <td>{idx + 1}</td>
                             <td>{obj.nickname}</td>    
                             <td>{obj.account_id}</td>
+                            <td>{obj.from}</td>
                             <td>
                               <Button style={{marginRight:"12px"}} variant="outline-danger" size="sm" onClick={() => onDeleteReceiverClick(obj.account_id, obj.nickname, true)}>
                                 <i class="fas fa-trash-alt"></i>
                               </Button>
-                              <Button variant="outline-primary" size="sm" onClick={() => onEditReceiver(obj.account_id, obj.nickname, true)}><i class="fas fa-pencil-alt"></i></Button>
+                              <Button variant="outline-primary" size="sm" onClick={() => onEditReceiver(obj.account_id, obj.nickname,true, obj.from)}><i class="fas fa-pencil-alt"></i></Button>
                             </td>                         
                           </tr>)
                         }                     
@@ -264,6 +281,16 @@ function ReceiversManagement(props) {
               <Form.Label>Sửa đổi tên gợi nhớ</Form.Label>
               <Form.Control id="updated_nickname" name="updated_nickname" ref={register()} defaultValue={nameEdited}/>
             </Form.Group>
+            {
+              isOutside?
+              <Form.Group>
+                <Form.Label>Loại ngân hàng</Form.Label>                  
+                <Form.Control name="type" as="select" ref={register()}>
+                  <option value="pgp"  selected={typeEdited=='pgp'} >PGP</option>
+                  <option value="rsa" selected={typeEdited=='rsa'}>RSA</option>
+                </Form.Control>
+              </Form.Group>:""
+            }
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
