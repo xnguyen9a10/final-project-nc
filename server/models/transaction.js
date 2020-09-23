@@ -46,50 +46,101 @@ module.exports = {
         })
     },
 
-    getByTransfer:(value)=>{
-        return new Promise((resolve, reject)=>{
-            var model = mongoose.model('transactions', transaction);
-            return model.find({accountHolderNumber: value,
-            isPayFee:false}).exec((err,rows)=>{
-                if(err){
-                    reject(err);
-                }
-                else{
-                    resolve(rows);
-                }
+    getByTransfer:(value, restrict = false)=>{
+        const now = Date.now();
+        const t = 30*1000*24*3600
+        if (restrict== false){
+            return new Promise((resolve, reject)=>{
+                var model = mongoose.model('transactions', transaction);
+                return model.find({accountHolderNumber: value, isPayment:false} ).sort({transferAt:-1}).exec((err,rows)=>{
+                    if(err){
+                        reject(err);
+                    }
+                    else{
+                        resolve(rows);
+                    }
+                })
             })
-        })
+        }
+        else {
+            return new Promise((resolve, reject)=>{
+                var model = mongoose.model('transactions', transaction);
+                return model.find({accountHolderNumber: value, isPayment:false,  transferAt: { $gt: now-t } } ).sort({transferAt:-1}).exec((err,rows)=>{
+                    if(err){
+                        reject(err);
+                    }
+                    else{
+                        resolve(rows);
+                    }
+                })
+            })
+        }
     },
 
-    getByReceiver:(value)=>{
+    getByReceiver:(value, restrict=false)=>{
         console.log(value)
-        return new Promise((resolve, reject)=>{
-            var model = mongoose.model('transactions', transaction);
-            return model.find({receiverAccountNumber: value,
-            isPayment :false}).exec((err,rows)=>{
-                if(err){
-                    reject(err);
-                }
-                else{
-                    resolve(rows);
-                }
+        if (restrict== false){
+            return new Promise((resolve, reject)=>{
+                var model = mongoose.model('transactions', transaction);
+                return model.find({receiverAccountNumber: value,isPayment:false
+                }).sort({transferAt:-1}).exec((err,rows)=>{
+                    if(err){
+                        reject(err);
+                    }
+                    else{
+                        resolve(rows);
+                    }
+                })
             })
-        })
+        }
+        else{
+            const now = Date.now();
+            const t = 30*1000*24*3600
+            return new Promise((resolve, reject)=>{
+                var model = mongoose.model('transactions', transaction);
+                return model.find({receiverAccountNumber: value, isPayment:false,transferAt: { $gt: now-t } 
+                }).sort({transferAt:-1}).exec((err,rows)=>{
+                    if(err){
+                        reject(err);
+                    }
+                    else{
+                        resolve(rows);
+                    }
+                })
+            })
+        }
     },
 
-    getByIspayment:(value)=>{
-        return new Promise((resolve, reject)=>{
-            var model = mongoose.model('transactions', transaction);
-            return model.find({accountHolderNumber: value,
-            isPayFee:true}).exec((err,rows)=>{
-                if(err){
-                    reject(err);
-                }
-                else{
-                    resolve(rows);
-                }
+    getByIspayment:(value, restrict=false)=>{
+        if(restrict==false){
+            return new Promise((resolve, reject)=>{
+                var model = mongoose.model('transactions', transaction);
+                return model.find({accountHolderNumber: value,
+                isPayment:true}).sort({transferAt:-1}).exec((err,rows)=>{
+                    if(err){
+                        reject(err);
+                    }
+                    else{
+                        resolve(rows);
+                    }
+                })
             })
-        })
+        }
+        else{
+            const now = Date.now();
+            const t = 30*1000*24*3600
+            return new Promise((resolve, reject)=>{
+                var model = mongoose.model('transactions', transaction);
+                return model.find({accountHolderNumber: value, transferAt: { $gt: now-t },
+                isPayment:true}).sort({transferAt:-1}).exec((err,rows)=>{
+                    if(err){
+                        reject(err);
+                    }
+                    else{
+                        resolve(rows);
+                    }
+                })
+            })
+        }
     }
-
 }

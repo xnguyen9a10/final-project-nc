@@ -36,12 +36,16 @@ class accountHistory extends React.Component {
       console.log(transferHistory)
       const dataSource = []
     for (let i = 0; i < transferHistory.length; i++) {
+      var type=""
+      if(!transferHistory[i].isOutside) type="Nội bộ"
+      else type="Liên ngân hàng"
       var transfer = {
         key: i + 1,
         receiverAccountNumber: transferHistory[i].receiverAccountNumber,
         transferAmount: transferHistory[i].transferAmount,
         content : transferHistory[i].content,
-        transferAt: transferHistory[i].transferAt
+        transferAt: transferHistory[i].transferAt,
+        type:type
       }
       dataSource.push(transfer)
     }
@@ -65,6 +69,11 @@ class accountHistory extends React.Component {
         title:'Nội dung giao dịch',
         dataIndex:'content',
         key:'content'
+      },
+      {
+        title:'Loại',
+        dataIndex:'type',
+        key:'type'
       },
       {
         title: 'Ngày giao dịch',
@@ -170,6 +179,8 @@ class accountHistory extends React.Component {
     }
 
     render() {
+      console.log("ádasd")
+
       const { size } = this.state;
       const transferTable=this.createTransferTable()
       const receiverTable=this.createReceiveTable()

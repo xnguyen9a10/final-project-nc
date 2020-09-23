@@ -27,10 +27,11 @@ export const VerifyRequest = () => {
 }
 
 
-export const VerifyCode = (code,receiverAccountNumber,amount) => {
+export const VerifyCode = (code,receiverAccountNumber,amount,requestResult) => {
     return async (dispatch) => {
         dispatch(VerifyRequest());
         var data = {
+            accountHolderNumber:requestResult.accountHolderNumber,
             code: code,
             email: getEmail(),
             receiverAccountNumber,
@@ -39,7 +40,8 @@ export const VerifyCode = (code,receiverAccountNumber,amount) => {
         try {
             var result = await httpClient.post('/customer/verify-transfer', data);
             if (result.status == "successful") {
-                dispatch(VerifySuccess());
+                var result = await httpClient.post('/customer/transactions', requestResult);
+                if(result.status==="successful") dispatch(VerifySuccess());
             }
             else{
                 dispatch(VerifyFailure(result))

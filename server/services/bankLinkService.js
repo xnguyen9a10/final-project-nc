@@ -33,13 +33,13 @@ class bankLinkService {
       try {
         await bankPartner.isValidPartner(timestamp, body, csi);
         await bankPartner.isValidTime(timestamp);
-        await bankPartner.isValidSign(detachedsignature);
+        await bankPartner.isValidSign(detachedsignature, partnercode);
         
         return Promise.resolve("Success");
         //Do tranfer stuff
       } catch (e) {
         console.log(e, "xxx")
-        throw new Error(e.message);
+        throw new Error(e);
       }
     }
     throw new Error("Your partner code was wrong !");

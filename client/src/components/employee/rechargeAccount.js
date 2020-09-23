@@ -126,12 +126,12 @@ class rechargeAccount extends React.Component {
                     [
                         {
                             required: true,
-                            message: "Vui lòng nhập số tài khoản!",
+                            message: "Vui lòng nhập số tài khoản hoặc tên đăng nhập!",
                         }
                     ]
                 }
                 >
-                    <Input placeholder="Số tài khoản"/>
+                    <Input placeholder="Số tài khoản hoặc tên đăng nhập"/>
                 </Form.Item>
 
                 <Form.Item

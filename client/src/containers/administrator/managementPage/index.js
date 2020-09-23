@@ -131,6 +131,9 @@ const deleteEmployee = async (data) => {
 
 const updateEmployee = async (data) => {
   const result = await httpClient.post('/admin/employee/update', data);
+  refreshTable();
+  store.dispatch(toggleModalUpdateEmployeeAction())
+
 }
 
 const refreshTable = async (data) => {
@@ -268,7 +271,7 @@ class ManagementPage extends Component {
               layout="horizontal"
               initialValues={{...this.props.form, prefixSelector: 84}} // onValuesChange={onFormLayoutChange}
               size={"small"}
-              onFinish={(values) => console.log(values._id)}
+              onFinish={(values) => updateEmployee(values)}
             >
               <Form.Item
                 label="Họ và tên"

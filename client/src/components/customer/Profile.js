@@ -30,6 +30,9 @@ function Profile({ customers, fetchProfile }) {
         <div>
             <Content style={{ margin: "24px 0px" }}>
                 <div className="site-layout-background" style={{ padding: 24, height: "600px" }}>
+                    <div style={{fontSize: "24px", marginBottom:"24px"}}>
+                        DANH SÁCH TÀI KHOẢN
+                    </div>
                     <div id="sub_content">
                         <div style={{ width: "100%" }}>
                             {
@@ -38,11 +41,11 @@ function Profile({ customers, fetchProfile }) {
                                         <Card key={index} style={{ width: '100%' }}>
                                             <Card.Body>
                                                 <Card.Title style={{ fontWeight: "600" }}> {} </Card.Title>
-                            <Card.Subtitle className="mb-2 text-muted" style={{ fontSize: "13px" }}>{_.get(account, 'account.name', null)}</Card.Subtitle>
-                                                <Card.Text style={{ opacity: "0.8", fontSize: "12px", marginTop: "20px" }}>
+                                                <Card.Subtitle className="mb-2 text-muted" style={{ fontSize: "22px" }}>{account.account_id}</Card.Subtitle>
+                                                <Card.Text style={{ opacity: "1", fontSize: "12px", marginTop: "20px" }}>
                                                     <div>
                                                         <i className="fa fa-user"></i>
-                                                        <span style={{ marginLeft: "8px" }}> NGUYỄN ANH TÚ </span>
+                                                        <span style={{ marginLeft: "8px" }}> {getUserName().toUpperCase()} </span>
                                                     </div>
                                                     <div>
                                                         <i className="fas fa-gift"></i>
@@ -53,7 +56,7 @@ function Profile({ customers, fetchProfile }) {
                                                 </Card.Text>
                                                 <Card.Text>
                                                     <div style={{fontFamily:"'Titillium Web', sans-serif", fontSize:"14px"}}>
-                                                        <span style={{fontWeight:"600", paddingRight:"8px"}}>Available Balance:</span> {formatMoney(_.get(account, 'account.balance', 0))} VND
+                                                        <span style={{fontWeight:"600", paddingRight:"8px"}}>Available Balance:</span> {formatMoney(account.balance)} VND
                                                         <div>
                                                         <span style={{fontWeight:"600", paddingRight:"8px"}}>Brand:</span> South VietNam
                                                         </div>

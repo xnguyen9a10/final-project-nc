@@ -39,6 +39,7 @@ ReactDOM.render(
     <Router history={history}>
       <Switch>
         <Route
+        exact
           path="/"
           exact
           render={(props) => {
@@ -49,6 +50,9 @@ ReactDOM.render(
               if (isRole("customer")) {
                 return <CustomerComponent />;
               }
+              // if (isRole("employee")) {
+              //   return <EmployeeComponenet />;
+              // }
             }
           }}
         /> */
@@ -58,7 +62,7 @@ ReactDOM.render(
             !isLogin() ? <LoginComponent /> : <Redirect to="/" />
           }
         />
-        <Route exact path={"/forget-password"} component={ForgetPassword}/>
+        <Route path={"/forget-password"} component={ForgetPassword}/>
         {!isRole("customer") ? <AppComponent /> : <CustomerComponent />}
         {/* <PrivateRoute component={(createCustomer)} path="/employee/create-customer"/>
         {/* <PrivateRoute component={(rechargeAccount)} path="/employee/recharge-account"/> */}

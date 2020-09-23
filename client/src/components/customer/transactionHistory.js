@@ -1,98 +1,152 @@
-import React from "react";
-import { Form, Input, Button, Checkbox, Table } from "antd";
-import axios from "axios";
+import React, { useEffect, useRef, useState } from "react";
+import "../../App.less"
+import { Layout } from "antd";
+import "./App.css";
 import httpClient from '../../utils/httpClient';
-import { Link,withRouter } from "react-router-dom";
-import { useHistory } from "react-router-dom";
+import Moment from 'react-moment';
+//import actions
 
-class transactionHistory extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      accounts: {}
-    }
-    this.handleRowClick = this.handleRowClick.bind(this)
-  }
-  async componentDidMount() {
-    const result = await httpClient.get('/customer/account-list');
-    console.log(result)
-    this.setState({
-      accounts: result
-    })
-  }
-  handleRowClick(id) {
-    this.props.history.push(`/accountHistory/${id}`);
-  }
-  render() {
-    const { accounts } = this.state
-    const dataSource = []
-    console.log(accounts)
-    const {paymentAccount,savingAccount}=accounts
-    console.log(savingAccount)
-    if(paymentAccount!=null){
-    var account = {
-          key: 0,
-          accountId: paymentAccount[0].account_id,
-          balance: paymentAccount[0].balance,
-          created_at: paymentAccount[0].createdAt,
-          type:"Thanh toán"
-        }
-    dataSource.push(account)
-    }
-    if(savingAccount!=null){
-    console.log(savingAccount)
-    for (let i = 0; i < savingAccount.length; i++) {
-      if(savingAccount[i][0]!=null){
-      var account = {
-        key: i + 1,
-        accountId: savingAccount[i][0].account_id,
-        balance: savingAccount[i][0].balance,
-        created_at: savingAccount[i][0].createdAt,
-        type:"Tiết kiệm"
-      }
-      dataSource.push(account)
-    }
-  }
-    }
-    const columns = [
-      {
-        title: 'STT',
-        dataIndex: 'key',
-        key: 'stt',
-      },
-      {
-        title: 'Số tài khoản',
-        dataIndex: 'accountId',
-        key: 'accountId',
-      },
-      {
-        title: 'Số dư',
-        dataIndex: 'balance',
-        key: 'balance',
-      },
-      {
-          title:'Loại',
-          dataIndex:'type',
-          key:'type'
-      },
-      {
-        title: 'Ngày tạo',
-        dataIndex: 'created_at',
-        key: 'created_at'
-      }
-    ];
+// import react boostrap
+import { Card, Button, Form, Col, Alert, Modal, Table } from 'react-bootstrap'
+import { Typeahead } from 'react-bootstrap-typeahead';
+import { forEach } from "lodash";
+function TransactionHistory(props) {
+  const { Content } = Layout;
+  const [type, setType] = useState(0);
+  const [transferHis, setTransferHis] = useState([]);
+  const [receiveHis, setReceiveHis] = useState([]);
+  const [payHis, setPayHis] = useState([]);
 
-
-    return (
-      <Table dataSource={dataSource} columns={columns}
-        onRow={(record, rowIndex) => {
-          return {
-            onClick: event => {
-              this.handleRowClick(record.accountId)
-            }, // click row
-          };
-        }} />
-    );
+  const onTypeChanged = (param) => {
+    if (param.target.value == 1) {
+      setType(1)
+    }
+    if (param.target.value == 2) {
+      setType(2)
+    }
+    if (param.target.value==3){
+      setType(3)
+    }
   }
+
+  const onCheckChanged = async(param) => {
+    if (param.target.checked){
+      let transferdata = await httpClient.get(`/customer/transfer-history/restrict`);
+      setTransferHis(transferdata.data);
+
+      let receiverdata = await httpClient.get(`/customer/receive-history/restrict`);
+      setReceiveHis(receiverdata.data);
+
+      let paydata = await httpClient.get(`/customer/payment-history/restrict`); 
+      setPayHis(paydata.data);
+    }
+    else{
+      let transferdata = await httpClient.get(`/customer/transfer-history/`);
+      setTransferHis(transferdata.data);
+
+      let receiverdata = await httpClient.get(`/customer/receive-history/`);
+      setReceiveHis(receiverdata.data);
+
+      let paydata = await httpClient.get(`/customer/payment-history/`); 
+      setPayHis(paydata.data);
+    }
+  }
+
+  const load_data = async() =>{
+    let transferdata = await httpClient.get(`/customer/transfer-history/`);
+    setTransferHis(transferdata.data);
+    console.log(transferdata)
+
+    let receiverdata = await httpClient.get(`/customer/receive-history/`);
+    setReceiveHis(receiverdata.data);
+
+    let paydata = await httpClient.get(`/customer/payment-history/`); 
+    setPayHis(paydata.data);
+  }
+  useEffect( () => {
+    load_data()
+  }, [])
+
+  return (
+    <>
+      <Content style={{ margin: "24px 0px", width: "100%", fontFamily: "'Titillium Web', sans-serif", backgroundColor: "#eee" }}>
+        <div className="site-layout-background" style={{ width: "100%", paddingRight: "20px", float: "left" }}>
+          <Card style={{ width: "100%", backgroundColor: "white", marginLeft: "12px" }}>
+            <Card.Body>
+              <Card.Title style={{ fontWeight: "600", fontSize: "24px" }}>LỊCH SỬ GIAO DỊCH</Card.Title>
+
+              <div style={{ width: "250px", marginBottom: "24px" }}>
+                <Form.Control name="type" as="select" className="mr-sm-2" custom onChange={onTypeChanged.bind(this)}>
+                  <option value="0" disabled="true" selected="true">--Loại giao dịch--</option>
+                  <option value="1">Thanh toán</option>
+                  <option value="2">Nhận tiền</option>
+                  <option value="3">Thanh toán nhắc nợ</option>
+                </Form.Control>
+              </div>
+              <div style={{ width: "250px", marginBottom: "24px" }}>
+                <Form.Group onChange={onCheckChanged.bind(this)}>
+                  <Form.Check type="checkbox" label="Xem lịch sử 30 ngày gần đây" />
+                </Form.Group>
+              </div>
+
+              {type != 0 ?
+                <Table striped bordered hover>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Ngày</th>
+                      <th>Loại ngân hàng</th>
+                      {type == 1 ?<th>Tài khoản người nhận</th> : ""}
+                      {type == 3 ? <th>Tài khoản người nhận</th> : ""}
+                      {type == 2 ? <th>Tài khoản người gửi</th> : ""}
+                      <th>Số tiền</th>
+                      <th>Nội dung</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {type == 1 ? transferHis.map((obj, idx) =>
+
+                      <tr key={obj._id}>
+                        <td>{idx + 1}</td>
+                        <td><Moment format="hh:mm DD/MM/YYYY">{obj.transferAt}</Moment></td>
+                        <td>{obj.isOutside? "Ngoài hệ thống": "Trong hệ thống"}</td>
+                        <td>{obj.receiverAccountNumber}</td>
+                        <td>{obj.transferAmount}</td>
+                        <td>{obj.content}</td>
+                      </tr>) : ""
+                    }
+                    {
+                      type == 2 ? receiveHis.map((obj, idx) =>
+
+                        <tr key={obj._id}>
+                          <td>{idx + 1}</td>
+                          <td><Moment format="hh:mm DD/MM/YYYY">{obj.transferAt}</Moment></td>
+                          <td>{obj.isOutside? "Ngoài hệ thống": "Trong hệ thống"}</td>
+                          <td>{obj.accountHolderNumber}</td>
+                          <td>{obj.transferAmount}</td>
+                          <td>{obj.content}</td>
+                        </tr>) : ""
+                    }
+                    {
+                      type == 3 ? payHis.map((obj, idx) =>
+                        <tr key={obj._id}>
+                          <td>{idx + 1}</td>
+                          <td><Moment format="hh:mm DD/MM/YYYY">{obj.transferAt}</Moment></td>
+                          <td>{obj.isOutside? "Ngoài hệ thống": "Trong hệ thống"}</td>
+                          <td>{obj.receiverAccountNumber}</td>
+                          <td>{obj.transferAmount}</td>
+                          <td>{obj.content}</td>
+                        </tr>) : ""
+                    }
+                  </tbody>
+                </Table>:""
+              }
+
+            </Card.Body>
+          </Card>
+        </div>
+      </Content>
+    </>
+  )
 }
-export default transactionHistory;
+export default TransactionHistory;

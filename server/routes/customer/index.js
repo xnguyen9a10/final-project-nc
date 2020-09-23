@@ -10,47 +10,163 @@ const User = mongoose.model("User");
 const nodemailer = require("nodemailer");
 var otpGenerator = require('otp-generator')
 const bcrypt = require('bcryptjs')
+const ObjectId = require('mongodb').ObjectId;
 
 router.get("/customer/info", utils.requireRole('customer'), async (req, res) => {
   const response = await CustomerService.vidu();
   return res.json(response);
 });
 
+router.get("/customer/get-inside-receiver", utils.requireRole('customer'), async (req, res) => {
+  const { user } = req
+  const customer = await Customer.find({ user_id: user._id })
+  return res.json(customer[0].receivers)
+});
+
+router.get("/customer/get-outside-receiver", utils.requireRole('customer'), async (req, res) => {
+  const { user } = req
+  var customer = await Customer.find({ user_id: user._id })
+  return res.json(customer[0].outsideReceivers)
+});
+
+router.post("/customer/delete-receiver/:accountnumber", utils.requireRole('customer'), async (req, res) => {
+  const { user } = req
+  const customer = await Customer.findOne({ user_id: user.id })
+  for (let i = 0; i < customer.receivers.length; i++) {
+    if (customer.receivers[i].account_id === req.params.accountnumber) {
+      customer.receivers.splice(i, 1)
+    }
+  }
+  const update = await Customer.findOneAndUpdate(
+    { user_id: user.id },
+    { receivers: customer.receivers })
+  if (update) return res.json(utils.succeed("Xóa người nhận thành công!"))
+  else res.json(utils.fail("Xóa thất bại!"))
+})
+
+router.post("/customer/delete-outside-receiver/:accountnumber", utils.requireRole('customer'), async (req, res) => {
+  const { user } = req
+  const customer = await Customer.findOne({ user_id: user.id })
+  for (let i = 0; i < customer.outsideReceivers.length; i++) {
+    if (customer.outsideReceivers[i].account_id === req.params.accountnumber) {
+      customer.outsideReceivers.splice(i, 1)
+    }
+  }
+  const update = await Customer.findOneAndUpdate(
+    { user_id: user.id },
+    { outsideReceivers: customer.outsideReceivers })
+  if (update) return res.json(utils.succeed("Xóa người nhận thành công!"))
+  else res.json(utils.fail("Xóa thất bại!"))
+})
+
+router.post("/customer/set-outside-receiver", utils.requireRole('customer'), async (req, res) => {
+  const { user } = req
+  const { receiver_nickname, receiver_accountNumber, type } = req.body
+  const customer = await Customer.find({ user_id: user.id })
+  const outsideReceivers = customer[0].outsideReceivers
+  for (let i = 0; i < outsideReceivers.length; i++) {
+    if (receiver_accountNumber == outsideReceivers[i].account_id) return res.json(utils.fail("Tài khoản này đã tồn tại!"))
+    if (receiver_nickname == outsideReceivers[i].nickname) return res.json(utils.fail("Người nhận này đã có trong danh sách!"))
+  }
+  Customer.findOneAndUpdate(
+    { user_id: user.id },
+    {
+      $push: {
+        outsideReceivers: {
+          nickname: receiver_nickname,
+          account_id: receiver_accountNumber,
+          from: type
+        }
+      }
+    })
+    .exec((err, result) => {
+      if (err) return res.json(fail(err))
+      else return res.json(utils.succeed("Thêm người nhận thành công!"))
+    })
+})
+
 router.post("/customer/set-receiver", utils.requireRole('customer'), async (req, res) => {
   const { user } = req
   const { receiver_nickname, receiver_accountNumber } = req.body
-  console.log(user)
+  console.log("Tên gợi nhớ:" + receiver_nickname)
   //check if accountnumber exist
   await Account.findOne({
     account_id: receiver_accountNumber
   }).exec((err, result) => {
     if (err) throw err
-    if (result === null) return res.json("Tài khoản không tồn tại!")
-    if (receiver_nickname === undefined) {
-      Customer.findOne({
-        paymentAccount: {
-          ID: receiver_accountNumber
-        }
-      }).exec((err, result) => {
-        if (err) throw err
-        if (result === null) return res.json("Tài khoản không tồn tại!")
-        else return res.json(result)
-      })
-    }
-    else Customer.findOneAndUpdate(
-      { user_id: user.id },
-      {
-        $push: {
-          receivers: {
-            nickname: receiver_nickname,
-            account_id: receiver_accountNumber
+    if (result === null) return res.json(utils.fail("Tài khoản không tồn tại!"))
+    else {
+      //if accountnumber exist, check if account in receiver
+      Customer.find({ user_id: user.id }).exec((err, result) => {
+        const receivers = result[0].receivers
+        console.log("Danh sách người nhận:" + receivers)
+        for (let i = 0; i < receivers.length; i++) {
+          //if account already in receiver, return error
+          if (receiver_accountNumber == receivers[i].account_id) {
+            return res.json(utils.fail("Tài khoản này đã có trong danh sách người nhận!"))
           }
         }
+        if (receiver_nickname === undefined) {
+          console.log("Nếu không có tên gợi nhớ")
+          Customer.findOne({
+            paymentAccount: {
+              ID: receiver_accountNumber
+            }
+          }).exec((err, result) => {
+            var ObjectId = require('mongodb').ObjectId;
+            if (err) throw err
+            if (result === null) return res.json(utils.fail("Tài khoản không tồn tại!"))
+            else User.find(ObjectId(result.user_id))
+              .exec((err, result) => {
+                if (err) return res.json(utils.fail("Không tìm ra người dùng"))
+                if (result) Customer.findOneAndUpdate(
+                  { user_id: user.id },
+                  {
+                    $push: {
+                      receivers: {
+                        nickname: result[0].fullname,
+                        account_id: receiver_accountNumber
+                      }
+                    }
+                  })
+                  .exec((err, result) => {
+                    if (err) return res.json(utils.fail(err))
+                    else return res.json(utils.succeed("Thêm người nhận thành công!"))
+                  })
+
+              })
+          })
+        }
+        else {
+          Customer.find({ user_id: user.id }).exec((err, result) => {
+            const receivers = result[0].receivers
+            for (let i = 0; i < receivers.length; i++) {
+              if (receiver_accountNumber == receivers[i].account_id)
+                return res.json(utils.fail("Tài khoản này đã có trong danh sách người nhận!"))
+              if (receiver_nickname == receivers[i].nickname)
+                return res.json(utils.fail("Tên này đã có trong danh sách người nhận!"))
+            }
+            if (err) {
+              return res.json(err)
+            }
+            else Customer.findOneAndUpdate(
+              { user_id: user.id },
+              {
+                $push: {
+                  receivers: {
+                    nickname: receiver_nickname,
+                    account_id: receiver_accountNumber
+                  }
+                }
+              })
+              .exec((err, result) => {
+                if (err) throw err
+                else return res.json(utils.succeed("Thêm người nhận thành công!"))
+              })
+          })
+        }
       })
-      .exec((err, result) => {
-        if (err) throw err
-        else return res.json(result)
-      })
+    }
   })
 })
 
@@ -58,36 +174,139 @@ router.get("/customer/account-list", utils.requireRole('customer'), async (req, 
   const { user } = req
   const customer = await Customer.find({ user_id: user.id })
   const paymentAccount = await Account.find({ account_id: customer[0].paymentAccount.ID })
-  const savingAccount = []
+  var savingAccount = []
   for (let i = 0; i < customer[0].savingAccount.length; i++) {
     const account = await Account.find({ account_id: customer[0].savingAccount[i].ID })
     savingAccount.push(account)
   }
+  console.log(savingAccount)
   const result = { paymentAccount, savingAccount }
   return res.status(201).json(result)
 })
 
-router.get("/customer/transfer-history/:accountId", utils.requireRole('customer'), async (req, res) => {
-  const accountnumber = req.params.accountId
-  console.log("chuyển khoản")
-  const result = await transactionModel.getByTransfer(accountnumber)
-  res.status(201).json(result)
-}
-)
+router.get("/customer/transfer-history/", utils.requireRole('customer'), async (req, res) => {
+  const { user } = req;
+  try {
+    await Customer.findOne({ 'user_id': user._id }).exec(async (err, result) => {
+      if (err) {
+        return res.json(fail(err, err.message))
+      }
+      else {
+        accountholder = result.paymentAccount.ID;
+        console.log('accountholder:', accountholder);
+        const list = await transactionModel.getByTransfer(accountholder);
 
-router.get("/customer/receive-history/:accountId", utils.requireRole('customer'), async (req, res) => {
-  const accountnumber = req.params.accountId
-  const result = await transactionModel.getByReceiver(accountnumber)
-  res.status(201).json(result)
+        return res.json(succeed(list));
+      }
+    })
+  } catch (ex) {
+    return res.json(fail(ex, ex.message));
+  }
 })
 
-router.get("/customer/payment-history/:accountId", utils.requireRole('customer'), async (req, res) => {
-  const accountnumber = req.params.accountId
-  console.log("Nhắc nợ")
-  const result = await transactionModel.getByIspayment(accountnumber)
-  res.status(201).json(result)
+
+router.get("/customer/receive-history/", utils.requireRole('customer'), async (req, res) => {
+  const { user } = req;
+
+  try {
+    await Customer.findOne({ 'user_id': user._id }).exec(async (err, result) => {
+      if (err) {
+        return res.json(fail(err, err.message))
+      }
+      else {
+        accountholder = result.paymentAccount.ID;
+        console.log('accountholder:', accountholder);
+        const list = await transactionModel.getByReceiver(accountholder);
+
+        return res.json(succeed(list));
+      }
+    })
+  } catch (ex) {
+    return res.json(fail(ex, ex.message));
+  }
 })
 
+router.get("/customer/payment-history/", utils.requireRole('customer'), async (req, res) => {
+  const { user } = req;
+
+  try {
+    await Customer.findOne({ 'user_id': user._id }).exec(async (err, result) => {
+      if (err) {
+        return res.json(fail(err, err.message))
+      }
+      else {
+        accountholder = result.paymentAccount.ID;
+        console.log('accountholder:', accountholder);
+        const list = await transactionModel.getByIspayment(accountholder);
+        return res.json(succeed(list));
+      }
+    })
+  } catch (ex) {
+    return res.json(fail(ex, ex.message));
+  }
+})
+
+router.get("/customer/transfer-history/restrict", utils.requireRole('customer'), async (req, res) => {
+  const { user } = req;
+  try {
+    await Customer.findOne({ 'user_id': user._id }).exec(async (err, result) => {
+      if (err) {
+        return res.json(fail(err, err.message))
+      }
+      else {
+        accountholder = result.paymentAccount.ID;
+        console.log('accountholder:', accountholder);
+        const list = await transactionModel.getByTransfer(accountholder, true);
+
+        return res.json(succeed(list));
+      }
+    })
+  } catch (ex) {
+    return res.json(fail(ex, ex.message));
+  }
+})
+
+
+router.get("/customer/receive-history/restrict", utils.requireRole('customer'), async (req, res) => {
+  const { user } = req;
+
+  try {
+    await Customer.findOne({ 'user_id': user._id }).exec(async (err, result) => {
+      if (err) {
+        return res.json(fail(err, err.message))
+      }
+      else {
+        accountholder = result.paymentAccount.ID;
+        console.log('accountholder:', accountholder);
+        const list = await transactionModel.getByReceiver(accountholder, true);
+
+        return res.json(succeed(list));
+      }
+    })
+  } catch (ex) {
+    return res.json(fail(ex, ex.message));
+  }
+})
+
+router.get("/customer/payment-history/restrict", utils.requireRole('customer'), async (req, res) => {
+  const { user } = req;
+
+  try {
+    await Customer.findOne({ 'user_id': user._id }).exec(async (err, result) => {
+      if (err) {
+        return res.json(fail(err, err.message))
+      }
+      else {
+        accountholder = result.paymentAccount.ID;
+        console.log('accountholder:', accountholder);
+        const list = await transactionModel.getByIspayment(accountholder, true);
+        return res.json(succeed(list));
+      }
+    })
+  } catch (ex) {
+    return res.json(fail(ex, ex.message));
+  }
+})
 /** ==== NGỌC PART===== */
 const { fail, succeed } = require("../../utils/utils");
 
@@ -270,7 +489,7 @@ router.post("/customer/reject-deb", utils.requireRole("customer"), async (req, r
         } else {
           (Customer.findOne({ "$or": [{ "paymentAccount.ID": change_deb.accountNumberDeb }, { "savingAccount.ID": change_deb.accountNumberDeb }] }).exec((err2, row2) => {
             if (err2 || row2 === null) {
-              res.json(fail(err2,"Fail"));
+              res.json(fail(err2, "Fail"));
             } else {
               row2.debs.forEach(element => {
                 if (element.time == change_deb.time && element.accountNumberDeb == row.paymentAccount.ID) {
@@ -307,14 +526,14 @@ router.post("/customer/solve-deb", utils.requireRole("customer"), async (req, re
         var id = mongoose.Types.ObjectId(content.deb_id);
         if (element._id.toString() === content.deb_id.toString()) {
           element.state = 2;
-          time = element.time;  
+          time = element.time;
         } else {
-          if(element.time === content.time) {
+          if (element.time === content.time) {
             element.state = 2
           }
         }
       });
-      return Customer.findOneAndUpdate({ "$or": [{ "debs._id": mongoose.Types.ObjectId(content.deb_id)}, { "savingAccount.ID": row.account_id }] }, { debs: row.debs }).exec((err1, row1) => {
+      return Customer.findOneAndUpdate({ "$or": [{ "debs._id": mongoose.Types.ObjectId(content.deb_id) }, { "savingAccount.ID": row.account_id }] }, { debs: row.debs }).exec((err1, row1) => {
         if (err1) {
           res.json(fail(err, row));
         } else {
@@ -342,7 +561,7 @@ router.post("/customer/solve-deb", utils.requireRole("customer"), async (req, re
         }
       })
     }
-  })) 
+  }))
 })
 
 /** ==== NGỌC PART===== */
@@ -361,6 +580,7 @@ router.post('/customer/transactions', utils.requireRole("customer"), async (req,
 
 const otpModel = require('../../models/otp.model');
 const { rsaKeyof47 } = require("../../key");
+const { json } = require("body-parser");
 
 router.post("/customer/transfer-request", utils.requireRole("customer"), async (req, res) => {
   const { email, receiverAccountNumber, isOutside = false } = req.body;
@@ -410,7 +630,7 @@ router.post("/customer/transfer-request", utils.requireRole("customer"), async (
             console.log('Email sent: ' + info.response);
             console.log(otp)
             await otpModel.insert(email, otp);
-            if(isOutside) {
+            if (isOutside) {
               await User.update({ _id: req.user.id }, { otp: otp });
             }
             return res.json(utils.succeed("Request send successfully"));
@@ -428,10 +648,12 @@ router.post("/customer/verify-transfer", utils.requireRole("customer"), async (r
   try {
     var { code, email, receiverAccountNumber, amount } = req.body;
     console.log("SO TIEN CHUYEN LA" + amount)
+    console.log("SO TAI KHOAN NGUOI NHAN LA: " + receiverAccountNumber)
     var { user } = req
     const holder = await Customer.find({ user_id: user.id })
     const accountholder = await Account.find({ account_id: holder[0].paymentAccount.ID })
     const accountreceiver = await Account.find({ account_id: receiverAccountNumber })
+    console.log("nguoi nhan ", accountreceiver);
     console.log("SO DU TAI KHOAN NGUOI NHAN LA:" + accountreceiver[0].balance)
     console.log("so du tai khoan nguoi gui la" + accountholder[0].balance)
     var record = await otpModel.findLatestOTP(email);
@@ -471,31 +693,64 @@ router.post("/customer/verify-transfer", utils.requireRole("customer"), async (r
     return res.json(utils.fail(2, ex.message));
   }
 })
-// Đã đến bước này thì tên không thể sai. 
+// Lưu người nhận: 2TH: có nhập tên gợi nhớ -> lưu bằng tên gợi nhớ, để trống tên gợi nhớ -> Tìm tên bằng stk rồi lưu 
 router.post("/customer/save-receiver", utils.requireRole("customer"), async (req, res) => {
   try {
     var { user_id, nickname, account_id } = req.body;
     var receiver = null;
 
-    if (nickname.match(/^[0-9]+$/)) {
-      console.log("match");
-      await Customer.findOne({ $or: [{ "paymentAccount.ID": account_id }, { receivers: { $elemMatch: { ID: account_id } } }] }).exec(async (err, result) => {
-        if (err) {
-          console.log("Find error: ", err)
-        }
+    await Customer.findOne({ "user_id": user_id ,  "receivers": { $elemMatch: { "account_id": account_id } } }).exec(async(err, r) => {
+      if (r != null) {
+        return res.json(fail("Đã tồn tại tài khoản này"));
+      }
+      else {
+        await Customer.findOne({ "user_id": user_id ,  'receivers': { $elemMatch: { nickname: nickname } } }).exec(async(err, r) => {
+          if (r != null) {
+            return res.json(fail("Đã tồn tại tên gợi nhớ này"));
+          }
+          else {
+            // Kiểm tra người dùng nhập số tài khoản
+            if (nickname.match(/^[0-9]+$/)) {
+              console.log("match");
+              //await Customer.findOne({ $or: [{ "paymentAccount.ID": account_id }, { receivers: { $elemMatch: { ID: account_id } } }] }).exec(async (err, result) => {
+              // tìm người nhận bằng số tài khoản (payment account)
+              //await Customer.findOne({ "paymentAccount": {'ID': account_id}}).exec(async (err, result) => {
+              await Customer.findOne({ $or: [{ "paymentAccount": { 'ID': account_id } }, { 'savingAccount': { $elemMatch: { ID: account_id } } }] }).exec(async (err, result) => {
+                if (err) {
+                  console.log("Find error: ", err)
+                  res.json(fail("Không tìm thấy số tài khoản này", "Không tìm thấy số tài khoản này"))
+                }
 
-        else {
-          receiver = result;
-          // Từ đây lấy user_id của recevier truy vấn vào bảng user để lấy full name. 
-          await User.findOne({ _id: receiver.user_id }).exec((err, result) => {
-            if (err) {
-              console.log("Find user id: ,", err);
+                else {
+                  receiver = result;
+                  if (result == null) {
+                    res.json(fail("Không tìm thấy số tài khoản này", "Không tìm thấy tài khoản này"))
+                  }
+                  // Từ đây lấy user_id của recevier truy vấn vào bảng user để lấy full name. 
+                  await User.findOne({ "_id": ObjectId(receiver.user_id) }).exec((err, result) => {
+                    if (err) {
+                      console.log("Find user id: ,", err);
+                    }
+                    else {
+                      console.log("User found: ,", result);
+                      nickname = result.fullname;
+                      console.log(nickname);
+
+                      const entity = {
+                        nickname,
+                        account_id
+                      }
+                      console.log(entity);
+                      Customer.findOneAndUpdate({ user_id: user_id }, { $push: { receivers: entity } }).exec((err, result) => {
+                        console.log(result);
+                        res.json(succeed(entity))
+                      })
+                    }
+                  })
+                }
+              })
             }
             else {
-              console.log("User found: ,", result);
-              nickname = result.fullname;
-              console.log(nickname);
-
               const entity = {
                 nickname,
                 account_id
@@ -506,21 +761,11 @@ router.post("/customer/save-receiver", utils.requireRole("customer"), async (req
                 res.json(succeed(entity))
               })
             }
-          })
-        }
-      })
-    }
-    else {
-      const entity = {
-        nickname,
-        account_id
+          }
+        })
       }
-      console.log(entity);
-      Customer.findOneAndUpdate({ user_id: user_id }, { $push: { receivers: entity } }).exec((err, result) => {
-        console.log(result);
-        res.json(succeed(entity))
-      })
-    }
+    })
+
 
 
   }
@@ -529,4 +774,51 @@ router.post("/customer/save-receiver", utils.requireRole("customer"), async (req
   }
 })
 
+router.post("/customer/edit-receiver", utils.requireRole('customer'), async (req, res) => {
+  try {
+    const { user } = req
+    const { edit_account_id, nickname } = req.body
+
+    Customer.find({ user_id: user.id }).exec((err, result) => {
+      if (err) { return res.json(err) }
+      const account = result[0];
+      console.log(account)
+      Customer.updateOne(
+        { "_id": account._id, "receivers.account_id": edit_account_id },
+        { $set: { "receivers.$.nickname": nickname } }
+      ).then((obj) => {
+        return res.json(true);
+      })
+    })
+  }
+  catch (ex) {
+    return res.json(ex.message);
+  }
+})
+
+
+router.post("/customer/edit-outside-receiver", utils.requireRole('customer'), async (req, res) => {
+  try {
+    const { user } = req
+    const { edit_account_id, nickname, from } = req.body
+
+    Customer.find({ user_id: user.id }).exec((err, result) => {
+      if (err) { return res.json(err) }
+      const account = result[0];
+      console.log(account)
+      Customer.updateOne(
+        { "_id": account._id, "outsideReceivers.account_id": edit_account_id },
+        { $set: { "outsideReceivers.$.nickname": nickname, "outsideReceivers.$.from": from } }
+      ).then((obj) => {
+        return res.json(true);
+      })
+    })
+  }
+  catch (ex) {
+    return res.json(ex.message);
+  }
+})
 module.exports = router;
+
+
+

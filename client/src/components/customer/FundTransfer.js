@@ -28,8 +28,8 @@ function FundTransfer(props) {
     const [ notiText, setNotiText] = useState(""); 
     const [showAddReceiver, setShowAddReceiver] = useState(false);
     const [alreadyIn, setAlreadyIn] = useState(false);
-    const [receiver, setReceiver] = useState({});
-
+    const [receiver, setReceiver] = useState("");
+    const [n, setN] = useState({});
     const onSubmit = data => {
         console.log(data);
         let receiverAccountNumber = document.getElementById("receiverAccountNumber").value;
@@ -39,29 +39,49 @@ function FundTransfer(props) {
         else {
             document.getElementById("alert").style.display = "none";
 
-                let flag = false;
-                props.customer.customer.receivers.forEach(element => {            
-                    if(element.nickname == receiverAccountNumber || element.account_id==receiverAccountNumber){
-                        flag=true;
-                        receiverAccountNumber = element.account_id;
-                        setAlreadyIn(true);
-                    }
-                });
-                if(flag==false){
-                    setAlreadyIn(false);
+            let flag = false;
+            props.customer.customer.receivers.forEach(element => {     
+                console.log(element)       
+                if(element.nickname == receiverAccountNumber || element.account_id ==receiverAccountNumber){
+                    flag=true;
+                    receiverAccountNumber = element.account_id;
+                    console.log(receiverAccountNumber);
+                    setAlreadyIn(true);                   
                 }
-            data.receiverAccountNumber = receiverAccountNumber;            
+            });
+            if(flag==false){
+                setAlreadyIn(false);
+            }
+            data.receiverAccountNumber = receiverAccountNumber;     
+            setN(receiverAccountNumber);
+            console.log(data)       
             props.sendRequest(data);
         }
     }
 
     const onVerify = () => {
-        props.verifyCode(document.getElementById("code").value,document.getElementById("receiverAccountNumber").value,document.getElementById("transferAmount").value);
+        
+        let receiverAccountNumber = document.getElementById("receiverAccountNumber").value;
+        if (receiverAccountNumber == "") {
+            document.getElementById("alert").style.display = "block";
+        }
+        else {
+            document.getElementById("alert").style.display = "none";
+                props.customer.customer.receivers.forEach(element => {            
+                    if(element.nickname == receiverAccountNumber || element.account_id==receiverAccountNumber){
+                        receiverAccountNumber = element.account_id;
+                    }
+                });
+            }
+        props.verifyCode(document.getElementById("code").value,receiverAccountNumber,document.getElementById("transferAmount").value,props.requestResult.data);
+       // props.verifyCode(document.getElementById("code").value,document.getElementById("receiverAccountNumber").value,document.getElementById("transferAmount").value);
+       // props.verifyCode(document.getElementById("code").value, n,document.getElementById("transferAmount").value);
+
     }
 
     useEffect(() => {
         if (isFirstRender.current == false) {
-            props.fundTransfer(props.requestResult.data);
+            // props.fundTransfer(props.requestResult.data);
             document.getElementById("confirm").style.display = "none";
             document.getElementById("confirm").reset();
             document.getElementById("info").reset();
@@ -73,13 +93,7 @@ function FundTransfer(props) {
     }, [props.verifyResult.result])
 
     useEffect(() => {
-        if(props.verifyResult.error!==null){
-            setErrorCard(true);
-            setNotiText(props.verifyResult.error.message);
-            return
-        }
-        else
-        if (props.customerTransfer.result == true) {
+        if (props.verifyResult.result == true) {
             setSuccessCard(true);
             setNotiText("Transfer Successfully!")
             if(alreadyIn==false){
@@ -87,11 +101,12 @@ function FundTransfer(props) {
             }
             return
         }
-        // if (props.customerTransfer.result == false) {
-        //     setErrorCard(true);
-        //     setNotiText(props.customerTransfer.error.message);
-        // }
-    }, [props.customerTransfer.result])
+        else if(props.verifyResult.error!==null) {
+            setErrorCard(true);
+            setNotiText(props.verifyResult.error.message);
+            return
+        }
+    }, [props.verifyResult.result])
 
     useEffect(()=>{
         if(props.requestResult.result==false){
@@ -219,7 +234,7 @@ function FundTransfer(props) {
                                         <Form.Label>Từ tài khoản nguồn</Form.Label>
                                         <Form.Control name="accountHolderNumber" ref={register()} as="select" custom>
                                             <option>{
-                                                props.customer.accounts.length >= 1 ? props.customer.accounts[0].account_id : ""
+                                                props.customer.customer?props.customer.customer.paymentAccount.ID : ""
                                             } </option>
                                         </Form.Control>
                                     </Form.Group>
@@ -333,10 +348,10 @@ function FundTransfer(props) {
                 <Modal.Body>Bạn có muốn lưu người này lại cho lần giao dịch kế tiếp?</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
-                        Có
+                        Không 
                     </Button>
                     <Button variant="primary" onClick={handleAgree}>
-                        Không
+                        Có
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -350,9 +365,7 @@ function FundTransfer(props) {
                             <Form.Control type="text" id="name" defaultValue="" name="name" placeholder="">                               
                             </Form.Control>
                             <div style={{opacity:"0.7", fontSize: "13px"}}>
-                            Tên này sẽ được hiển thị trong danh sách tài khoản của người nhận trong thời gian tới. <br/>
-                               
-Để trống phần mềm này nếu bạn muốn sử dụng tên mặc định trong tài khoản của người nhận
+                            Tên này sẽ được hiển thị trong danh sách tài khoản của người nhận trong thời gian tới. Để trống phần này nếu bạn muốn sử dụng tên mặc định trong tài khoản của người nhận
                             </div>
                         </Form.Group>
                     </Form>
@@ -384,7 +397,7 @@ const mapDispatchToProps = (dispatch) => {
         fetchCustomer: () => dispatch(fetchCustomerAccount()),
         fundTransfer: (data) => dispatch(Transfer(data)),
         sendRequest: (data) => dispatch(RequestTransfer(data)),
-        verifyCode: (code,receiverAccountNumber,amount) => dispatch(VerifyCode(code,receiverAccountNumber,amount)),
+        verifyCode: (code,receiverAccountNumber,amount,requestResult) => dispatch(VerifyCode(code,receiverAccountNumber,amount,requestResult)),
         saveReceiver: (data) => dispatch(SaveReceiver(data)) 
     }
 }
